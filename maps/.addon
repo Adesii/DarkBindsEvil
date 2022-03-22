@@ -1,0 +1,13 @@
+{
+  "Title": "darkbindsempty",
+  "Type": "map",
+  "Org": "local",
+  "Ident": "darkbindsempty",
+  "Schema": 1,
+  "HasAssets": true,
+  "AssetsPath": "",
+  "ResourcePaths": null,
+  "HasCode": false,
+  "CodePath": null,
+  "RootNamespace": null
+}

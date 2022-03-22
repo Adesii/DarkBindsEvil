@@ -1,0 +1,13 @@
+{
+  "Title": "The Dark Binds Evil",
+  "Type": "game",
+  "Org": "local",
+  "Ident": "the_dark_binds_evil",
+  "Schema": 1,
+  "HasAssets": true,
+  "AssetsPath": "",
+  "ResourcePaths": null,
+  "HasCode": true,
+  "CodePath": "/code/",
+  "RootNamespace": "DarkBinds"
+}

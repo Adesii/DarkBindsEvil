@@ -1,0 +1,41 @@
+<!-- kv3 encoding:text:version{e21c7f3c-8a33-41c5-9977-a76d3a32aa0d} format:generic:version{7412167c-06e9-4698-aff2-e63eb59037e7} -->
+{
+	data = 
+	{
+		spriteareas = 
+		[
+			{
+				name = "Slime"
+				area = 
+				{
+					width = 320
+					height = 320
+					position = [0,0]
+					size = [320,64]
+				}
+				xsubdivisions = 5
+				ysubdivisions = 1
+				areacolor = [0,1,1,1]
+				framerate = 6
+				spriteorigin = [0.5,0]
+				spritesheetpath = "/sprites/enemies/enemy_sheet.png"
+			},
+			{
+				name = "Bat"
+				area = 
+				{
+					width = 320
+					height = 320
+					position = [0,64]
+					size = [320,64]
+				}
+				xsubdivisions = 5
+				ysubdivisions = 1
+				areacolor = [1,1,1,1]
+				framerate = 8
+				spriteorigin = [0.5,0]
+				spritesheetpath = "/sprites/enemies/enemy_sheet.png"
+			},
+		]
+	}
+}

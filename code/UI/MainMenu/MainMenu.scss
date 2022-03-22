@@ -1,0 +1,87 @@
+.MainMenu{
+    width: 100%;
+    height: 100%;
+    pointer-events: all;
+}
+.BackGround{
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background-color: #888888;
+}
+
+.MainMenuSelect{
+    height: 60%;
+    width: 30%;
+    background-color: bisque;
+    position: absolute;
+    left: 125px;
+    top: 20%;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-between;
+
+    padding: 50px;
+
+    border-radius: 10px;
+    .menu-btn{
+        height: 100px;
+        width: 100%;
+        background-color: #c2a548;
+        border-radius: 10px;
+
+        align-items: center;
+        justify-content: center;
+        .label{
+            font-size: 30px;
+            font-weight: bold;
+        }
+    }
+}
+
+.TitlePanel{
+    position: absolute;
+    width: 50%;
+    height: 20%;
+    bottom: 50px;
+    right: 100px;
+    justify-content: center;
+    align-items: center;
+    .PlaceHolderTitle{
+        font-size: 115px;
+        font-weight: bold;
+    }
+}
+.LobbySection{
+    position: absolute;
+    top: 100px;
+    right: 100px;
+    width: 25%;
+    height: 50%;
+    background-color: bisque;
+    border-radius: 10px;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-between;
+    padding: 25px;
+    .LobbyTitle{
+        font-size: 30px;
+        font-weight: bold;
+        height: 50px;
+    }
+    .LobbyList{
+        flex-grow: 1;
+        flex-direction: column;
+        align-items: center;
+        justify-content: space-between;
+        .PlayerListing{
+            width: 400px;
+            height: 100px;
+            background-color: gray;
+
+            font-size: 30px;
+            font-weight: bold;
+        }
+
+    }
+}

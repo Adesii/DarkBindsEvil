@@ -1,0 +1,25 @@
+<!-- kv3 encoding:text:version{e21c7f3c-8a33-41c5-9977-a76d3a32aa0d} format:generic:version{7412167c-06e9-4698-aff2-e63eb59037e7} -->
+{
+	data = 
+	{
+		spriteareas = 
+		[
+			{
+				name = "Unnamed"
+				area = 
+				{
+					width = 64
+					height = 64
+					position = [0,0]
+					size = [64,64]
+				}
+				xsubdivisions = 1
+				ysubdivisions = 1
+				areacolor = [0,1,1,1]
+				framerate = 12
+				spriteorigin = [0.5,0]
+				spritesheetpath = "/sprites/abilities/minions.png"
+			},
+		]
+	}
+}

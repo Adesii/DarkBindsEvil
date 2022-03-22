@@ -1,0 +1,35 @@
+//
+// SpriteKit.Asset.SpriteArea
+//
+@struct = SpriteKit_Asset_SpriteArea
+[
+	name(string) : "Name" :  : ""
+	area(struct:Rect) : "Area" :  : ""
+	xsubdivisions(integer) : "Xsubdivisions" : 1 : ""
+	ysubdivisions(integer) : "Ysubdivisions" : 1 : ""
+	framerate(float) : "Frame Rate" : "12" : ""
+	areacolor(color1) : "Area Color" :  : ""
+	spriteorigin(vector2) : "Sprite Origin" :  : ""
+	spritesheetpath(string) { editor = "AssetBrowse(img)" } : "Sprite Sheet Path" :  : ""
+	spritesheetnormalpath(string) { editor = "AssetBrowse(img)" } : "Sprite Sheet Normal Path" :  : ""
+]
+
+//
+// Rect
+//
+@struct = Rect
+[
+	width(float) : "Width" : 0 : ""
+	height(float) : "Height" : 0 : ""
+	position(vector2) : "Position" :  : ""
+	size(vector2) : "Size" :  : ""
+]
+
+//
+// SpriteKit.Asset.SpriteAsset
+//
+@BaseClass = sprite : ""
+[
+	spriteareas(array:struct:SpriteKit_Asset_SpriteArea) : "Sprite Areas" :  : ""
+]
+
