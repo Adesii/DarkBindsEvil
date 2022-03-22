@@ -57,7 +57,7 @@ public class DarkBindCharacter : ModelSprite
 		float boost = 1;
 		if ( Input.Down( InputButton.Run ) )
 		{
-			boost *= 4;
+			boost *= 10;
 		}
 		var direction = Vel.y < 0;
 		Vel = Rotation * Vel;

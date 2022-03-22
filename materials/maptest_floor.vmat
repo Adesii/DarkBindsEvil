@@ -12,7 +12,7 @@ Layer0
 	g_flFadeExponent "1.000"
 
 	//---- Material ----
-	SpriteSheet "materials/ground_plane.png"
+	SpriteSheet "materials/ground_floor_plane.png"
 	SpriteSheetTintMask "materials/default/default.tga"
 
 	//---- Texture Coordinates ----

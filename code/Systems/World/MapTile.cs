@@ -21,6 +21,18 @@ public partial class MapTile
 	public Vector3 WorldPosition { get; set; }
 	public int BlockIndex { get; set; }
 
+	public SceneObject TileSO { get; set; }
+
+	public void Delete()
+	{
+		if ( TileSO.IsValid() )
+			TileSO.Delete();
+	}
+	~MapTile()
+	{
+		Delete();
+	}
+
 	internal void Deserialize( ref BinaryReader reader )
 	{
 		int x = reader.ReadInt32();

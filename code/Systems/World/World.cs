@@ -105,10 +105,10 @@ public partial class World : Entity
 			for ( int i = 0; i < ActiveChunks.Count; i++ )
 			{
 				MapChunk item = ActiveChunks[i];
-				if ( item.Position.Distance( playerchunks ) >= 3 )
+				if ( item.Position.Distance( playerchunks ) >= 3 && item.IsGenerated )
 				{
 					ActiveChunks.RemoveAt( i );
-					item.Cleanup();
+					item.Hide();
 				}
 			}
 			LastCleanup = 0;
@@ -256,7 +256,7 @@ public partial class World : Entity
 			Log.Debug( $"Amount of chunks: {amount}" );
 			foreach ( var item in Tiles.Values )
 			{
-				item.SceneObject?.Delete();
+				item.Cleanup();
 			}
 			ClearTiles();
 			for ( int i = 0; i < amount; i++ )
