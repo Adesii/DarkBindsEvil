@@ -1,0 +1,37 @@
+//
+// SpriteKit.Asset.MapSheetArea
+//
+@struct = SpriteKit_Asset_MapSheetArea
+[
+	minimapcolor(color1) : "Mini Map Color" :  : ""
+	mapblendpath(string) : "Map Blend Path" :  : ""
+	mapblendnormalpath(string) : "Map Blend Normal Path" :  : ""
+	name(string) : "Name" :  : ""
+	area(struct:Rect) : "Area" :  : ""
+	xsubdivisions(float) : "Xsubdivisions" : 0 : ""
+	ysubdivisions(float) : "Ysubdivisions" : 0 : ""
+	areacolor(color1) : "Area Color" :  : ""
+	framerate(float) : "Frame Rate" : "12" : ""
+	spritesheetpath(string) { editor = "AssetBrowse(img)" } : "Sprite Sheet Path" :  : ""
+	spritesheetnormalpath(string) { editor = "AssetBrowse(img)" } : "Sprite Sheet Normal Path" :  : ""
+]
+
+//
+// Rect
+//
+@struct = Rect
+[
+	width(float) : "Width" : 0 : ""
+	height(float) : "Height" : 0 : ""
+	position(vector2) : "Position" :  : ""
+	size(vector2) : "Size" :  : ""
+]
+
+//
+// SpriteKit.Asset.MapSheetAsset
+//
+@BaseClass = m_sprite : ""
+[
+	spriteareas(array:struct:SpriteKit_Asset_MapSheetArea) : "Sprite Areas" :  : ""
+]
+

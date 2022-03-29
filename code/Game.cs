@@ -12,7 +12,7 @@ global using System.Threading.Tasks;
 
 using DarkBinds.Player;
 using DarkBinds.UI;
-using DarkBinds.Systems.World;
+using DarkBinds.Systems.Worlds;
 
 namespace DarkBinds;
 
@@ -29,6 +29,8 @@ public partial class DarkBindsGame : Game
 			_ = new DarkBindsHud();
 			World = new World();
 		}
+
+		Event.Run( "BlockRegister.RegisterBlocks" );
 	}
 
 	public override void ClientJoined( Client client )

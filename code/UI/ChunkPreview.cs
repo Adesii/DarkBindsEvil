@@ -1,5 +1,5 @@
 using System.Collections.Generic;
-using DarkBinds.Systems.World;
+using DarkBinds.Systems.Worlds;
 using Sandbox.UI;
 
 namespace DarkBinds.UI;
@@ -25,7 +25,7 @@ public class ChunkPreview : Image
 		if ( curworld.Tiles == null || curworld.Tiles.Count == 0 || curworld.Tiles[0].Tiles.Count == 0 || !curworld.ChunksFullyReceived ) return;
 		if ( PreviewTexture == null )
 		{
-			PreviewTexture = Texture.Create( World.WorldSize * MapChunk.ChunkSize, World.WorldSize * MapChunk.ChunkSize ).WithDynamicUsage().Finish();
+			PreviewTexture = Texture.Create( World.WorldSize * World.ChunkSize, World.WorldSize * World.ChunkSize ).WithDynamicUsage().Finish();
 		}
 		if ( dirty )
 		{
@@ -51,9 +51,10 @@ public class ChunkPreview : Image
 					}
 					else
 					{
-						chunkdata.Add( (byte)tile.BlockIndex );
-						chunkdata.Add( (byte)tile.BlockIndex );
-						chunkdata.Add( (byte)tile.BlockIndex );
+						Color32 col = tile.Block.GetMiniMapColor();
+						chunkdata.Add( (byte)col.r );
+						chunkdata.Add( (byte)col.g );
+						chunkdata.Add( (byte)col.b );
 						chunkdata.Add( byte.MaxValue );
 					}
 				}
@@ -61,9 +62,7 @@ public class ChunkPreview : Image
 			PreviewTexture.Update( chunkdata.ToArray(), 0, 0, PreviewTexture.Width, PreviewTexture.Height );
 			dirty = false;
 		}
-		var block = World.GetMapTile( Local.Pawn.Position );
-		if ( block == null ) return;
-		var PlayerPos = block.Position;
+		var PlayerPos = World.GetTilePosition( Local.Pawn.Position );
 		if ( PlayerPos != PrevPosition )
 		{
 			prevchunkdata = chunkdata.ToList();
@@ -91,8 +90,26 @@ public class ChunkPreview : Image
 		}
 
 		Texture = PreviewTexture;
-		Style.Width = PreviewTexture.Width * 2;
-		Style.Height = PreviewTexture.Height * 2;
+		Style.Width = PreviewTexture.Width;
+		Style.Height = PreviewTexture.Height;
+	}
+
+	[Event( "tile.changed" )]
+	public void UpdateTilePixel( MapTile tile )
+	{
+		Log.Info( "Tile changed" );
+		if ( tile == null ) return;
+
+		int pixelfrompositionindex = ((tile.Position.x) * PreviewTexture.Width + (tile.Position.y)) * 4;
+		var MiniMapColor = tile.Block.GetMiniMapColor();
+		chunkdata[pixelfrompositionindex + 0] = (byte)MiniMapColor.r;
+		chunkdata[pixelfrompositionindex + 1] = (byte)MiniMapColor.g;
+		chunkdata[pixelfrompositionindex + 2] = (byte)MiniMapColor.b;
+		chunkdata[pixelfrompositionindex + 3] = byte.MaxValue;
+
+		PreviewTexture.Update( chunkdata.ToArray(), 0, 0, PreviewTexture.Width, PreviewTexture.Height );
+
+
 	}
 
 }

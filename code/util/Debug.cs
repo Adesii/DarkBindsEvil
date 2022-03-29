@@ -5,7 +5,7 @@ public static partial class Debug
 {
 
 	[ConVar.Replicated( "debug" )]
-	public static bool Enabled { get; set; } = true;
+	public static bool Enabled { get; set; } = false;
 }
 
 // Log.Debug

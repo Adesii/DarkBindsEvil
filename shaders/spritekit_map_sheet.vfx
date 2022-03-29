@@ -32,17 +32,16 @@ MODES
 COMMON
 {
 	#include "common/shared.hlsl"
-	CreateInputTexture2D( SpriteSheet,            Srgb,   8, "",                 "_color",  "Material,10/10", Default3( 1.0, 1.0, 1.0 ) );
-	CreateInputTexture2D( SpriteSheetNormal,           Linear, 8, "NormalizeNormals", "_normal", "Material,10/20", Default3( 0.5, 0.5, 1.0 ) );
-
-	CreateInputTexture2D( SpriteSheetTintMask,     Linear, 8, "",                 "_tint",   "Material,10/70", Default( 1.0 ) );
-    #define COLOR_TEXTURE_CHANNELS Channel( RGB,  Box( SpriteSheet ), Srgb ); Channel( A, Box( SpriteSheetTintMask ), Linear )
-
-	CreateTexture2D( g_tSpriteSheetTex )  <COLOR_TEXTURE_CHANNELS; OutputFormat( BC7 ); SrgbRead( true );Filter(NEAREST);AddressU( WRAP );AddressV( WRAP ); >;
-	CreateTexture2D( g_tSpriteSheetNormalTex ) <Channel( RGBA, Box( SpriteSheetNormal ), Linear ); OutputFormat( BC7 ); SrgbRead( false );Filter(NEAREST);AddressU( WRAP );AddressV( WRAP ); >;
 
 	float3 Tint<Attribute("TintColor");>;
 	float TintAmount<Attribute("TintAmount");>;
+	
+	float AmbientOcclusionAmount<UiType(Slider);Range(0,10);Default(1);>;
+	float AmbientOcclusionDistance<UiType(Slider);Range(0,10);Default(1);>;
+
+	float2 AmbientOcclusionSquare<UiType(Slider);Range2(0,0,1,1);Default2(0.1,0.9);>;
+
+
 
 	#define PS_INPUT_HAS_TANGENT_BASIS 1
 }
@@ -52,6 +51,8 @@ COMMON
 struct VertexInput
 {
 	#include "common/vertexinput.hlsl"
+	float2 fBlendAmountPerSide : TEXCOORD17 <Semantic( none);>;
+	float4 vUVData : TEXCOORD18 <Semantic( none);>;
 };
 
 //=========================================================================================================================
@@ -60,7 +61,8 @@ struct PixelInput
 {
 	#include "common/pixelinput.hlsl"
 
-	float3 wBitangent : TEXCOORD13;
+	float2 fBlendAmountPerSide : TEXCOORD17;
+	float4 vUVData : TEXCOORD18;
 };
 
 
@@ -73,17 +75,14 @@ VS
 	//
 	// Main
 	//
-	PixelInput MainVs( INSTANCED_SHADER_PARAMS( VS_INPUT i ) )
+	PixelInput MainVs( INSTANCED_SHADER_PARAMS( VertexInput i ) )
 	{
 		PixelInput o = ProcessVertex( i );
 		// Add your vertex manipulation functions here
 		
 		o = FinalizeVertex( o );
-		o.wBitangent = cross(-o.vTangentUWs,o.vNormalWs) *o.vTangentVWs.y;
-		float3 normal = normalize(o.vNormalWs.xyz);
-    	float3 tangent = normalize(o.vTangentUWs.xyz);
-
-		o.wBitangent = cross(normal, tangent.xyz);
+		o.fBlendAmountPerSide = i.fBlendAmountPerSide;
+		o.vUVData = i.vUVData;
 		return o;
 	}
 }
@@ -95,19 +94,56 @@ PS
 {
     #include "spritekit/Pixel.hlsl"
 
+	CreateTexture2D( g_tSpriteSheetTexCode )< Attribute( "SpriteSheet" );SrgbRead( true );Filter(NEAREST);>;
+	CreateTexture2D( g_tSpriteSheetNormalTexCode )< Attribute( "SpriteSheetNormalMap" );SrgbRead( false );Filter(NEAREST);>;
+
 	//
 	// Main
 	//
 	PixelOutput MainPs( PixelInput i )
 	{
-		PixelOutput o;
+		float2 spriteStartUV = i.vUVData.xy;
+		float2 spriteEndVU = i.vUVData.zw;
+		float2 spriteRange = (spriteEndVU - spriteStartUV);
+		float2 uv = spriteStartUV + (frac(clamp(i.vTextureCoords.xy,0.001f,0.999f) ) * spriteRange);
+		uv = round(uv * 1024.0f) / 1024.0f;
 
-		float4 Color = Tex2D(g_tSpriteSheetTex, i.vTextureCoords.xy).rgba;
-		o.vColor.a = Color.a;
-        o.vColor.rgb = Color.rgb;
-		o.vColor.rgb = saturate(o.vColor.rgb + (Tint.rgb*TintAmount));
+		float4 Albedo = Tex2D(g_tSpriteSheetTexCode, uv).rgba;
+		Albedo.rgb = saturate(Albedo.rgb + (Tint.rgb*TintAmount));
+		/* PixelOutput o;
+		o.vColor.rgba = 1;
+		o.vColor.rgb = 0;
+		o.vColor.rg = uv;
+		return o; */
+		//add ambient occlusion with a 0.2% of TextureCoords if it is a wall in the direction of the wall
+		float fBlendAmount = 0;
+
+		if(i.fBlendAmountPerSide.y > 0.5){
+			fBlendAmount =(i.vTextureCoords.x);
+			Albedo.rgb = Albedo.rgb * saturate(((AmbientOcclusionDistance - fBlendAmount)*AmbientOcclusionAmount*2));
+		}
+		if(i.fBlendAmountPerSide.x > 0.5){
+			fBlendAmount =1-(i.vTextureCoords.x);
+			Albedo.rgb = Albedo.rgb * saturate(((AmbientOcclusionDistance - fBlendAmount)*AmbientOcclusionAmount*2));
+		}
+		
+		if(i.vTextureCoords.y < AmbientOcclusionSquare.y){
+			//blend from y = 0 to y = AmbientOcclusionSquare.y = 1
+			fBlendAmount = i.vTextureCoords.y;
+			Albedo.rgb = Albedo.rgb * saturate((( (AmbientOcclusionDistance) -fBlendAmount)*AmbientOcclusionAmount));
+		}
 		
 		
-		return o;
+		Material b = ToMaterial(
+			Albedo,
+			float4(0.5,0.5,1,0),
+			float4(1,0,0,0)
+		);
+
+		
+		
+		CombinerInput o = MaterialToCombinerInput( i, b );
+
+		return FinalizePixel( o );
 	}
 }

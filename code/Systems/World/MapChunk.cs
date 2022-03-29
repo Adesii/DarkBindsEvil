@@ -3,38 +3,35 @@ using System.IO;
 using System.IO.Compression;
 using Sandbox;
 using Sandbox.Internal;
+using SpriteKit.Asset;
 
-namespace DarkBinds.Systems.World;
+namespace DarkBinds.Systems.Worlds;
+[SkipHotload]
 
 public partial class MapChunk
 {
-	public static int ChunkSize = 16;
-	private static int _viewsize = ChunkSize * MapTile.TileSize;
-	public static int ViewSize
-	{
-		get
-		{
-			return _viewsize;
-		}
-	}
+
+
 	private Vector2Int _pos;
 	public Vector2Int Position
 	{
 		get => _pos; set
 		{
 			_pos = value;
-			WorldPosition = (new Vector3( Position.x * ViewSize, Position.y * ViewSize, 0 ) - (World.WorldSize * MapChunk.ViewSize / 2)).WithZ( 0 );
+			WorldPosition = (new Vector3( Position.x * World.ViewSize, Position.y * World.ViewSize, 0 ) - (World.WorldSize * World.ViewSize / 2)).WithZ( 0 );
 		}
 	}
 
-	public static Material spriteMap = Material.Load( "materials/maptest.vmat" );
-	public static Material spriteMapCeiiling = Material.Load( "materials/black_matte.vmat" );
-	public static Material spriteMapFloor = Material.Load( "materials/maptest_floor.vmat" );
+	public static Material spriteMap;
+	public static Material spriteMapCeiiling;
+	public static Material spriteMapFloor;
 
 	public Vector3 WorldPosition { get; set; }
 
+	[SkipHotload]
 	public Dictionary<Vector2Int, MapTile> Tiles { get; set; } = new();
 	private SceneObject GroundPlaneSO { get; set; }
+	private SceneObject ChunkSO { get; set; }
 	public bool IsGenerated { get; set; } = false;
 	public bool IsGenerating { get; set; } = false;
 
@@ -55,145 +52,63 @@ public partial class MapChunk
 			Show();
 		}
 	}
+	public void RegenerateMesh()
+	{
+		IsGenerated = false;
+		GenerateMesh();
+	}
 	private void ClearTileSO()
 	{
+
 		if ( GroundPlaneSO.IsValid() )
 		{
 			GroundPlaneSO.Delete();
 		}
+		if ( ChunkSO.IsValid() )
+		{
+			ChunkSO.Delete();
+		}
 		foreach ( var item in Tiles.Values )
 		{
-			item.Delete();
+			if ( item != null )
+				item.Delete();
 		}
 	}
-	private void ResolveMesh()
+	private async void ResolveMesh()
+	{
+
+		spriteMap = Material.Load( "materials/maptest.vmat" );
+		spriteMapCeiiling = Material.Load( "materials/maptest_floor.vmat" );
+		spriteMapFloor = Material.Load( "materials/maptest_floor.vmat" );
+		await GenerateChunk();
+		IsGenerated = true;
+		IsGenerating = false;
+	}
+
+	private async Task GenerateChunk()
 	{
 		ClearTileSO();
 
 		Mesh idk = new( spriteMapFloor );
-		idk.CreateBuffers( MakeTesselatedPlane( new Vector3( MapTile.TileSize, MapTile.TileSize ) / 2, 0, new Vector3( ViewSize, ViewSize, 0 ), 4, 4 ) );
+		idk.CreateBuffers( MakeTesselatedPlane( new Vector3( World.TileSize, World.TileSize ) / 2, 0, new Vector3( World.ViewSize, World.ViewSize, 0 ), 4, 4 ) );
 		Model groundplane = Model.Builder.AddMesh( idk ).Create();
-		GroundPlaneSO = new SceneObject( Map.Scene, groundplane, new Transform( WorldPosition ) );
-		var currVertexBuffer = new VertexBuffer();
-		currVertexBuffer.Init( true );
-
-		var HalfTileSize = MapTile.TileSize / 2;
-		var TileSize = MapTile.TileSize;
-		int VertCount = 0;
+		GroundPlaneSO = new MapSceneObject( Map.Scene, groundplane, new Transform( WorldPosition ) );
+		GroundPlaneSO.Attributes.Set( "SpriteSheet", MapSheetAsset.GetBlockArea( "Dirt" ).SpriteSheetTexture );
+		int index = 0;
+		//ModelBuilder mb = Model.Builder;
 		foreach ( var Tile in Tiles.Values )
 		{
-			if ( Tile.BlockIndex == 0 ) continue;
-
-			var TilePosition = Tile.Position;
-			var TileWorldPosition = 0;
-			var NorthBlock = World.GetMapTile( new Vector2Int( TilePosition.x + 1, TilePosition.y ) );
-			var SouthBlock = World.GetMapTile( new Vector2Int( TilePosition.x - 1, TilePosition.y ) );
-			var EastBlock = World.GetMapTile( new Vector2Int( TilePosition.x, TilePosition.y + 1 ) );
-			var WestBlock = World.GetMapTile( new Vector2Int( TilePosition.x, TilePosition.y - 1 ) );
-
-			ModelBuilder builder = Model.Builder;
-
-			//var NorthEastBlock = World.GetMapTile( new Vector2Int( Position.x + 1, Position.y + 1 ) );
-			//var NorthWestBlock = World.GetMapTile( new Vector2Int( Position.x - 1, Position.y + 1 ) );
-			//var SouthEastBlock = World.GetMapTile( new Vector2Int( Position.x + 1, Position.y - 1 ) );
-			//var SouthWestBlock = World.GetMapTile( new Vector2Int( Position.x - 1, Position.y - 1 ) );
-			//NorthWall
-			if ( NorthBlock != null && NorthBlock.BlockIndex == 0 )
-			{
-				var right = TileWorldPosition + (Vector3.Forward + Vector3.Right) * HalfTileSize;
-				var left = right + Vector3.Left * TileSize;
-				AddWall( currVertexBuffer, TileSize, right, left );
-				VertCount += 4;
-			}
-			//SouthWall
-			if ( SouthBlock != null && SouthBlock.BlockIndex == 0 )
-			{
-				var right = TileWorldPosition + (Vector3.Backward + Vector3.Left) * HalfTileSize;
-				var left = right + Vector3.Right * TileSize;
-				AddWall( currVertexBuffer, TileSize, right, left );
-				VertCount += 4;
-			}
-			//EastWall
-			if ( EastBlock != null && EastBlock.BlockIndex == 0 )
-			{
-				var right = TileWorldPosition + (Vector3.Left + Vector3.Forward) * HalfTileSize;
-				var left = right + Vector3.Backward * TileSize;
-				AddWall( currVertexBuffer, TileSize, right, left );
-				VertCount += 4;
-			}
-			//WestWall
-			if ( WestBlock != null && WestBlock.BlockIndex == 0 )
-			{
-				var right = TileWorldPosition + (Vector3.Right + Vector3.Backward) * HalfTileSize;
-				var left = right + Vector3.Forward * TileSize;
-				AddWall( currVertexBuffer, TileSize, right, left );
-				VertCount += 4;
-			}
-
-
-			//Ceilng
-			if ( Tile.BlockIndex != 0 )
-			{
-				var vertexBuffer = new VertexBuffer();
-				vertexBuffer.Init( true );
-
-				var v1 = TileWorldPosition + (Vector3.Forward + Vector3.Right) * HalfTileSize;
-				var v2 = TileWorldPosition + (Vector3.Left + Vector3.Forward) * HalfTileSize;
-				var v3 = TileWorldPosition + (Vector3.Backward + Vector3.Left) * HalfTileSize;
-				var v4 = TileWorldPosition + (Vector3.Right + Vector3.Backward) * HalfTileSize;
-				Vertex[] arr = new Vertex[]{
-					new Vertex(v1   + Vector3.Up * TileSize, new Vector2( 0, 1 ) ,Color.White),
-					new Vertex(v2   + Vector3.Up * TileSize, new Vector2( 1, 1 ) ,Color.White),
-					new Vertex(v3   + Vector3.Up * TileSize, new Vector2( 1, 0 ) ,Color.White),
-					new Vertex(v4   + Vector3.Up * TileSize, new Vector2( 0, 0 ) ,Color.White),
-				};
-				vertexBuffer.AddQuad( arr[0], arr[1], arr[2], arr[3] );
-				Mesh Ceiiling = new( spriteMapCeiiling );
-				Ceiiling.CreateBuffers( vertexBuffer );
-				builder.AddMesh( Ceiiling );
-			}
-			if ( VertCount > 0 )
-			{
-				Mesh TileMesh = new( spriteMap );
-				TileMesh.CreateBuffers( currVertexBuffer );
-				builder.AddMesh( TileMesh );
-			}
-
-
-
-
-
-			var newVB = new VertexBuffer();
-			newVB.Init( true );
-			Model TileModel = builder.Create();
-			Tile.TileSO = new SceneObject( Map.Scene, TileModel, new Transform( Tile.WorldPosition ) );
-			currVertexBuffer = newVB;
-
-			VertCount = 0;
-
+			Tile.BuildMesh();
+			if ( index % 16 == 0 )
+				await GameTask.NextPhysicsFrame();
+			index++;
 		}
+		//Model model = mb.Create();
 
+		//ChunkSO = new MapSceneObject( Map.Scene, model, new Transform( WorldPosition ) );
+		//
+		//ChunkSO.Attributes.Set( "SpriteSheet", MapSheetAsset.GetBlockArea( "Dirt" ).SpriteSheetTexture );
 
-		IsGenerated = true;
-		IsGenerating = false;
-
-
-	}
-
-	private static void AddWall( VertexBuffer currVertexBuffer, int TileSize, Vector3 right, Vector3 left )
-	{
-		Vertex[] arr = new Vertex[]{
-					new Vertex(right, new Vector2( 0, 1 ) ,Color.White),
-					new Vertex(left, new Vector2( 1, 1 ) ,Color.White),
-					new Vertex(left + Vector3.Up * TileSize, new Vector2( 1, 0 ) ,Color.White),
-					new Vertex(right + Vector3.Up * TileSize, new Vector2( 0, 0 ) ,Color.White),
-				};
-		currVertexBuffer.AddQuad( arr[0], arr[1], arr[2], arr[3] );
-	}
-
-	~MapChunk()
-	{
-		ClearTileSO();
 	}
 
 
@@ -212,6 +127,7 @@ public partial class MapChunk
 		{
 			var tile = new MapTile();
 			tile.Deserialize( ref reader );
+			tile.ParentChunk = this;
 			Tiles.Add( tile.Position, tile );
 		}
 	}
@@ -237,12 +153,8 @@ public partial class MapChunk
 	}
 	public MapTile GetTile( Vector3 WorldPosition )
 	{
-		var pos = new Vector2Int(
-			(int)Math.Floor( (WorldPosition.x) / MapTile.TileSize ),
-			(int)Math.Floor( (WorldPosition.y) / MapTile.TileSize )
-		);
-		pos += (World.WorldSize * ChunkSize) / 2;
-		return GetTile( pos );
+
+		return GetTile( World.GetTilePosition( WorldPosition ) );
 	}
 
 	internal void DebugView()
@@ -253,27 +165,16 @@ public partial class MapChunk
 		}
 	}
 
-	public static Vector2Int GetChunkPosition( Vector3 WorldPosition )
-	{
-		return new Vector2Int(
-			(int)Math.Floor( (WorldPosition.x + (World.WorldSize * ViewSize / 2)) / ViewSize ),
-			(int)Math.Floor( (WorldPosition.y + (World.WorldSize * ViewSize / 2)) / ViewSize )
-		);
-	}
-	public static Vector2Int GetChunkPosition( Vector2Int WorldPosition )
-	{
-		return (WorldPosition / ChunkSize) % ChunkSize;
 
-	}
 
 	public Vector3 GetTilePositionRelativeToChunk( Vector2Int TilePositionWorldSpace )
 	{
-		var TilePosition = TilePositionWorldSpace - (Position * ChunkSize);
-		return new Vector3( TilePosition.x * MapTile.TileSize, TilePosition.y * MapTile.TileSize, 0 );
+		var TilePosition = TilePositionWorldSpace - (Position * World.ChunkSize);
+		return new Vector3( TilePosition.x * World.TileSize, TilePosition.y * World.TileSize, 0 );
 
 	}
 
-	internal void Cleanup()
+	internal void Delete()
 	{
 		ClearTileSO();
 		IsGenerated = false;
@@ -308,7 +209,7 @@ public partial class MapChunk
 
 	internal void Render()
 	{
-		DebugView();
+		//DebugView();
 		GenerateMesh();
 	}
 
@@ -336,7 +237,7 @@ public partial class MapChunk
 
 				var uv = new Vector2( x / (float)xRes, y / (float)yRes );
 
-				vb.Add( new Vertex( vPos, Vector3.Down, Vector3.Right, uv ) );
+				vb.Add( new Vertex( vPos, Vector3.Up, Vector3.Right, uv ) );
 
 			}
 		}

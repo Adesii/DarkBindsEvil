@@ -9,5 +9,8 @@
   "ResourcePaths": null,
   "HasCode": false,
   "CodePath": null,
-  "RootNamespace": null
+  "RootNamespace": null,
+  "Metadata": {
+    "GameSupport": []
+  }
 }

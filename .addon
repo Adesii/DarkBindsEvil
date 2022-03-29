@@ -9,5 +9,11 @@
   "ResourcePaths": null,
   "HasCode": true,
   "CodePath": "/code/",
-  "RootNamespace": "DarkBinds"
+  "RootNamespace": "DarkBinds",
+  "Metadata": {
+    "MapList": [
+      "local.darkbindsempty"
+    ],
+    "MapSelect": 1
+  }
 }

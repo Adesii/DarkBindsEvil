@@ -1,0 +1,41 @@
+<!-- kv3 encoding:text:version{e21c7f3c-8a33-41c5-9977-a76d3a32aa0d} format:generic:version{7412167c-06e9-4698-aff2-e63eb59037e7} -->
+{
+	data = 
+	{
+		spriteareas = 
+		[
+			{
+				minimapcolor = [ 1, 0, 0, 1 ]
+				name = "Dirt"
+				area = 
+				{
+					width = 96
+					height = 96
+					position = [ 0, 0 ]
+					size = [ 96.0, 64.0 ]
+				}
+				xsubdivisions = 3
+				ysubdivisions = 1
+				areacolor = [ 1, 0, 1, 1 ]
+				framerate = 12
+				spritesheetpath = "/sprites/map/walls/walls_paint layer 1_spritesheet.png"
+			},
+			{
+				minimapcolor = [ 1, 0, 1, 1 ]
+				name = "Stone"
+				area = 
+				{
+					width = 96
+					height = 96
+					position = [ 0, 64 ]
+					size = [ 96, 64 ]
+				}
+				xsubdivisions = 3
+				ysubdivisions = 1
+				areacolor = [ 0, 0, 1, 1 ]
+				framerate = 12
+				spritesheetpath = "/sprites/map/walls/walls_paint layer 1_spritesheet.png"
+			},
+		]
+	}
+}

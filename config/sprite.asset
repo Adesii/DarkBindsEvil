@@ -3,13 +3,13 @@
 //
 @struct = SpriteKit_Asset_SpriteArea
 [
+	spriteorigin(vector2) : "Sprite Origin" :  : ""
 	name(string) : "Name" :  : ""
 	area(struct:Rect) : "Area" :  : ""
-	xsubdivisions(integer) : "Xsubdivisions" : 1 : ""
-	ysubdivisions(integer) : "Ysubdivisions" : 1 : ""
-	framerate(float) : "Frame Rate" : "12" : ""
+	xsubdivisions(float) : "Xsubdivisions" : 0 : ""
+	ysubdivisions(float) : "Ysubdivisions" : 0 : ""
 	areacolor(color1) : "Area Color" :  : ""
-	spriteorigin(vector2) : "Sprite Origin" :  : ""
+	framerate(float) : "Frame Rate" : "12" : ""
 	spritesheetpath(string) { editor = "AssetBrowse(img)" } : "Sprite Sheet Path" :  : ""
 	spritesheetnormalpath(string) { editor = "AssetBrowse(img)" } : "Sprite Sheet Normal Path" :  : ""
 ]

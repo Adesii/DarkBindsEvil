@@ -2,7 +2,7 @@ namespace DarkBinds.Player;
 
 public class TopDownCamera : CameraMode
 {
-	public float CameraHeight => 800.0f;
+	public float CameraHeight => 600.0f;
 	public override void Activated()
 	{
 		base.Activated();

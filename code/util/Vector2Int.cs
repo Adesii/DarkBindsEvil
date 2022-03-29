@@ -120,6 +120,10 @@ public struct Vector2Int : IEquatable<Vector2Int>
 	{
 		return new Vector2Int( (float)value, (float)value );
 	}
+	public static implicit operator Vector3( Vector2Int value )
+	{
+		return new Vector3( value.x, value.y, 0f );
+	}
 
 	public static Vector2Int operator +( Vector2Int c1, Vector2Int c2 )
 	{

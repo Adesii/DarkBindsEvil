@@ -1,0 +1,13 @@
+.itembar{
+    position: absolute;
+    bottom: 10;
+    height: 100px;
+    width: 100%;
+    justify-content: center;
+    .ItemList{
+        width: 70%;
+        height: 100%;
+        background-color: rgba(197, 122, 35, 0.452);
+        border-radius: 5px;
+    }
+}
