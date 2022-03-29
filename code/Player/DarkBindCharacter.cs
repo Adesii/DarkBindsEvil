@@ -49,18 +49,18 @@ public partial class DarkBindCharacter : ModelSprite
 	public override void ClientSpawn()
 	{
 		base.ClientSpawn();
-
-		FollowSun = new SpotLightEntity()
-		{
-			Rotation = Rotation.LookAt( Vector3.Down ),
-			Falloff = 1,
-			InnerConeAngle = 18,
-			OuterConeAngle = 23,
-			Range = 550,
-			Color = new Color( 1.0f, 0.95f, 0.8f ),
-			Brightness = 1.2f,
-			DynamicShadows = true,
-		};
+		if ( Host.IsClient && Local.Pawn == this )
+			FollowSun = new SpotLightEntity()
+			{
+				Rotation = Rotation.LookAt( Vector3.Down ),
+				Falloff = 1,
+				InnerConeAngle = 18,
+				OuterConeAngle = 23,
+				Range = 550,
+				Color = new Color( 1.0f, 0.95f, 0.8f ),
+				Brightness = 1.2f,
+				DynamicShadows = true,
+			};
 
 	}
 
