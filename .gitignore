@@ -26,3 +26,6 @@ omnisharp.json
 *.vpcf_c
 *.vpost_c
 *.kra~
+
+
+/code/SpriteKit
