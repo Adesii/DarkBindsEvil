@@ -6,10 +6,10 @@ using Sandbox;
 
 namespace DarkBinds.Player;
 
-public class DarkBindCharacter : ModelSprite
+public partial class DarkBindCharacter : ModelSprite
 {
 	public float Speed => 125f;
-
+	[Net, Predicted]
 	public Vector2Int PlayerPosition { get; set; }
 	/// <summary>
 	/// Provides an easy way to switch our current cameramode component
@@ -31,13 +31,7 @@ public class DarkBindCharacter : ModelSprite
 
 		//Components.Create<SoulPillar>();
 		//Components.Create<SoulEater>();
-	}
 
-	private PointLightEntity FollowLight;
-	private SpotLightEntity FollowSun;
-	public override void ClientSpawn()
-	{
-		base.ClientSpawn();
 		FollowLight = new PointLightEntity()
 		{
 			Falloff = 1,
@@ -46,6 +40,15 @@ public class DarkBindCharacter : ModelSprite
 			Brightness = 0.3f,
 			DynamicShadows = true,
 		};
+
+
+	}
+
+	[Net, Predicted] protected PointLightEntity FollowLight { get; set; }
+	private SpotLightEntity FollowSun { get; set; }
+	public override void ClientSpawn()
+	{
+		base.ClientSpawn();
 
 		FollowSun = new SpotLightEntity()
 		{
@@ -58,6 +61,7 @@ public class DarkBindCharacter : ModelSprite
 			Brightness = 1.2f,
 			DynamicShadows = true,
 		};
+
 	}
 
 	private TimeSince LastAttack;
@@ -119,11 +123,11 @@ public class DarkBindCharacter : ModelSprite
 				MapTile item = blocks[i];
 				if ( !item.IsSolid() && i == blocks.Count - 1 )
 				{
-					DebugOverlay.Box( item.WorldPosition, -tileExtends.WithZ( 0 ), tileExtends, Color.White, 0 );
+					DebugOverlay.Box( item.WorldPosition, -tileExtends.WithZ( 0 ), tileExtends, Color.White, Time.Delta * 2 );
 				}
 				else if ( item.IsSolid() )
 				{
-					DebugOverlay.Box( item.WorldPosition, -tileExtends.WithZ( 0 ), tileExtends, Color.White, 0 );
+					DebugOverlay.Box( item.WorldPosition, -tileExtends.WithZ( 0 ), tileExtends, Color.White, Time.Delta * 2 );
 					break;
 				}
 			}
@@ -170,11 +174,13 @@ public class DarkBindCharacter : ModelSprite
 
 		if ( FollowLight.IsValid() )
 		{
-			FollowLight.Position = Position + Vector3.Up * 32f;
-
+			if ( IsServer )
+				FollowLight.Position = Position + Vector3.Up * 64f;
+		}
+		if ( FollowSun.IsValid() )
 			FollowSun.Position = Position + Vector3.Up * 500f;
 
-		}
+
 
 	}
 

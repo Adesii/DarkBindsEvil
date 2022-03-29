@@ -10,7 +10,8 @@ namespace DarkBinds.Systems.Worlds;
 
 public partial class MapChunk
 {
-
+	public static Dictionary<string, Material> MaterialList = new();
+	public static Material DefaultMaterial => Material.Load( "materials/maptest.vmat" );
 
 	private Vector2Int _pos;
 	public Vector2Int Position
@@ -21,10 +22,6 @@ public partial class MapChunk
 			WorldPosition = (new Vector3( Position.x * World.ViewSize, Position.y * World.ViewSize, 0 ) - (World.WorldSize * World.ViewSize / 2)).WithZ( 0 );
 		}
 	}
-
-	public static Material spriteMap;
-	public static Material spriteMapCeiiling;
-	public static Material spriteMapFloor;
 
 	public Vector3 WorldPosition { get; set; }
 
@@ -76,10 +73,6 @@ public partial class MapChunk
 	}
 	private async void ResolveMesh()
 	{
-
-		spriteMap = Material.Load( "materials/maptest.vmat" );
-		spriteMapCeiiling = Material.Load( "materials/maptest_floor.vmat" );
-		spriteMapFloor = Material.Load( "materials/maptest_floor.vmat" );
 		await GenerateChunk();
 		IsGenerated = true;
 		IsGenerating = false;
@@ -89,11 +82,11 @@ public partial class MapChunk
 	{
 		ClearTileSO();
 
-		Mesh idk = new( spriteMapFloor );
-		idk.CreateBuffers( MakeTesselatedPlane( new Vector3( World.TileSize, World.TileSize ) / 2, 0, new Vector3( World.ViewSize, World.ViewSize, 0 ), 4, 4 ) );
-		Model groundplane = Model.Builder.AddMesh( idk ).Create();
-		GroundPlaneSO = new MapSceneObject( Map.Scene, groundplane, new Transform( WorldPosition ) );
-		GroundPlaneSO.Attributes.Set( "SpriteSheet", MapSheetAsset.GetBlockArea( "Dirt" ).SpriteSheetTexture );
+		//Mesh idk = new( spriteMapFloor );
+		//idk.CreateBuffers( MakeTesselatedPlane( new Vector3( World.TileSize, World.TileSize ) / 2, 0, new Vector3( World.ViewSize, World.ViewSize, 0 ), 4, 4 ) );
+		//Model groundplane = Model.Builder.AddMesh( idk ).Create();
+		//GroundPlaneSO = new MapSceneObject( Map.Scene, groundplane, new Transform( WorldPosition ) );
+		//GroundPlaneSO.Attributes.Set( "SpriteSheet", MapSheetAsset.GetBlockArea( "Dirt" ).SpriteSheetTexture );
 		int index = 0;
 		//ModelBuilder mb = Model.Builder;
 		foreach ( var Tile in Tiles.Values )

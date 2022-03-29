@@ -14,6 +14,8 @@ public class BaseBlock
 	public MapSheetArea MapSheet { get; set; }
 	public MapTile Tile { get; set; }
 
+	public bool IsFloor { get; set; } = false;
+
 	public BaseBlock()
 	{
 	}
@@ -63,7 +65,7 @@ public class BaseBlock
 	}
 	List<MapVertex> vertices = new();
 	List<int> indices = new();
-	public virtual ModelBuilder BuildMesh( Vector2Int Position )
+	public virtual Mesh BuildMesh( Vector2Int Position )
 	{
 		if ( !IsSolid() )
 		{
@@ -77,7 +79,7 @@ public class BaseBlock
 		int VertCount = 0;
 
 		var TilePosition = Position;
-		var TileWorldPosition = 0;//new Vector3( Tile.LocalPosition.x, Tile.LocalPosition.y, 0 );
+		var TileWorldPosition = IsFloor ? new Vector3( 0, 0, -TileSize ) : 0;//new Vector3( Tile.LocalPosition.x, Tile.LocalPosition.y, 0 );
 		var NorthBlock = World.GetMapTile( new Vector2Int( TilePosition.x + 1, TilePosition.y ) );
 		var SouthBlock = World.GetMapTile( new Vector2Int( TilePosition.x - 1, TilePosition.y ) );
 		var EastBlock = World.GetMapTile( new Vector2Int( TilePosition.x, TilePosition.y + 1 ) );
@@ -88,15 +90,13 @@ public class BaseBlock
 		int hasSouthEastWall = -1;
 		int hasSouthWestWall = -1;
 
-		ModelBuilder builder = Model.Builder;
-
 		//NorthWall
 		if ( NorthBlock != null && !NorthBlock.IsSolid() )
 		{
 			var right = TileWorldPosition + (Vector3.Forward + Vector3.Right) * HalfTileSize;
 			var left = right + Vector3.Left * TileSize;
-			hasNorthEastWall = (bool)(World.GetMapTile( new Vector2Int( TilePosition.x + 1, TilePosition.y + 1 ) )?.IsSolid()) ? 1 : 0;
-			hasNorthWestWall = (bool)(World.GetMapTile( new Vector2Int( TilePosition.x + 1, TilePosition.y - 1 ) )?.IsSolid()) ? 1 : 0;
+			hasNorthEastWall = World.GetMapTile( new Vector2Int( TilePosition.x + 1, TilePosition.y + 1 ) )?.IsSolid() ?? false ? 1 : 0;
+			hasNorthWestWall = World.GetMapTile( new Vector2Int( TilePosition.x + 1, TilePosition.y - 1 ) )?.IsSolid() ?? false ? 1 : 0;
 			Vector2 VertBlends = new Vector2( hasNorthEastWall, hasNorthWestWall );
 			AddWall( TileSize, right, left, VertBlends );
 			VertCount += 4;
@@ -106,8 +106,8 @@ public class BaseBlock
 		{
 			var right = TileWorldPosition + (Vector3.Backward + Vector3.Left) * HalfTileSize;
 			var left = right + Vector3.Right * TileSize;
-			hasSouthEastWall = (bool)(World.GetMapTile( new Vector2Int( TilePosition.x - 1, TilePosition.y + 1 ) )?.IsSolid()) ? 1 : 0;
-			hasSouthWestWall = (bool)(World.GetMapTile( new Vector2Int( TilePosition.x - 1, TilePosition.y - 1 ) )?.IsSolid()) ? 1 : 0;
+			hasSouthEastWall = World.GetMapTile( new Vector2Int( TilePosition.x - 1, TilePosition.y + 1 ) )?.IsSolid() ?? false ? 1 : 0;
+			hasSouthWestWall = World.GetMapTile( new Vector2Int( TilePosition.x - 1, TilePosition.y - 1 ) )?.IsSolid() ?? false ? 1 : 0;
 
 			Vector2 VertBlends = new Vector2( hasSouthWestWall, hasSouthEastWall );
 			AddWall( TileSize, right, left, VertBlends );
@@ -120,11 +120,11 @@ public class BaseBlock
 			var left = right + Vector3.Backward * TileSize;
 			if ( hasNorthEastWall == -1 )
 			{
-				hasNorthEastWall = (bool)(World.GetMapTile( new Vector2Int( TilePosition.x + 1, TilePosition.y + 1 ) )?.IsSolid()) ? 1 : 0;
+				hasNorthEastWall = World.GetMapTile( new Vector2Int( TilePosition.x + 1, TilePosition.y + 1 ) )?.IsSolid() ?? false ? 1 : 0;
 			}
 			if ( hasSouthEastWall == -1 )
 			{
-				hasSouthEastWall = (bool)(World.GetMapTile( new Vector2Int( TilePosition.x - 1, TilePosition.y + 1 ) )?.IsSolid()) ? 1 : 0;
+				hasSouthEastWall = World.GetMapTile( new Vector2Int( TilePosition.x - 1, TilePosition.y + 1 ) )?.IsSolid() ?? false ? 1 : 0;
 			}
 			Vector2 VertBlends = new Vector2( hasSouthEastWall, hasNorthEastWall );
 			AddWall( TileSize, right, left, VertBlends );
@@ -137,11 +137,11 @@ public class BaseBlock
 			var left = right + Vector3.Forward * TileSize;
 			if ( hasNorthWestWall == -1 )
 			{
-				hasNorthWestWall = (bool)(World.GetMapTile( new Vector2Int( TilePosition.x + 1, TilePosition.y - 1 ) )?.IsSolid()) ? 1 : 0;
+				hasNorthWestWall = World.GetMapTile( new Vector2Int( TilePosition.x + 1, TilePosition.y - 1 ) )?.IsSolid() ?? false ? 1 : 0;
 			}
 			if ( hasSouthWestWall == -1 )
 			{
-				hasSouthWestWall = (bool)(World.GetMapTile( new Vector2Int( TilePosition.x - 1, TilePosition.y - 1 ) )?.IsSolid()) ? 1 : 0;
+				hasSouthWestWall = World.GetMapTile( new Vector2Int( TilePosition.x - 1, TilePosition.y - 1 ) )?.IsSolid() ?? false ? 1 : 0;
 			}
 			Vector2 VertBlends = new Vector2( hasNorthWestWall, hasSouthWestWall );
 			AddWall( TileSize, right, left, VertBlends );
@@ -170,23 +170,23 @@ public class BaseBlock
 					new MapVertex(v2   + Vector3.Up * World.TileHeight,Vector3.Up, Vector3.Right, uv2,VertBlends,Texcord),
 					new MapVertex(v3   + Vector3.Up * World.TileHeight,Vector3.Up, Vector3.Right, uv3,VertBlends,Texcord)
 				};
-			Mesh Ceiiling = new( MapChunk.spriteMapCeiiling );
-			Ceiiling.CreateVertexBuffer<MapVertex>( 4, MapVertex.Layout, arr );
-			Ceiiling.SetVertexBufferSize( 4 );
-			Ceiiling.SetVertexBufferData<MapVertex>( arr );
-
-			Ceiiling.CreateIndexBuffer( 6 );
-			Ceiiling.SetIndexBufferSize( 6 );
-			Ceiiling.SetIndexBufferData( new List<int>(){
-					0,1,2,
-					2,3,0
-				} );
-
-			builder.AddMesh( Ceiiling );
+			vertices.AddRange( arr );
+			int i = vertices.Count;
+			indices.AddRange( new List<int>(){
+					i - 4,i - 3,i - 1,
+					i - 2,i - 1,i - 3
+			} );
+			VertCount += 4;
 		}
 		if ( VertCount > 0 )
 		{
-			Mesh TileMesh = new( MapChunk.spriteMap );
+			if ( !MapChunk.MaterialList.ContainsKey( MapSheet.SpriteSheetPath ) )
+			{
+				var copy = MapChunk.DefaultMaterial.CreateCopy();
+				copy.OverrideTexture( "SpriteSheet", MapSheet.SpriteSheetTexture );
+				MapChunk.MaterialList.Add( MapSheet.SpriteSheetPath, copy );
+			}
+			Mesh TileMesh = new( MapChunk.MaterialList[MapSheet.SpriteSheetPath] );
 			TileMesh.CreateVertexBuffer<MapVertex>( vertices.Count, MapVertex.Layout, vertices );
 
 			TileMesh.SetVertexBufferSize( vertices.Count );
@@ -196,20 +196,156 @@ public class BaseBlock
 			TileMesh.SetIndexBufferSize( indices.Count );
 			TileMesh.SetIndexBufferData( indices );
 
-			builder.AddMesh( TileMesh );
+			return TileMesh;
 		}
 
 
 
 
 
-		return builder;
+		return null;
 
 	}
 
-	private void VertexHandler( Span<MapVertex> list )
+	public virtual Mesh BuildFloorMesh( Vector2Int Position )
 	{
+		if ( !IsSolid() )
+		{
+			return null;
+		}
+		indices = new();
+		vertices = new();
+		var HalfTileSize = World.TileSize / 2;
+		var TileSize = World.TileSize;
 
+		int VertCount = 0;
+
+		var TilePosition = Position;
+		var TileWorldPosition = new Vector3( 0, 0, -World.TileHeight );//new Vector3( Tile.LocalPosition.x, Tile.LocalPosition.y, 0 );
+		var NorthBlock = World.GetMapTile( new Vector2Int( TilePosition.x + 1, TilePosition.y ) );
+		var SouthBlock = World.GetMapTile( new Vector2Int( TilePosition.x - 1, TilePosition.y ) );
+		var EastBlock = World.GetMapTile( new Vector2Int( TilePosition.x, TilePosition.y + 1 ) );
+		var WestBlock = World.GetMapTile( new Vector2Int( TilePosition.x, TilePosition.y - 1 ) );
+
+		int hasNorthEastWall = -1;
+		int hasNorthWestWall = -1;
+		int hasSouthEastWall = -1;
+		int hasSouthWestWall = -1;
+
+		//NorthWall
+		if ( NorthBlock != null && !NorthBlock.IsFloorSolid() )
+		{
+			var right = TileWorldPosition + (Vector3.Forward + Vector3.Right) * HalfTileSize;
+			var left = right + Vector3.Left * TileSize;
+			hasNorthEastWall = World.GetMapTile( new Vector2Int( TilePosition.x + 1, TilePosition.y + 1 ) )?.IsFloorSolid() ?? false ? 1 : 0;
+			hasNorthWestWall = World.GetMapTile( new Vector2Int( TilePosition.x + 1, TilePosition.y - 1 ) )?.IsFloorSolid() ?? false ? 1 : 0;
+			Vector2 VertBlends = new Vector2( hasNorthEastWall, hasNorthWestWall );
+			AddWall( TileSize, right, left, VertBlends );
+			VertCount += 4;
+		}
+		//SouthWall
+		if ( SouthBlock != null && !SouthBlock.IsFloorSolid() )
+		{
+			var right = TileWorldPosition + (Vector3.Backward + Vector3.Left) * HalfTileSize;
+			var left = right + Vector3.Right * TileSize;
+			hasSouthEastWall = World.GetMapTile( new Vector2Int( TilePosition.x - 1, TilePosition.y + 1 ) )?.IsFloorSolid() ?? false ? 1 : 0;
+			hasSouthWestWall = World.GetMapTile( new Vector2Int( TilePosition.x - 1, TilePosition.y - 1 ) )?.IsFloorSolid() ?? false ? 1 : 0;
+
+			Vector2 VertBlends = new Vector2( hasSouthWestWall, hasSouthEastWall );
+			AddWall( TileSize, right, left, VertBlends );
+			VertCount += 4;
+		}
+		//EastWall
+		if ( EastBlock != null && !EastBlock.IsFloorSolid() )
+		{
+			var right = TileWorldPosition + (Vector3.Left + Vector3.Forward) * HalfTileSize;
+			var left = right + Vector3.Backward * TileSize;
+			if ( hasNorthEastWall == -1 )
+			{
+				hasNorthEastWall = World.GetMapTile( new Vector2Int( TilePosition.x + 1, TilePosition.y + 1 ) )?.IsFloorSolid() ?? false ? 1 : 0;
+			}
+			if ( hasSouthEastWall == -1 )
+			{
+				hasSouthEastWall = World.GetMapTile( new Vector2Int( TilePosition.x - 1, TilePosition.y + 1 ) )?.IsFloorSolid() ?? false ? 1 : 0;
+			}
+			Vector2 VertBlends = new Vector2( hasSouthEastWall, hasNorthEastWall );
+			AddWall( TileSize, right, left, VertBlends );
+			VertCount += 4;
+		}
+		//WestWall
+		if ( WestBlock != null && !WestBlock.IsFloorSolid() )
+		{
+			var right = TileWorldPosition + (Vector3.Right + Vector3.Backward) * HalfTileSize;
+			var left = right + Vector3.Forward * TileSize;
+			if ( hasNorthWestWall == -1 )
+			{
+				hasNorthWestWall = World.GetMapTile( new Vector2Int( TilePosition.x + 1, TilePosition.y - 1 ) )?.IsFloorSolid() ?? false ? 1 : 0;
+			}
+			if ( hasSouthWestWall == -1 )
+			{
+				hasSouthWestWall = World.GetMapTile( new Vector2Int( TilePosition.x - 1, TilePosition.y - 1 ) )?.IsFloorSolid() ?? false ? 1 : 0;
+			}
+			Vector2 VertBlends = new Vector2( hasNorthWestWall, hasSouthWestWall );
+			AddWall( TileSize, right, left, VertBlends );
+			VertCount += 4;
+		}
+
+
+		//Ceilng
+		if ( !Tile.Block?.IsSolid() ?? false )
+		{
+			var v0 = TileWorldPosition + (Vector3.Forward + Vector3.Right) * HalfTileSize;
+			var v1 = TileWorldPosition + (Vector3.Left + Vector3.Forward) * HalfTileSize;
+			var v2 = TileWorldPosition + (Vector3.Backward + Vector3.Left) * HalfTileSize;
+			var v3 = TileWorldPosition + (Vector3.Right + Vector3.Backward) * HalfTileSize;
+
+			var uv0 = new Vector2( 0, 0 );
+			var uv1 = new Vector2( 1, 0 );
+			var uv2 = new Vector2( 0, 1 );
+			var uv3 = new Vector2( 1, 1 );
+
+			Vector2 VertBlends = new Vector2( 0, 0 );
+			Vector4 Texcord = GetUVCoords();
+			MapVertex[] arr = new MapVertex[]{
+					new MapVertex(v0   + Vector3.Up * World.TileHeight,Vector3.Up, Vector3.Right, uv0,VertBlends,Texcord),
+					new MapVertex(v1   + Vector3.Up * World.TileHeight,Vector3.Up, Vector3.Right, uv1,VertBlends,Texcord),
+					new MapVertex(v2   + Vector3.Up * World.TileHeight,Vector3.Up, Vector3.Right, uv2,VertBlends,Texcord),
+					new MapVertex(v3   + Vector3.Up * World.TileHeight,Vector3.Up, Vector3.Right, uv3,VertBlends,Texcord)
+				};
+			vertices.AddRange( arr );
+			int i = vertices.Count;
+			indices.AddRange( new List<int>(){
+					i - 4,i - 3,i - 1,
+					i - 2,i - 1,i - 3
+			} );
+			VertCount += 4;
+		}
+		if ( VertCount > 0 )
+		{
+			if ( !MapChunk.MaterialList.ContainsKey( MapSheet.SpriteSheetPath ) )
+			{
+				var copy = MapChunk.DefaultMaterial.CreateCopy();
+				copy.OverrideTexture( "SpriteSheet", MapSheet.SpriteSheetTexture );
+				MapChunk.MaterialList.Add( MapSheet.SpriteSheetPath, copy );
+			}
+			Mesh TileMesh = new( MapChunk.MaterialList[MapSheet.SpriteSheetPath] );
+			TileMesh.CreateVertexBuffer<MapVertex>( vertices.Count, MapVertex.Layout, vertices );
+
+			TileMesh.SetVertexBufferSize( vertices.Count );
+			TileMesh.SetVertexBufferData( vertices );
+
+			TileMesh.CreateIndexBuffer( indices.Count, indices );
+			TileMesh.SetIndexBufferSize( indices.Count );
+			TileMesh.SetIndexBufferData( indices );
+
+			return TileMesh;
+		}
+
+
+
+
+
+		return null;
 	}
 
 	public Color32 GetMiniMapColor()

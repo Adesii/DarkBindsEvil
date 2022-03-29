@@ -57,8 +57,12 @@ public partial class World
 							ParentChunk = chunk
 						};
 						tile.Block = nv > 0.4f ? BaseBlock.Create( "Dirt" ) : new AirBlock();
+						tile.FloorBlock = nv > 0.2f ? BaseBlock.Create( "Dirt" ) : new AirBlock();
 						if ( nv == 1 )
+						{
 							tile.Block = BaseBlock.Create( "Stone" );
+							tile.FloorBlock = new AirBlock();
+						}
 						chunk.Tiles.Add( WorldPosition, tile );
 
 					}

@@ -43,6 +43,21 @@ public partial class MapTile
 		}
 	}
 
+
+	private BaseBlock _Floorblock;
+	public BaseBlock FloorBlock
+	{
+		get => _Floorblock; set
+		{
+			if ( value != null )
+			{
+				value.Tile = this;
+				_Floorblock = value;
+				_Floorblock.IsFloor = true;
+			}
+		}
+	}
+
 	public SceneObject TileSO { get; set; }
 
 	public MapChunk ParentChunk { get; set; }
@@ -62,6 +77,7 @@ public partial class MapTile
 		int y = reader.ReadInt32();
 		Position = new Vector2Int( x, y );
 		Block = BaseBlock.Create( reader.ReadString() );
+		FloorBlock = BaseBlock.Create( reader.ReadString() );
 	}
 
 
@@ -70,13 +86,13 @@ public partial class MapTile
 		writer.Write( Position.x );
 		writer.Write( Position.y );
 		writer.Write( Block.Name );
+		writer.Write( FloorBlock.Name );
 	}
 
 	public void BuildMesh()
 	{
 		//return Block.BuildMesh( ref mb, Position );
-		if ( Block.IsSolid() )
-			CreateSceneObject();
+		CreateSceneObject();
 
 
 	}
@@ -89,19 +105,37 @@ public partial class MapTile
 		}
 
 		GeneratingMesh = true;
-		var model = Block.BuildMesh( Position ).Create();
+		var BlockModel = Block.BuildMesh( Position );
+		var builder = Model.Builder;
+		if ( BlockModel != null )
+		{
+			builder.AddMesh( BlockModel );
+		}
+		var FloorBlockModel = FloorBlock.BuildFloorMesh( Position );
+		if ( FloorBlockModel != null )
+		{
+			builder.AddMesh( FloorBlockModel );
+		}
+		var model = builder.Create();
 		GeneratingMesh = false;
-		if ( model == null )
+		if ( model == null || (BlockModel == null && FloorBlockModel == null) )
 			return;
-		TileSO = new MapSceneObject( Map.Scene, model, new Transform( WorldPosition ) );
+		TileSO = new MapSceneObject( Map.Scene, model, new Transform( WorldPosition ) )
+		{
+			//Bounds = new BBox( new Vector3( -World.HalfTileSize, -World.HalfTileSize, -World.TileHeight ), new Vector3( World.HalfTileSize, World.HalfTileSize, World.TileHeight ) ) + WorldPosition
+		};
 
-		SetAttributes();
+		//SetAttributes();
 
 	}
 
 	public bool IsSolid()
 	{
 		return Block.IsSolid();
+	}
+	public bool IsFloorSolid()
+	{
+		return FloorBlock.IsSolid();
 	}
 
 
@@ -119,9 +153,9 @@ public partial class MapTile
 
 	internal void SetAttributes()
 	{
-		if ( !TileSO.IsValid() || Block == null || Block.MapSheet == null )
+		if ( !TileSO.IsValid() || Block == null || Block.MapSheet == null || FloorBlock == null || FloorBlock.MapSheet == null )
 			return;
-		var uv = Block.GetUVCoords();
 		TileSO.Attributes.Set( "SpriteSheet", Block.MapSheet.SpriteSheetTexture );
+		TileSO.Attributes.Set( "FloorSpriteSheet", FloorBlock.MapSheet.SpriteSheetTexture );
 	}
 }

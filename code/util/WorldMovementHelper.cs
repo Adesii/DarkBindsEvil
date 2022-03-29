@@ -27,15 +27,21 @@ public class WorldMovementHelper
 
 		DebugOverlay.Line( _position, transformedPos, Color.Red );
 		NextTile?.DebugView( true );
-		if ( NextTile != null && !NextTile.Block.IsSolid() )
+		if ( NextTile != null && !NextTile.Block.IsSolid() && NextTile.FloorBlock.IsSolid() )
 		{
-			if ( diff.x != 0 && diff.y != 0 && ((World.GetMapTile( CurrentPosition + Vector2Int.Right * (Velocity.x > 0 ? -1 : 1) )?.Block.IsSolid() ?? false) && (World.GetMapTile( CurrentPosition + Vector2Int.Up * (Velocity.y > 0 ? 1 : -1) )?.Block.IsSolid() ?? false)) )
+			var vertblock = World.GetMapTile( CurrentPosition + Vector2Int.Right * (Velocity.x > 0 ? -1 : 1) );
+			var horblock = World.GetMapTile( CurrentPosition + Vector2Int.Up * (Velocity.y > 0 ? 1 : -1) );
+			if ( diff.x != 0 && diff.y != 0 && (
+				(vertblock?.Block.IsSolid() ?? false &&
+				(horblock?.Block.IsSolid() ?? false)) || (
+				(!vertblock?.FloorBlock.IsSolid() ?? false) &&
+				(!horblock?.FloorBlock.IsSolid() ?? false))) )
 			{
 				directionvector = directionvector.WithX( 0 ).WithY( 0 );
 			}
 			_position += directionvector;
 		}
-		else if ( NextTile != null && NextTile.Block.IsSolid() )
+		else if ( NextTile != null && (NextTile.Block.IsSolid() || !NextTile.FloorBlock.IsSolid()) )
 		{
 
 			if ( diff.x != 0 && diff.y == 0 )
@@ -52,10 +58,19 @@ public class WorldMovementHelper
 				horizontaltile?.DebugView( true, Color.Green );
 				if ( horizontaltile?.Block.IsSolid() ?? false )
 					directionvector = directionvector.WithX( 0 );
+				if ( !horizontaltile?.FloorBlock.IsSolid() ?? false )
+				{
+					directionvector = directionvector.WithX( 0 );
+				}
 				var VerticalTile = World.GetMapTile( CurrentPosition + Vector2Int.Up * (Velocity.y > 0 ? 1 : -1) );
 				VerticalTile?.DebugView( true, Color.Yellow );
-				if ( VerticalTile?.Block.IsSolid() ?? false )
+				if ( VerticalTile?.Block.IsSolid() ?? false && (VerticalTile?.FloorBlock.IsSolid() ?? false) )
 					directionvector = directionvector.WithY( 0 );
+				if ( !VerticalTile?.FloorBlock.IsSolid() ?? false )
+				{
+					directionvector = directionvector.WithY( 0 );
+				}
+
 			}
 
 			_position += directionvector;

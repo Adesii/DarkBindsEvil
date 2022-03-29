@@ -93,9 +93,13 @@ VS
 PS
 {
     #include "spritekit/Pixel.hlsl"
+	CreateInputTexture2D( SpriteSheet,            Srgb,   8, "",                 "_color",  "Material,10/10", Default3( 1.0, 1.0, 1.0 ) );
 
-	CreateTexture2D( g_tSpriteSheetTexCode )< Attribute( "SpriteSheet" );SrgbRead( true );Filter(NEAREST);>;
-	CreateTexture2D( g_tSpriteSheetNormalTexCode )< Attribute( "SpriteSheetNormalMap" );SrgbRead( false );Filter(NEAREST);>;
+	CreateInputTexture2D( SpriteSheetTintMask,     Linear, 8, "",                 "_tint",   "Material,10/70", Default( 1.0 ) );
+    #define COLOR_TEXTURE_CHANNELS Channel( RGB,  Box( SpriteSheet ), Srgb ); Channel( A, Box( SpriteSheetTintMask ), Linear )
+
+	CreateTexture2DWithoutSampler( g_tSpriteSheet ) < COLOR_TEXTURE_CHANNELS; OutputFormat( BC7 ); SrgbRead( true ); >;
+	CreateTexture2D( g_tSpriteSheetNormalTexCode )< Attribute( "SpriteSheetNormalMap" );SrgbRead( false );>;
 
 	//
 	// Main
@@ -108,7 +112,7 @@ PS
 		float2 uv = spriteStartUV + (frac(clamp(i.vTextureCoords.xy,0.001f,0.999f) ) * spriteRange);
 		uv = round(uv * 1024.0f) / 1024.0f;
 
-		float4 Albedo = Tex2D(g_tSpriteSheetTexCode, uv).rgba;
+		float4 Albedo = Tex2DS(g_tSpriteSheet,TextureFiltering, uv).rgba;
 		Albedo.rgb = saturate(Albedo.rgb + (Tint.rgb*TintAmount));
 		/* PixelOutput o;
 		o.vColor.rgba = 1;
@@ -127,7 +131,7 @@ PS
 			Albedo.rgb = Albedo.rgb * saturate(((AmbientOcclusionDistance - fBlendAmount)*AmbientOcclusionAmount*2));
 		}
 		
-		if(i.vTextureCoords.y < AmbientOcclusionSquare.y){
+		if(i.vTextureCoords.y < AmbientOcclusionSquare.y && dot( i.vNormalWs,float3(0,0,1)) == 0){
 			//blend from y = 0 to y = AmbientOcclusionSquare.y = 1
 			fBlendAmount = i.vTextureCoords.y;
 			Albedo.rgb = Albedo.rgb * saturate((( (AmbientOcclusionDistance) -fBlendAmount)*AmbientOcclusionAmount));
