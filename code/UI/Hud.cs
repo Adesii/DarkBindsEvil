@@ -2,7 +2,7 @@ namespace DarkBinds.UI;
 
 public partial class DarkBindsHud : HudEntity<RootPanel>
 {
-	public DarkBindsHud()
+	public DarkBindsHud() : base()
 	{
 		if ( !IsClient ) return;
 		RootPanel.SetTemplate( "/UI/Hud.html" );
