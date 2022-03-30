@@ -120,7 +120,7 @@ public partial class MapTile
 		GeneratingMesh = false;
 		if ( model == null || (BlockModel == null && FloorBlockModel == null) )
 			return;
-		TileSO = new MapSceneObject( Map.Scene, model, new Transform( WorldPosition ) )
+		TileSO = new MapSceneObject( World.Scene, model, new Transform( WorldPosition ) )
 		{
 			//Bounds = new BBox( new Vector3( -World.HalfTileSize, -World.HalfTileSize, -World.TileHeight ), new Vector3( World.HalfTileSize, World.HalfTileSize, World.TileHeight ) ) + WorldPosition
 		};
