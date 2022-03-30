@@ -2,37 +2,38 @@
 {
 	data = 
 	{
+		fileextension = "Map (*.m_sprite)"
 		spriteareas = 
 		[
 			{
-				minimapcolor = [ 1, 0, 0, 1 ]
+				minimapcolor = [1,0,0,1]
 				name = "Dirt"
 				area = 
 				{
 					width = 96
 					height = 96
-					position = [ 0, 0 ]
-					size = [ 96.0, 64.0 ]
+					position = [0,0]
+					size = [96,64]
 				}
 				xsubdivisions = 3
 				ysubdivisions = 1
-				areacolor = [ 1, 0, 1, 1 ]
+				areacolor = [1,0,1,1]
 				framerate = 12
 				spritesheetpath = "/sprites/map/walls/walls_paint layer 1_spritesheet.png"
 			},
 			{
-				minimapcolor = [ 1, 0, 1, 1 ]
+				minimapcolor = [1,0,1,1]
 				name = "Stone"
 				area = 
 				{
 					width = 96
 					height = 96
-					position = [ 0, 64 ]
-					size = [ 96, 64 ]
+					position = [0,64]
+					size = [96,64]
 				}
 				xsubdivisions = 3
 				ysubdivisions = 1
-				areacolor = [ 0, 0, 1, 1 ]
+				areacolor = [1,1,0,1]
 				framerate = 12
 				spritesheetpath = "/sprites/map/walls/walls_paint layer 1_spritesheet.png"
 			},
