@@ -76,7 +76,7 @@ public partial class World
 				mapchunk.DeserializeFromCompressed( ref reader );
 				Tiles.Add( mapchunk.Position, mapchunk );
 				//Log.Info( $"Chunk {mapchunk.Position} received" );
-				Event.Register( mapchunk );
+				//Event.Register( mapchunk );
 			}
 			ChunksFullyReceived = true;
 		}
@@ -162,7 +162,7 @@ public partial class World
 			if ( rebuildRight && Tiles.ContainsKey( mapchunk.Position + Vector2Int.Right ) )
 				Tiles[mapchunk.Position + Vector2Int.Right]?.RegenerateMesh();
 			Log.Debug( $"Chunk {mapchunk.Position} received" );
-			Event.Register( mapchunk );
+			//Event.Register( mapchunk );
 		}
 	}
 
