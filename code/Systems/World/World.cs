@@ -17,6 +17,8 @@ public partial class World : Entity
 	private bool WorldNeedsUpdate = false;
 	public bool ChunksFullyReceived = false;
 
+
+
 	public override void Spawn()
 	{
 		base.Spawn();
@@ -29,6 +31,11 @@ public partial class World : Entity
 	{
 		base.ClientSpawn();
 		Instance = this;
+		if ( World.Scene.IsValid() )
+		{
+			World.Scene.Delete();
+		}
+		World.Scene = Map.Scene;
 	}
 
 
@@ -51,7 +58,7 @@ public partial class World : Entity
 	public void onhotload()
 	{
 		var startTimer = DateTime.Now;
-		foreach ( var item in Map.Scene.SceneObjects )
+		foreach ( var item in World.Scene.SceneObjects )
 		{
 			if ( item is MapSceneObject )
 			{
@@ -60,6 +67,14 @@ public partial class World : Entity
 		}
 		Tiles = new();
 		ClearTiles();
+
+		if ( World.Scene.IsValid() )
+		{
+			World.Scene.Delete();
+		}
+		World.Scene = Map.Scene;
+
+
 	}
 
 	[Event.Tick.Client]
@@ -118,6 +133,7 @@ public partial class World : Entity
 		}
 
 	}
+
 
 
 
