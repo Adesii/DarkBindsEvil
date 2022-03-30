@@ -374,10 +374,10 @@ public class BaseBlock
 				SpriteViewport.height /= MapSheet.YSubdivisions;
 
 			var view = SpriteViewport;
-			var x = (Tile.Position.x + Tile.Position.y) % MapSheet.XSubdivisions;
-			var y = (Tile.Position.y + Tile.Position.x) % MapSheet.YSubdivisions;
+			var x = (Tile.Position.x * Tile.Position.y) % MapSheet.XSubdivisions;
+			var y = (Tile.Position.y * Tile.Position.x) % MapSheet.YSubdivisions;
 			view.Position += new Vector2( x * SpriteViewport.width,
-											y * SpriteViewport.height );
+										  y * SpriteViewport.height );
 			Vector2 StartUV = view.Position / MapSheet.SpriteSheetTexture.Size;
 			Vector2 EndUV = (view.Position + view.Size) / MapSheet.SpriteSheetTexture.Size;
 			return new Vector4( StartUV.x, StartUV.y, EndUV.x, EndUV.y );
