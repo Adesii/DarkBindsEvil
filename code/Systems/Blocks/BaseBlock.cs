@@ -152,15 +152,15 @@ public class BaseBlock
 		//Ceilng
 
 		{
-			var v0 = TileWorldPosition + (Vector3.Forward + Vector3.Right) * HalfTileSize;
-			var v1 = TileWorldPosition + (Vector3.Left + Vector3.Forward) * HalfTileSize;
+			var v0 = TileWorldPosition + (Vector3.Forward + Vector3.Left) * HalfTileSize;
+			var v1 = TileWorldPosition + (Vector3.Forward + Vector3.Right) * HalfTileSize;
 			var v2 = TileWorldPosition + (Vector3.Backward + Vector3.Left) * HalfTileSize;
 			var v3 = TileWorldPosition + (Vector3.Right + Vector3.Backward) * HalfTileSize;
 
 			var uv0 = new Vector2( 0, 0 );
 			var uv1 = new Vector2( 1, 0 );
-			var uv2 = new Vector2( 0, 1 );
-			var uv3 = new Vector2( 1, 1 );
+			var uv2 = new Vector2( 0, 0.5f );
+			var uv3 = new Vector2( 1, 0.5f );
 
 			Vector2 VertBlends = new Vector2( 0, 0 );
 			Vector4 Texcord = GetUVCoords();
@@ -173,8 +173,8 @@ public class BaseBlock
 			vertices.AddRange( arr );
 			int i = vertices.Count;
 			indices.AddRange( new List<int>(){
-					i - 4,i - 3,i - 1,
-					i - 2,i - 1,i - 3
+					i - 1,i - 3,i - 4,
+					i - 2,i - 1,i - 4
 			} );
 			VertCount += 4;
 		}
@@ -294,15 +294,15 @@ public class BaseBlock
 		//Ceilng
 		if ( !Tile.Block?.IsSolid() ?? false )
 		{
-			var v0 = TileWorldPosition + (Vector3.Forward + Vector3.Right) * HalfTileSize;
-			var v1 = TileWorldPosition + (Vector3.Left + Vector3.Forward) * HalfTileSize;
+			var v0 = TileWorldPosition + (Vector3.Forward + Vector3.Left) * HalfTileSize;
+			var v1 = TileWorldPosition + (Vector3.Forward + Vector3.Right) * HalfTileSize;
 			var v2 = TileWorldPosition + (Vector3.Backward + Vector3.Left) * HalfTileSize;
 			var v3 = TileWorldPosition + (Vector3.Right + Vector3.Backward) * HalfTileSize;
 
 			var uv0 = new Vector2( 0, 0 );
 			var uv1 = new Vector2( 1, 0 );
-			var uv2 = new Vector2( 0, 1 );
-			var uv3 = new Vector2( 1, 1 );
+			var uv2 = new Vector2( 0, 0.5f );
+			var uv3 = new Vector2( 1, 0.5f );
 
 			Vector2 VertBlends = new Vector2( 0, 0 );
 			Vector4 Texcord = GetUVCoords();
@@ -315,8 +315,8 @@ public class BaseBlock
 			vertices.AddRange( arr );
 			int i = vertices.Count;
 			indices.AddRange( new List<int>(){
-					i - 4,i - 3,i - 1,
-					i - 2,i - 1,i - 3
+					i - 1,i - 3,i - 4,
+					i - 2,i - 1,i - 4
 			} );
 			VertCount += 4;
 		}
@@ -372,6 +372,7 @@ public class BaseBlock
 				SpriteViewport.width /= MapSheet.XSubdivisions;
 			if ( MapSheet.YSubdivisions != 1 )
 				SpriteViewport.height /= MapSheet.YSubdivisions;
+
 			var view = SpriteViewport;
 			var x = (Tile.Position.x + Tile.Position.y) % MapSheet.XSubdivisions;
 			var y = (Tile.Position.y + Tile.Position.x) % MapSheet.YSubdivisions;
