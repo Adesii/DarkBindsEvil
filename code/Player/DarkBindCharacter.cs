@@ -118,19 +118,19 @@ public partial class DarkBindCharacter : ModelSprite
 		var tileExtends = new Vector3( World.HalfTileSize + 1, World.HalfTileSize + 1, World.TileHeight + 1 );
 		var blocks = World.GetBlocksInLine( Position, TargetBlockPosition, 3 );
 		if ( IsClient )
+		{
 			for ( int i = 0; i < blocks.Count; i++ )
 			{
 				MapTile item = blocks[i];
-				if ( !item.IsSolid() && i == blocks.Count - 1 )
-				{
-					DebugOverlay.Box( item.WorldPosition, -tileExtends.WithZ( 0 ), tileExtends, Color.White, Time.Delta * 2 );
-				}
-				else if ( item.IsSolid() )
+				if ( item.IsSolid() )
 				{
 					DebugOverlay.Box( item.WorldPosition, -tileExtends.WithZ( 0 ), tileExtends, Color.White, Time.Delta * 2 );
 					break;
 				}
 			}
+			DebugOverlay.Box( World.GetMapTile( TargetBlockPosition )?.WorldPosition ?? TargetBlockPosition.SnapToGrid( World.TileSize ), -tileExtends.WithZ( 0 ), tileExtends, Color.Green.WithAlpha( 0.3f ), Time.Delta * 2 );
+		}
+
 
 		if ( Input.Down( InputButton.Attack1 ) && IsServer && LastAttack > 0.1f )
 		{
@@ -175,7 +175,12 @@ public partial class DarkBindCharacter : ModelSprite
 		if ( FollowLight.IsValid() )
 		{
 			if ( IsServer )
+			{
 				FollowLight.Position = Position + Vector3.Up * 64f;
+				FollowLight.QuadraticAttenuation = 0f;
+				FollowLight.LinearAttenuation = 1f;
+
+			}
 		}
 		if ( FollowSun.IsValid() )
 			FollowSun.Position = Position + Vector3.Up * 500f;
@@ -230,7 +235,7 @@ public partial class DarkBindCharacter : ModelSprite
 	{
 		if ( ConsoleSystem.Caller?.Pawn is DarkBindCharacter charr )
 		{
-			var light = new SceneLight( Map.Scene, charr.Position + (Vector3.Up * 32), 400, Color.White );
+			var light = new SceneLight( World.Scene, charr.Position + (Vector3.Up * 32), 400, Color.White );
 		}
 	}
 
