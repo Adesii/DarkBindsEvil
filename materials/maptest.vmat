@@ -7,6 +7,7 @@ Layer0
 	AmbientOcclusionAmount "3.367"
 	AmbientOcclusionDistance "1.033"
 	AmbientOcclusionSquare "[0.111 1.000]"
+	fRoughness "0.000"
 
 	//---- Color ----
 	g_flModelTintAmount "1.000"
@@ -23,7 +24,7 @@ Layer0
 	g_flDirectionalLightmapStrength "1.000"
 
 	//---- Material ----
-	SpriteSheet "materials/default/default_color.tga"
+	SpriteSheet "sprites/map/testingimage.png"
 	SpriteSheetTintMask "materials/default/default.tga"
 
 	//---- Texture Coordinates ----
