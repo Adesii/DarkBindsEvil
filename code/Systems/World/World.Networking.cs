@@ -197,7 +197,9 @@ public partial class World
 		var oldtile = World.GetMapTile( tile.Position );
 		tile.ParentChunk = oldtile.ParentChunk;
 		tile.ParentChunk.Tiles[tile.Position] = tile;
-		tile.ParentChunk.RegenerateMesh();
+		//tile.ParentChunk.RegenerateMesh();
+
+		tile.BuildMesh();
 
 		oldtile.Delete();
 
@@ -206,28 +208,28 @@ public partial class World
 		var lefttile = World.GetMapTile( tile.Position + Vector2Int.Left );
 		var righttile = World.GetMapTile( tile.Position + Vector2Int.Right );
 
-		/* var toprighttile = World.GetMapTile( tile.Position + Vector2Int.Up + Vector2Int.Right );
+		var toprighttile = World.GetMapTile( tile.Position + Vector2Int.Up + Vector2Int.Right );
 		var toplefttile = World.GetMapTile( tile.Position + Vector2Int.Up + Vector2Int.Left );
 		var bottomrighttile = World.GetMapTile( tile.Position + Vector2Int.Down + Vector2Int.Right );
-		var bottomlefttile = World.GetMapTile( tile.Position + Vector2Int.Down + Vector2Int.Left ); */
+		var bottomlefttile = World.GetMapTile( tile.Position + Vector2Int.Down + Vector2Int.Left );
 
-		if ( toptile != null && toptile.ParentChunk != tile.ParentChunk )
-			toptile.ParentChunk.RegenerateMesh();
-		if ( bottomtile != null && bottomtile.ParentChunk != tile.ParentChunk )
-			bottomtile.ParentChunk.RegenerateMesh();
-		if ( lefttile != null && lefttile.ParentChunk != tile.ParentChunk )
-			lefttile.ParentChunk.RegenerateMesh();
-		if ( righttile != null && righttile.ParentChunk != tile.ParentChunk )
-			righttile.ParentChunk.RegenerateMesh();
+		if ( toptile != null )
+			toptile.BuildMesh();
+		if ( bottomtile != null )
+			bottomtile.BuildMesh();
+		if ( lefttile != null )
+			lefttile.BuildMesh();
+		if ( righttile != null )
+			righttile.BuildMesh();
 
-		/* if ( toprighttile != null )
+		if ( toprighttile != null )
 			toprighttile.BuildMesh();
 		if ( toplefttile != null )
 			toplefttile.BuildMesh();
 		if ( bottomrighttile != null )
 			bottomrighttile.BuildMesh();
 		if ( bottomlefttile != null )
-			bottomlefttile.BuildMesh(); */
+			bottomlefttile.BuildMesh();
 
 		Event.Run( "tile.changed", tile );
 		Log.Debug( $"Tile {tile.Position} received" );
