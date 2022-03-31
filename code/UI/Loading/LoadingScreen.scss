@@ -1,0 +1,68 @@
+@import "/ui/theme.scss";
+.LoadingScreen{
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    opacity: 1;
+
+    &.hidden{
+        transition:all 0.5s ease-in-out;
+        opacity: 0;
+    }
+}
+
+.BackGround{
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background-image: url("/ui/MainMenu/MainMenuBackground.png");
+    image-rendering: pixelated;
+    background-size: cover;
+    background-position: center;
+}
+
+.TitlePanel{
+    position: absolute;
+    width: 100%;
+    height: 30%;
+    top: 50px;
+    justify-content: center;
+    align-items: center;
+    background-image: url("/ui/MainMenu/Logo.png");
+    image-rendering: pixelated;
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+}
+
+.Bar-outercase{
+    position: absolute;
+    width: 100%;
+    height: 50px;
+    bottom: 200px;
+    justify-content: center;
+    
+    .ProgressBar-case{
+        height: 100%;
+        width: 50%;
+        background-image: url("/Sprites/Map/Walls/Paint Layer 1.PNG");
+        image-rendering: pixelated;
+        background-size: cover;
+        padding: 10px;
+
+        .ProgressBarBackdrop{
+            position: absolute;
+            margin: 10px;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(41, 24, 1, 0.712);
+            
+        }
+        .ProgressBar{
+            height: 100%;
+            width: 0%;
+            background-color: blue;
+        }
+    }
+}
