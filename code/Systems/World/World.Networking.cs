@@ -22,9 +22,21 @@ public partial class World
 			writer.Flush();
 		}
 
-		var compressed = output.ToArray();
+		var compressedArr = output.ToArray();
+		var compressed = compressedArr.ToList().Chunk( compressedArr.Length / amountofChunks );
+		int amount = compressed.Count();
+		int chunk = 0;
+		foreach ( var item in compressed )
+		{
+			SendChunks( To.Everyone, item, chunk, amount );
+			chunk++;
+			await GameTask.Delay( 10 );
+		}
 
-		Log.Debug( $"Compressed: {compressed.Length}" );
+
+		//var compressed = output.ToArray();
+
+		/* Log.Debug( $"Compressed: {compressed.Length}" );
 		int chunkSize = compressed.Length / amountofChunks;
 		for ( int i = 0; i < amountofChunks; i++ )
 		{
@@ -39,9 +51,18 @@ public partial class World
 				chunkdata = new byte[chunkSize];
 				Array.Copy( compressed, i * chunkSize, chunkdata, 0, chunkdata.Length );
 			}
-			SendChunks( To.Everyone, chunkdata, i, amountofChunks );
+			await GameTask.RunInThreadAsync( () =>
+			{
+				ThreadedSending( chunkdata, i, amountofChunks );
+			} );
+			//SendChunks( To.Everyone, chunkdata, i, amountofChunks );
 			await GameTask.Delay( 5 );
-		}
+		} */
+	}
+
+	private void ThreadedSending( byte[] data, int chunk, int amountofChunks )
+	{
+		SendChunks( To.Everyone, data, chunk, amountofChunks );
 	}
 
 	[SkipHotload]
@@ -54,11 +75,13 @@ public partial class World
 			CompressedChunks = new();
 			CompressedChunks.Clear();
 			ChunksFullyReceived = false;
+			WorldLoadingProgress = 0;
 		}
 		CompressedChunks.AddRange( chunk );
 		//Log.Debug( "Chunk " + chunkNumber + "/" + (amountofChunks) + " received" );
 		if ( chunkNumber == amountofChunks - 1 )
 		{
+
 			Log.Debug( $"Decompressing {CompressedChunks.Count} bytes" );
 			using var stream = new MemoryStream( CompressedChunks.ToArray() );
 			using var dstream = new DeflateStream( stream, CompressionMode.Decompress );
@@ -122,20 +145,22 @@ public partial class World
 			await GameTask.Delay( 5 );
 		}
 	}
+	[SkipHotload]
+	private List<byte> CompressedChunkArray = new();
 	[ClientRpc]
 	public void SendSingleChunk( byte[] chunk, int chunkNumber, int amountofChunks, RebuildChunksAround rebuild = RebuildChunksAround.None )
 	{
 		if ( chunkNumber == 0 )
 		{
-			CompressedChunks = new();
-			CompressedChunks.Clear();
+			CompressedChunkArray = new();
+			CompressedChunkArray.Clear();
 		}
-		CompressedChunks.AddRange( chunk );
+		CompressedChunkArray.AddRange( chunk );
 		Log.Debug( "Chunk " + chunkNumber + "/" + (amountofChunks) + " received" );
 		if ( chunkNumber == amountofChunks - 1 )
 		{
-			Log.Debug( $"Decompressing {CompressedChunks.Count} bytes" );
-			using var stream = new MemoryStream( CompressedChunks.ToArray() );
+			Log.Debug( $"Decompressing {CompressedChunkArray.Count} bytes" );
+			using var stream = new MemoryStream( CompressedChunkArray.ToArray() );
 			using var dstream = new DeflateStream( stream, CompressionMode.Decompress );
 			var reader = new BinaryReader( dstream );
 
