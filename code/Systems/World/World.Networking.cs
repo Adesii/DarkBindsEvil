@@ -67,6 +67,9 @@ public partial class World
 
 	[SkipHotload]
 	private List<byte> CompressedChunks = new();
+
+
+	public static float WorldLoadingProgress = 0;
 	[ClientRpc]
 	public void SendChunks( byte[] chunk, int chunkNumber, int amountofChunks )
 	{
@@ -78,6 +81,7 @@ public partial class World
 			WorldLoadingProgress = 0;
 		}
 		CompressedChunks.AddRange( chunk );
+		WorldLoadingProgress = (float)chunkNumber / (amountofChunks - 1);
 		//Log.Debug( "Chunk " + chunkNumber + "/" + (amountofChunks) + " received" );
 		if ( chunkNumber == amountofChunks - 1 )
 		{
