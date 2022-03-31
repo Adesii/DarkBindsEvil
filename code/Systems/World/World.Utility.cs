@@ -24,6 +24,8 @@ public partial class World
 
 	public static MapTile GetMapTile( Vector2Int WorldPosition, bool debug = false )
 	{
+		if ( Instance == null || Instance.Tiles == null )
+			return null;
 		var chunkpos = GetChunkIndex( WorldPosition );
 		if ( debug )
 		{
@@ -46,6 +48,8 @@ public partial class World
 	}
 	public static MapTile GetMapTile( Vector3 WorldPosition )
 	{
+		if ( Instance == null || Instance.Tiles == null )
+			return null;
 		var chunkpos = GetChunkIndex( WorldPosition );
 
 		if ( Instance.Tiles.TryGetValue( chunkpos, out var chunk ) )
