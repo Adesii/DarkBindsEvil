@@ -92,7 +92,7 @@ public partial class MapChunk
 		foreach ( var Tile in Tiles.Values )
 		{
 			Tile.BuildMesh();
-			if ( index % 16 == 0 )
+			if ( index % 8 == 0 )
 				await GameTask.NextPhysicsFrame();
 			index++;
 		}
