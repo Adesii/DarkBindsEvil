@@ -31,26 +31,8 @@ public partial class World : Entity
 	{
 		base.ClientSpawn();
 		Instance = this;
-		if ( World.Scene.IsValid() )
-		{
-			World.Scene.Delete();
-		}
+
 		World.Scene = Map.Scene;
-	}
-
-
-	[Event.Tick.Server]
-	public void Tick()
-	{
-		if ( Tiles.Count == 0 )
-		{
-			//Generate();
-			//WorldNeedsUpdate = true;
-		}
-		else if ( WorldNeedsUpdate )
-		{
-			//DebugMap();
-		}
 	}
 
 
@@ -58,20 +40,17 @@ public partial class World : Entity
 	public void onhotload()
 	{
 		var startTimer = DateTime.Now;
-		foreach ( var item in World.Scene.SceneObjects )
-		{
-			if ( item is MapSceneObject )
+		if ( World.Scene.IsValid() )
+			foreach ( var item in World.Scene.SceneObjects )
 			{
-				item.Delete();
+				if ( item is MapSceneObject )
+				{
+					item.Delete();
+				}
 			}
-		}
 		Tiles = new();
 		ClearTiles();
 
-		if ( World.Scene.IsValid() )
-		{
-			World.Scene.Delete();
-		}
 		World.Scene = Map.Scene;
 
 
@@ -139,11 +118,12 @@ public partial class World : Entity
 
 	private void ClearTiles()
 	{
-		foreach ( var item in Tiles.Values )
-		{
-			item.Delete();
-			Event.Unregister( item );
-		}
+		if ( Tiles != null )
+			foreach ( var item in Tiles.Values )
+			{
+				item.Delete();
+				Event.Unregister( item );
+			}
 		Tiles = new();
 		ActiveChunks = new();
 	}
