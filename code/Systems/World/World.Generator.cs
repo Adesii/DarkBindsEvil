@@ -14,7 +14,7 @@ public partial class World
 	//Test Generation
 	[SkipHotload]
 	FastNoiseLite noise = new();
-	private void Generate()
+	private async void Generate()
 	{
 		noise = new( Time.Tick );
 
@@ -25,53 +25,56 @@ public partial class World
 		noise.SetDomainWarpAmp( 80 );
 		//noise.SetFractalPingPongStrength( 0.5f );
 		ClearTiles();
-
-		for ( int x = 0; x < WorldSize; x++ )
+		await GameTask.RunInThreadAsync( () =>
 		{
-			for ( int y = 0; y < WorldSize; y++ )
+			for ( int x = 0; x < WorldSize; x++ )
 			{
-				var chunk = new MapChunk
+				for ( int y = 0; y < WorldSize; y++ )
 				{
-					Position = new Vector2Int( x, y )
-				};
-				Tiles.Add( chunk.Position, chunk );
-
-				for ( int i = 0; i < ChunkSize; i++ )
-				{
-					for ( int j = 0; j < World.ChunkSize; j++ )
+					var chunk = new MapChunk
 					{
-						Vector2Int WorldPosition = new Vector2Int( x * World.ChunkSize + i, y * World.ChunkSize + j );
-						float nv = 0f;
-						if ( WorldPosition.x <= 5 || WorldPosition.y <= 5 || WorldPosition.x >= WorldSize * ChunkSize - 5 || WorldPosition.y >= WorldSize * ChunkSize - 5 )
-							nv = 1;
-						else
-						{
-							float xy = WorldPosition.x;
-							float yy = WorldPosition.y;
-							noise.DomainWarp( ref xy, ref yy );
-							nv = noise.GetNoise( xy, yy ) * 0.5f + 0.5f;
-						}
-						var tile = new MapTile
-						{
-							Position = new Vector2Int( WorldPosition.x, WorldPosition.y ),
-							ParentChunk = chunk
-						};
-						tile.Block = nv > 0.4f ? BaseBlock.Create( "Dirt" ) : new AirBlock();
-						tile.FloorBlock = nv > 0.2f ? BaseBlock.Create( "Dirt" ) : new AirBlock();
-						if ( nv == 1 )
-						{
-							tile.Block = BaseBlock.Create( "Stone" );
-							tile.FloorBlock = new AirBlock();
-						}
-						chunk.Tiles.Add( WorldPosition, tile );
+						Position = new Vector2Int( x, y )
+					};
+					Tiles.Add( chunk.Position, chunk );
 
+					for ( int i = 0; i < ChunkSize; i++ )
+					{
+						for ( int j = 0; j < World.ChunkSize; j++ )
+						{
+							Vector2Int WorldPosition = new Vector2Int( x * World.ChunkSize + i, y * World.ChunkSize + j );
+							float nv = 0f;
+							if ( WorldPosition.x <= 5 || WorldPosition.y <= 5 || WorldPosition.x >= WorldSize * ChunkSize - 5 || WorldPosition.y >= WorldSize * ChunkSize - 5 )
+								nv = 1;
+							else
+							{
+								float xy = WorldPosition.x;
+								float yy = WorldPosition.y;
+								noise.DomainWarp( ref xy, ref yy );
+								nv = noise.GetNoise( xy, yy ) * 0.5f + 0.5f;
+							}
+							var tile = new MapTile
+							{
+								Position = new Vector2Int( WorldPosition.x, WorldPosition.y ),
+								ParentChunk = chunk
+							};
+							tile.Block = nv > 0.4f ? BaseBlock.Create( "Dirt" ) : new AirBlock();
+							tile.FloorBlock = nv > 0.2f ? BaseBlock.Create( "Dirt" ) : new AirBlock();
+							if ( nv == 1 )
+							{
+								tile.Block = BaseBlock.Create( "Stone" );
+								tile.FloorBlock = new AirBlock();
+							}
+							chunk.Tiles.Add( WorldPosition, tile );
+
+						}
 					}
 				}
 			}
-		}
+		} );
+
 		//SmoothChunks();
 		WorldNeedsUpdate = true;
-		SendchunksChunked( 16 );
+		SendchunksChunked( 32 );
 
 
 	}
