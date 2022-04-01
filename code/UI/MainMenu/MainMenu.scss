@@ -23,9 +23,9 @@
     height: 60%;
     width: 30%;
     //background-color: $MainBackground;
-    background-image: url("/Sprites/Map/Walls/Paint Layer 1.PNG");
+    background-image: url("/ui/MainMenu/UI-Background.png");
     image-rendering: pixelated;
-    background-size: cover;
+    background-size: 512;
     position: absolute;
     left: 125px;
     bottom: 100px;
@@ -39,15 +39,15 @@
     .menu-btn{
         height: 100px;
         width: 100%;
-        background-color: #c2a548;
+        background-image: url("/ui/MainMenu/UI-Background-Stone.png");
+        image-rendering: pixelated;
+        background-size: 512;
+        background-position: -100 0;
         border-radius: 10px;
 
         align-items: center;
         justify-content: center;
-        .label{
-            font-size: 30px;
-            font-weight: bold;
-        }
+        
         &:hover{
             background-color: #f7e6b1;
         }
@@ -74,9 +74,11 @@
     right: 100px;
     width: 25%;
     height: 50%;
-    background-image: url("/Sprites/Map/Walls/Paint Layer 1.PNG");
+    background-image: url("/ui/MainMenu/UI-Background.png");
     image-rendering: pixelated;
-    background-size: cover;
+    background-size: contain;
+    background-repeat: repeat;
+    background-position-x: -10%;
     border-radius: 10px;
     flex-direction: column;
     align-items: center;

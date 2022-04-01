@@ -3,6 +3,15 @@
     height: 70%;
     background-color: rgba(197, 122, 35, 0.452);
     align-self: center;
-    opacity: 1;
+    transition: opacity 0.3s ease-in-out;
+    background-image: url("/ui/MainMenu/UI-Background.png");
+    image-rendering: pixelated;
+    background-size: 512;
+
+    
+    opacity: 0.5;
+    &.hidden{
+        opacity: 0;
+    }
     pointer-events: visible;
 }

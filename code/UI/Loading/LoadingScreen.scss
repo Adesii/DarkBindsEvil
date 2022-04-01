@@ -7,7 +7,7 @@
     opacity: 1;
 
     &.hidden{
-        transition:all 0.5s ease-in-out;
+        transition:all 2s ease-in-out;
         opacity: 0;
     }
 }
@@ -46,7 +46,7 @@
     .ProgressBar-case{
         height: 100%;
         width: 50%;
-        background-image: url("/Sprites/Map/Walls/Paint Layer 1.PNG");
+        background-image: url("/ui/MainMenu/UI-Background.png");
         image-rendering: pixelated;
         background-size: cover;
         padding: 10px;
@@ -62,7 +62,9 @@
         .ProgressBar{
             height: 100%;
             width: 0%;
-            background-color: blue;
+            background-image: url("/ui/MainMenu/loading_bar.png");
+            image-rendering: pixelated;
+            background-repeat: repeat;
         }
     }
 }

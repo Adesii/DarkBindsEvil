@@ -7,7 +7,9 @@
     .ItemList{
         width: 70%;
         height: 100%;
-        background-color: rgba(197, 122, 35, 0.452);
         border-radius: 5px;
+        background-image: url("/ui/MainMenu/UI-Background.png");
+        image-rendering: pixelated;
+        background-size: 512;
     }
 }
