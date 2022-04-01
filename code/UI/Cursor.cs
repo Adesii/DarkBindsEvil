@@ -7,6 +7,7 @@ namespace DarkBinds.UI;
 public class Cursor : Panel
 {
 	public Panel cursorImage { get; set; }
+	public static Panel hovered;
 	Vector2 Mouse;
 
 	public Cursor()
@@ -25,7 +26,7 @@ public class Cursor : Panel
 	[Event.BuildInput]
 	public static void Build( InputBuilder input )
 	{
-		var hovered = UIUtility.GetHoveredPanel();
+		hovered = UIUtility.GetHoveredPanel();
 		if ( hovered == null/*  || hovered is RootPanel  */)
 			return;
 
