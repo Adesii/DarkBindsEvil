@@ -3,6 +3,8 @@ using SpriteKit.SceneObjects;
 using DarkBinds.Systems.Worlds;
 using DarkBinds.util;
 using Sandbox;
+using DarkBinds.UI.IngameHUD;
+using DarkBinds.UI;
 
 namespace DarkBinds.Player;
 
@@ -66,6 +68,8 @@ public partial class DarkBindCharacter : ModelSprite
 
 	private TimeSince LastAttack;
 
+	bool isEditingFloor = false;
+
 
 	public override void Simulate( Client cl )
 	{
@@ -87,19 +91,16 @@ public partial class DarkBindCharacter : ModelSprite
 		{
 			Vel += Vector3.Right;
 		}
-		if ( Input.Down( InputButton.Use ) )
+		if ( Input.Pressed( InputButton.Use ) && IsClient )
 		{
-			Rotation *= Rotation.FromAxis( Vector3.Up, 100f * Time.Delta );
+			Inventory.Toggle();
 		}
+		/*
 		if ( Input.Down( InputButton.Menu ) )
 		{
 			Rotation *= Rotation.FromAxis( Vector3.Up, -100f * Time.Delta );
-		}
-		float boost = 1;
-		if ( Input.Down( InputButton.Run ) )
-		{
-			boost *= 10;
-		}
+		} */
+
 		var direction = Vel.y < 0;
 		Vel = Rotation * Vel;
 		if ( Vel.Length.AlmostEqual( 0f ) )
@@ -113,34 +114,37 @@ public partial class DarkBindCharacter : ModelSprite
 				SetFacingDirection( direction );
 		}
 		PlayerPosition = World.GetTilePosition( Position );
-		var directionvector = Vel.Normal * Speed * boost * Time.Delta;
+		var directionvector = Speed * Time.Delta * Vel.Normal;
 		var TargetBlockPosition = LinePlaneIntersectionWithHeight( Input.Cursor.Origin, Input.Cursor.Direction, 0 );
 		var tileExtends = new Vector3( World.HalfTileSize + 1, World.HalfTileSize + 1, World.TileHeight + 1 );
 		var blocks = World.GetBlocksInLine( Position, TargetBlockPosition, 3 );
-		if ( IsClient )
+		isEditingFloor = Input.Down( InputButton.Run );
+		if ( IsClient && Cursor.hovered == null )
 		{
 			for ( int i = 0; i < blocks.Count; i++ )
 			{
 				MapTile item = blocks[i];
 				if ( item.IsSolid() )
 				{
-					DebugOverlay.Box( item.WorldPosition, -tileExtends.WithZ( 0 ), tileExtends, Color.White, Time.Delta * 2 );
+					DebugOverlay.Box( isEditingFloor ? item.WorldPosition - Vector3.Up * World.TileHeight : item.WorldPosition, -tileExtends.WithZ( 0 ), tileExtends, Color.White, Time.Delta * 2 );
 					break;
 				}
 			}
-			DebugOverlay.Box( World.GetMapTile( TargetBlockPosition )?.WorldPosition ?? TargetBlockPosition.SnapToGrid( World.TileSize ), -tileExtends.WithZ( 0 ), tileExtends, Color.Green.WithAlpha( 0.3f ), Time.Delta * 2 );
+			Vector3 pos = World.GetMapTile( TargetBlockPosition )?.WorldPosition ?? TargetBlockPosition.SnapToGrid( World.TileSize );
+			Vector3 wpos = isEditingFloor ? pos - Vector3.Up * World.TileHeight : pos;
+			DebugOverlay.Box( wpos, -tileExtends.WithZ( 0 ), tileExtends, Color.Green.WithAlpha( 0.3f ), Time.Delta * 2 );
 		}
-
 
 		if ( Input.Down( InputButton.Attack1 ) && IsServer && LastAttack > 0.1f )
 		{
 			LastAttack = 0;
 			var currentPos = Position;
-			foreach ( var block in blocks )
+			for ( int i = 0; i < blocks.Count; i++ )
 			{
-				if ( block.IsSolid() )
+				MapTile block = blocks[i];
+				if ( (isEditingFloor || block.IsSolid()) && ((block.Position != PlayerPosition) || !isEditingFloor) && (!isEditingFloor || (i == blocks.Count - 1)) )
 				{
-					SetBlock( block, false );
+					SetBlock( block, isEditingFloor, false );
 					break;
 				}
 			}
@@ -152,13 +156,13 @@ public partial class DarkBindCharacter : ModelSprite
 			for ( int i = 0; i < blocks.Count; i++ )
 			{
 				MapTile block = blocks[i];
-				if ( block.IsSolid() && i != blocks.Count - 1 )
+				if ( IsBlockSolid( block ) && i != blocks.Count - 1 )
 				{
 					continue;
 				}
-				else if ( i == blocks.Count - 1 && block.Position.Distance( World.GetTilePosition( TargetBlockPosition ) ) <= 1 && block.Position != PlayerPosition )
+				else if ( i == blocks.Count - 1 && block.Position.Distance( World.GetTilePosition( TargetBlockPosition ) ) <= 1 && (isEditingFloor || block.Position != PlayerPosition) )
 				{
-					SetBlock( block, true );
+					SetBlock( block, isEditingFloor, true );
 				}
 			}
 		}
@@ -184,8 +188,13 @@ public partial class DarkBindCharacter : ModelSprite
 		}
 		if ( FollowSun.IsValid() )
 			FollowSun.Position = Position + Vector3.Up * 500f;
+	}
 
-
+	public bool IsBlockSolid( MapTile Block )
+	{
+		if ( isEditingFloor )
+			return Block.IsFloorSolid();
+		return Block.IsSolid();
 
 	}
 
@@ -217,16 +226,23 @@ public partial class DarkBindCharacter : ModelSprite
 	}
 
 
-	public void SetBlock( MapTile block, bool place = false )
+	public void SetBlock( MapTile block, bool floor, bool place = false )
 	{
-		if ( place && !block.IsSolid() )
+		if ( place && !IsBlockSolid( block ) )
 		{
-			block.Block = Systems.Blocks.BaseBlock.Create( "Dirt" );
+			if ( !floor )
+				block.Block = Systems.Blocks.BaseBlock.Create( "Dirt" );
+			else
+				block.FloorBlock = Systems.Blocks.BaseBlock.Create( "Dirt" );
 			World.SendTile( block );
 		}
-		else if ( !place && block.IsSolid() )
+		else if ( !place && IsBlockSolid( block ) )
 		{
-			block.Block = new Systems.Blocks.AirBlock();
+			if ( !floor )
+				block.Block = new Systems.Blocks.AirBlock();
+			else
+				block.FloorBlock = new Systems.Blocks.AirBlock();
+
 			World.SendTile( block );
 		}
 	}
