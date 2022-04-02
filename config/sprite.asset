@@ -11,6 +11,7 @@
 	areacolor(color1) : "Area Color" :  : ""
 	framerate(float) : "Frame Rate" : "12" : ""
 	spritesheetpath(string) { editor = "AssetBrowse(img)" } : "Sprite Sheet Path" :  : ""
+	spritesheetalphapath(string) { editor = "AssetBrowse(img)" } : "Sprite Sheet Alpha Path" :  : ""
 	spritesheetnormalpath(string) { editor = "AssetBrowse(img)" } : "Sprite Sheet Normal Path" :  : ""
 ]
 

@@ -13,6 +13,8 @@ public partial class DarkBindCharacter : ModelSprite
 	public float Speed => 125f;
 	[Net, Predicted]
 	public Vector2Int PlayerPosition { get; set; }
+
+	public string CurrentBlock => DarkInventory.CurrentBlock;
 	/// <summary>
 	/// Provides an easy way to switch our current cameramode component
 	/// </summary>
@@ -22,6 +24,12 @@ public partial class DarkBindCharacter : ModelSprite
 		get => Components.Get<CameraMode>();
 		set => Components.Add( value );
 	}
+	[SkipHotload]
+	public DarkInventory DarkInventory
+	{
+		get => Components.Get<DarkInventory>();
+		set => Components.Add( value );
+	}
 	public override void Spawn()
 	{
 		//SpritePath = "/sprites/mainchar/darkbind.sprite";
@@ -29,7 +37,7 @@ public partial class DarkBindCharacter : ModelSprite
 		CameraMode = new TopDownCamera();
 		base.Spawn();
 		Rotation = Rotation.LookAt( Vector3.Backward, Vector3.Up );
-		Scale = 0.8f;
+		Scale = 0.63f;
 
 		//Components.Create<SoulPillar>();
 		//Components.Create<SoulEater>();
@@ -42,6 +50,8 @@ public partial class DarkBindCharacter : ModelSprite
 			Brightness = 0.3f,
 			DynamicShadows = true,
 		};
+
+		DarkInventory = new DarkInventory();
 
 
 	}
@@ -63,6 +73,10 @@ public partial class DarkBindCharacter : ModelSprite
 				Brightness = 1.2f,
 				DynamicShadows = true,
 			};
+
+		Tracking = TrackingMode.Billboard;
+
+
 
 	}
 
@@ -94,6 +108,14 @@ public partial class DarkBindCharacter : ModelSprite
 		if ( Input.Pressed( InputButton.Use ) && IsClient )
 		{
 			Inventory.Toggle();
+		}
+		if ( Input.MouseWheel > 0 )
+		{
+			DarkInventory.NextBlock();
+		}
+		else if ( Input.MouseWheel < 0 )
+		{
+			DarkInventory.PreviousBlock();
 		}
 		/*
 		if ( Input.Down( InputButton.Menu ) )
@@ -166,7 +188,7 @@ public partial class DarkBindCharacter : ModelSprite
 				}
 			}
 		}
-		var MoveHelper = new WorldMovementHelper( Position, 10f );
+		var MoveHelper = new WorldMovementHelper( Position, 10 );
 		if ( !Tags.Has( "noclip" ) )
 		{
 			//debug the time this method takes
@@ -231,17 +253,17 @@ public partial class DarkBindCharacter : ModelSprite
 		if ( place && !IsBlockSolid( block ) )
 		{
 			if ( !floor )
-				block.Block = Systems.Blocks.BaseBlock.Create( "Dirt" );
+				block.Block = Systems.Blocks.BaseBlock.Create( CurrentBlock );
 			else
-				block.FloorBlock = Systems.Blocks.BaseBlock.Create( "Dirt" );
+				block.FloorBlock = Systems.Blocks.BaseBlock.Create( CurrentBlock );
 			World.SendTile( block );
 		}
 		else if ( !place && IsBlockSolid( block ) )
 		{
 			if ( !floor )
-				block.Block = new Systems.Blocks.AirBlock();
+				block.Block = Systems.Blocks.BaseBlock.Create( "Air" );
 			else
-				block.FloorBlock = new Systems.Blocks.AirBlock();
+				block.FloorBlock = Systems.Blocks.BaseBlock.Create( "Air" );
 
 			World.SendTile( block );
 		}

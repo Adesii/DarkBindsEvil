@@ -1,15 +1,44 @@
 .itembar{
     position: absolute;
-    bottom: 10;
+    top: 10;
     height: 100px;
     width: 100%;
-    justify-content: center;
+    pointer-events: none;
     .ItemList{
-        width: 70%;
+        width: 50%;
         height: 100%;
         border-radius: 5px;
         background-image: url("/ui/MainMenu/UI-Background.png");
         image-rendering: pixelated;
         background-size: 512;
+        justify-content: center;
+        align-items: center;
+
+        //padding: 5px;
+        TempItem{
+            width: 100%;
+            aspect-ratio: 1;
+            border-radius: 5px;
+            background-color: rgba(0, 0, 0, 0.726);
+            background-repeat: no-repeat;
+            background-position: center;
+            margin-right: 5px;
+            border-radius: 5px;
+            align-items: center;
+            justify-content: center;
+            &:first-child{
+                margin-left: 5px;
+            }
+            .ItemName{
+                font-size: 15px;
+                font-family: "Arial";
+                font-weight: bold;
+                color: #f7e6b1;
+                text-shadow: 0 0 10px #000;
+            }
+            &.selected{
+                border: 5px solid rgb(255, 255, 255);
+            }
+        }
     }
 }

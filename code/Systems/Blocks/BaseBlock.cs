@@ -2,6 +2,7 @@ using System.IO;
 using SpriteKit.Asset;
 using DarkBinds.Systems.Worlds;
 using System;
+using System.Collections.Generic;
 
 namespace DarkBinds.Systems.Blocks;
 
@@ -23,8 +24,17 @@ public class BaseBlock
 	public virtual void OnPlaced()
 	{
 	}
+	public virtual void OnBroken()
+	{
+
+	}
 	public virtual void OnDestroyed()
 	{
+	}
+
+	public virtual void OnCreated()
+	{
+
 	}
 	public virtual void OnSerialize( ref BinaryWriter writer )
 	{
@@ -32,7 +42,7 @@ public class BaseBlock
 	public virtual void OnDeserialize( ref BinaryReader reader )
 	{
 	}
-	[Event( "BlockRegister.RegisterBlocks" )]
+	[Event.Entity.PostSpawn]
 	public static void RegisterBlocks()
 	{
 		BlockList = new();
@@ -50,6 +60,7 @@ public class BaseBlock
 		{
 			var block = testblock.Create<BaseBlock>();
 			block.Name = name;
+			block.MapSheet = MapSheetAsset.GetBlockArea( name );
 			return block;
 		}
 		MapSheetArea area = MapSheetAsset.GetBlockArea( name );
@@ -63,14 +74,12 @@ public class BaseBlock
 		}
 		return null;
 	}
-	List<MapVertex> vertices = new();
-	List<int> indices = new();
+	protected List<MapVertex> vertices = new();
+	protected List<int> indices = new();
 	public virtual Mesh BuildMesh( Vector2Int Position )
 	{
-		if ( !IsSolid() )
-		{
+		if ( !HasMesh() )
 			return null;
-		}
 		indices = new();
 		vertices = new();
 		var HalfTileSize = World.TileSize / 2;
@@ -91,7 +100,7 @@ public class BaseBlock
 		int hasSouthWestWall = -1;
 
 		//NorthWall
-		if ( NorthBlock != null && !NorthBlock.IsSolid() )
+		if ( NorthBlock != null && NorthBlock.Block.IsTranslucent() )
 		{
 			var right = TileWorldPosition + (Vector3.Forward + Vector3.Right) * HalfTileSize;
 			var left = right + Vector3.Left * TileSize;
@@ -102,7 +111,7 @@ public class BaseBlock
 			VertCount += 4;
 		}
 		//SouthWall
-		if ( SouthBlock != null && !SouthBlock.IsSolid() )
+		if ( SouthBlock != null && SouthBlock.Block.IsTranslucent() )
 		{
 			var right = TileWorldPosition + (Vector3.Backward + Vector3.Left) * HalfTileSize;
 			var left = right + Vector3.Right * TileSize;
@@ -114,7 +123,7 @@ public class BaseBlock
 			VertCount += 4;
 		}
 		//EastWall
-		if ( EastBlock != null && !EastBlock.IsSolid() )
+		if ( EastBlock != null && EastBlock.Block.IsTranslucent() )
 		{
 			var right = TileWorldPosition + (Vector3.Left + Vector3.Forward) * HalfTileSize;
 			var left = right + Vector3.Backward * TileSize;
@@ -131,7 +140,7 @@ public class BaseBlock
 			VertCount += 4;
 		}
 		//WestWall
-		if ( WestBlock != null && !WestBlock.IsSolid() )
+		if ( WestBlock != null && WestBlock.Block.IsTranslucent() )
 		{
 			var right = TileWorldPosition + (Vector3.Right + Vector3.Backward) * HalfTileSize;
 			var left = right + Vector3.Forward * TileSize;
@@ -152,30 +161,7 @@ public class BaseBlock
 		//Ceilng
 
 		{
-			var v0 = TileWorldPosition + (Vector3.Forward + Vector3.Left) * HalfTileSize;
-			var v1 = TileWorldPosition + (Vector3.Forward + Vector3.Right) * HalfTileSize;
-			var v2 = TileWorldPosition + (Vector3.Backward + Vector3.Left) * HalfTileSize;
-			var v3 = TileWorldPosition + (Vector3.Right + Vector3.Backward) * HalfTileSize;
-
-			var uv0 = new Vector2( 0, 0 );
-			var uv1 = new Vector2( 1, 0 );
-			var uv2 = new Vector2( 0, 0.5f );
-			var uv3 = new Vector2( 1, 0.5f );
-
-			Vector2 VertBlends = new Vector2( 0, 0 );
-			Vector4 Texcord = GetUVCoords();
-			MapVertex[] arr = new MapVertex[]{
-					new MapVertex(v0   + Vector3.Up * World.TileHeight,Vector3.Up, Vector3.Right, uv0,VertBlends,Texcord),
-					new MapVertex(v1   + Vector3.Up * World.TileHeight,Vector3.Up, Vector3.Right, uv1,VertBlends,Texcord),
-					new MapVertex(v2   + Vector3.Up * World.TileHeight,Vector3.Up, Vector3.Right, uv2,VertBlends,Texcord),
-					new MapVertex(v3   + Vector3.Up * World.TileHeight,Vector3.Up, Vector3.Right, uv3,VertBlends,Texcord)
-				};
-			vertices.AddRange( arr );
-			int i = vertices.Count;
-			indices.AddRange( new List<int>(){
-					i - 1,i - 3,i - 4,
-					i - 2,i - 1,i - 4
-			} );
+			AddCeiiling( HalfTileSize, TileWorldPosition );
 			VertCount += 4;
 		}
 		if ( VertCount > 0 )
@@ -184,6 +170,9 @@ public class BaseBlock
 			{
 				var copy = MapChunk.DefaultMaterial.CreateCopy();
 				copy.OverrideTexture( "SpriteSheet", MapSheet.SpriteSheetTexture );
+				var alpha = MapSheet.SpriteSheetAlphaTexture;
+				if ( alpha != null )
+					copy.OverrideTexture( "SpriteSheetOpacityMask", MapSheet.SpriteSheetAlphaTexture );
 				MapChunk.MaterialList.Add( MapSheet.SpriteSheetPath, copy );
 			}
 			Mesh TileMesh = new( MapChunk.MaterialList[MapSheet.SpriteSheetPath] );
@@ -209,10 +198,8 @@ public class BaseBlock
 
 	public virtual Mesh BuildFloorMesh( Vector2Int Position )
 	{
-		if ( !IsSolid() )
-		{
+		if ( !HasMesh() )
 			return null;
-		}
 		indices = new();
 		vertices = new();
 		var HalfTileSize = World.TileSize / 2;
@@ -233,7 +220,7 @@ public class BaseBlock
 		int hasSouthWestWall = -1;
 
 		//NorthWall
-		if ( NorthBlock != null && !NorthBlock.IsFloorSolid() )
+		if ( NorthBlock != null && NorthBlock.FloorBlock.IsTranslucent() )
 		{
 			var right = TileWorldPosition + (Vector3.Forward + Vector3.Right) * HalfTileSize;
 			var left = right + Vector3.Left * TileSize;
@@ -244,7 +231,7 @@ public class BaseBlock
 			VertCount += 4;
 		}
 		//SouthWall
-		if ( SouthBlock != null && !SouthBlock.IsFloorSolid() )
+		if ( SouthBlock != null && SouthBlock.FloorBlock.IsTranslucent() )
 		{
 			var right = TileWorldPosition + (Vector3.Backward + Vector3.Left) * HalfTileSize;
 			var left = right + Vector3.Right * TileSize;
@@ -256,7 +243,7 @@ public class BaseBlock
 			VertCount += 4;
 		}
 		//EastWall
-		if ( EastBlock != null && !EastBlock.IsFloorSolid() )
+		if ( EastBlock != null && EastBlock.FloorBlock.IsTranslucent() )
 		{
 			var right = TileWorldPosition + (Vector3.Left + Vector3.Forward) * HalfTileSize;
 			var left = right + Vector3.Backward * TileSize;
@@ -273,7 +260,7 @@ public class BaseBlock
 			VertCount += 4;
 		}
 		//WestWall
-		if ( WestBlock != null && !WestBlock.IsFloorSolid() )
+		if ( WestBlock != null && WestBlock.FloorBlock.IsTranslucent() )
 		{
 			var right = TileWorldPosition + (Vector3.Right + Vector3.Backward) * HalfTileSize;
 			var left = right + Vector3.Forward * TileSize;
@@ -294,30 +281,7 @@ public class BaseBlock
 		//Ceilng
 		if ( !Tile.Block?.IsSolid() ?? false )
 		{
-			var v0 = TileWorldPosition + (Vector3.Forward + Vector3.Left) * HalfTileSize;
-			var v1 = TileWorldPosition + (Vector3.Forward + Vector3.Right) * HalfTileSize;
-			var v2 = TileWorldPosition + (Vector3.Backward + Vector3.Left) * HalfTileSize;
-			var v3 = TileWorldPosition + (Vector3.Right + Vector3.Backward) * HalfTileSize;
-
-			var uv0 = new Vector2( 0, 0 );
-			var uv1 = new Vector2( 1, 0 );
-			var uv2 = new Vector2( 0, 0.5f );
-			var uv3 = new Vector2( 1, 0.5f );
-
-			Vector2 VertBlends = new Vector2( 0, 0 );
-			Vector4 Texcord = GetUVCoords();
-			MapVertex[] arr = new MapVertex[]{
-					new MapVertex(v0   + Vector3.Up * World.TileHeight,Vector3.Up, Vector3.Right, uv0,VertBlends,Texcord),
-					new MapVertex(v1   + Vector3.Up * World.TileHeight,Vector3.Up, Vector3.Right, uv1,VertBlends,Texcord),
-					new MapVertex(v2   + Vector3.Up * World.TileHeight,Vector3.Up, Vector3.Right, uv2,VertBlends,Texcord),
-					new MapVertex(v3   + Vector3.Up * World.TileHeight,Vector3.Up, Vector3.Right, uv3,VertBlends,Texcord)
-				};
-			vertices.AddRange( arr );
-			int i = vertices.Count;
-			indices.AddRange( new List<int>(){
-					i - 1,i - 3,i - 4,
-					i - 2,i - 1,i - 4
-			} );
+			AddCeiiling( HalfTileSize, TileWorldPosition );
 			VertCount += 4;
 		}
 		if ( VertCount > 0 )
@@ -348,12 +312,59 @@ public class BaseBlock
 		return null;
 	}
 
+	protected virtual void AddCeiiling( int HalfTileSize, Vector3 TileWorldPosition )
+	{
+		var v0 = TileWorldPosition + (Vector3.Forward + Vector3.Left) * HalfTileSize;
+		var v1 = TileWorldPosition + (Vector3.Forward + Vector3.Right) * HalfTileSize;
+		var v2 = TileWorldPosition + (Vector3.Backward + Vector3.Left) * HalfTileSize;
+		var v3 = TileWorldPosition + (Vector3.Right + Vector3.Backward) * HalfTileSize;
+
+		var uv0 = new Vector2( 0, 0 );
+		var uv1 = new Vector2( 1, 0 );
+		var uv2 = new Vector2( 0, 0.5f );
+		var uv3 = new Vector2( 1, 0.5f );
+
+		Vector2 VertBlends = new Vector2( 0, 0 );
+		Vector4 Texcord0 = GetUVCoords( Vector3.Up );
+
+		MapVertex[] arr = new MapVertex[]{
+					new MapVertex(v0   + Vector3.Up * World.TileHeight,Vector3.Up, Vector3.Right, uv0,VertBlends,Texcord0),
+					new MapVertex(v1   + Vector3.Up * World.TileHeight,Vector3.Up, Vector3.Right, uv1,VertBlends,Texcord0),
+					new MapVertex(v2   + Vector3.Up * World.TileHeight,Vector3.Up, Vector3.Right, uv2,VertBlends,Texcord0),
+					new MapVertex(v3   + Vector3.Up * World.TileHeight,Vector3.Up, Vector3.Right, uv3,VertBlends,Texcord0)
+				};
+		vertices.AddRange( arr );
+		int i = vertices.Count;
+		indices.AddRange( new List<int>(){
+					i - 1,i - 3,i - 4,
+					i - 2,i - 1,i - 4
+			} );
+	}
+
 	public Color32 GetMiniMapColor()
 	{
 		return Color32.White;
 	}
+	public virtual bool BreakAble()
+	{
+		return true;
+	}
 
 	public virtual bool IsSolid()
+	{
+		return true;
+	}
+	public virtual bool IsTranslucent()
+	{
+		return false;
+	}
+
+	public virtual bool HasMesh()
+	{
+		return true;
+	}
+
+	public virtual bool HasCollisions()
 	{
 		return true;
 	}
@@ -363,7 +374,7 @@ public class BaseBlock
 	/// 
 	/// </summary>
 	/// <returns> Start and End UV Coords</returns>	
-	public Vector4 GetUVCoords()
+	public Vector4 GetUVCoords( Vector3 Axis )
 	{
 		if ( MapSheet != null && Tile != null )
 		{
@@ -374,10 +385,20 @@ public class BaseBlock
 				SpriteViewport.height /= MapSheet.YSubdivisions;
 
 			var view = SpriteViewport;
-			var x = (Tile.Position.x * Tile.Position.y) % MapSheet.XSubdivisions;
-			var y = (Tile.Position.y * Tile.Position.x) % MapSheet.YSubdivisions;
+			float axisprogress = 0;
+			/* if ( Axis == Vector3.Right || Axis == Vector3.Left )
+				axisprogress = (Tile.Position.y) % (MapSheet.XSubdivisions);
+			else if ( Axis == Vector3.Forward || Axis == Vector3.Backward )
+				axisprogress = (Tile.Position.x) % (MapSheet.XSubdivisions);
+			else if ( Axis == Vector3.Up )
+			{ */
+			axisprogress = (Tile.Position.x + Tile.Position.y) % (MapSheet.XSubdivisions);
+			/* } */
+			axisprogress += 1;
+
+			int x = ((MapSheet.XSubdivisions.FloorToInt()) - axisprogress.FloorToInt()).Clamp( 0, MapSheet.XSubdivisions.FloorToInt() - 1 );
 			view.Position += new Vector2( x * SpriteViewport.width,
-										  y * SpriteViewport.height );
+										  0 * SpriteViewport.height );
 			Vector2 StartUV = view.Position / MapSheet.SpriteSheetTexture.Size;
 			Vector2 EndUV = (view.Position + view.Size) / MapSheet.SpriteSheetTexture.Size;
 			return new Vector4( StartUV.x, StartUV.y, EndUV.x, EndUV.y );
@@ -402,7 +423,7 @@ public class BaseBlock
 
 
 
-	private void AddWall( int TileSize, Vector3 right, Vector3 left, Vector2 Blends )
+	protected virtual void AddWall( int TileSize, Vector3 right, Vector3 left, Vector2 Blends )
 	{
 		var topleft = left + Vector3.Up * World.TileHeight;
 		var topright = right + Vector3.Up * World.TileHeight;
@@ -419,7 +440,16 @@ public class BaseBlock
 
 
 		ComputeTriangleNormalAndTangent( out var outnormal, out var outtangent, v0, v1, v2, uv0, uv1, uv2 );
-		Vector4 uvcoords = GetUVCoords();
+		Vector3 Axis;
+		//Get Closest Axis x forward y right z up
+		if ( Math.Abs( outnormal.x ) > Math.Abs( outnormal.y ) && Math.Abs( outnormal.x ) > Math.Abs( outnormal.z ) )
+			Axis = Vector3.Right;
+		else if ( Math.Abs( outnormal.y ) > Math.Abs( outnormal.z ) )
+			Axis = Vector3.Forward;
+		else
+			Axis = Vector3.Up;
+
+		Vector4 uvcoords = GetUVCoords( Axis );
 		MapVertex[] arr = new MapVertex[]{
 					new MapVertex(v0,outnormal, outtangent,uv0,Blends,uvcoords),
 					new MapVertex(v1,outnormal, outtangent,uv1,Blends,uvcoords),
@@ -436,7 +466,7 @@ public class BaseBlock
 
 	}
 
-	private static Vector4 ComputeTangentForFace( Vector3 faceS, Vector3 faceT, Vector3 normal )
+	protected static Vector4 ComputeTangentForFace( Vector3 faceS, Vector3 faceT, Vector3 normal )
 	{
 		var leftHanded = Vector3.Dot( Vector3.Cross( faceS, faceT ), normal ) < 0.0f;
 		var tangent = Vector4.Zero;
@@ -467,7 +497,7 @@ public class BaseBlock
 		return tangent;
 	}
 
-	private static Vector3 ComputeTriangleNormal( Vector3 v1, Vector3 v2, Vector3 v3 )
+	protected static Vector3 ComputeTriangleNormal( Vector3 v1, Vector3 v2, Vector3 v3 )
 	{
 		var e1 = v2 - v1;
 		var e2 = v3 - v1;
@@ -475,7 +505,7 @@ public class BaseBlock
 		return Vector3.Cross( e1, e2 ).Normal;
 	}
 
-	private static void ComputeTriangleTangentSpace( Vector3 p0, Vector3 p1, Vector3 p2, Vector2 t0, Vector2 t1, Vector2 t2, out Vector3 s, out Vector3 t )
+	protected static void ComputeTriangleTangentSpace( Vector3 p0, Vector3 p1, Vector3 p2, Vector2 t0, Vector2 t1, Vector2 t2, out Vector3 s, out Vector3 t )
 	{
 		const float epsilon = 1e-12f;
 
@@ -519,7 +549,7 @@ public class BaseBlock
 		t = t.Normal;
 	}
 
-	private static void ComputeTriangleNormalAndTangent( out Vector3 outNormal, out Vector4 outTangent, Vector3 v0, Vector3 v1, Vector3 v2, Vector2 uv0, Vector2 uv1, Vector2 uv2 )
+	protected static void ComputeTriangleNormalAndTangent( out Vector3 outNormal, out Vector4 outTangent, Vector3 v0, Vector3 v1, Vector3 v2, Vector2 uv0, Vector2 uv1, Vector2 uv2 )
 	{
 		outNormal = ComputeTriangleNormal( v0, v1, v2 );
 		ComputeTriangleTangentSpace( v0, v1, v2, uv0, uv1, uv2, out var faceS, out var faceT );

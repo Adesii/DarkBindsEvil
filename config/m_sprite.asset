@@ -6,6 +6,7 @@
 	minimapcolor(color1) : "Mini Map Color" :  : ""
 	mapblendpath(string) : "Map Blend Path" :  : ""
 	mapblendnormalpath(string) : "Map Blend Normal Path" :  : ""
+	blockid(integer) : "Block ID" : -1 : ""
 	name(string) : "Name" :  : ""
 	area(struct:Rect) : "Area" :  : ""
 	xsubdivisions(float) : "Xsubdivisions" : 0 : ""
@@ -13,6 +14,7 @@
 	areacolor(color1) : "Area Color" :  : ""
 	framerate(float) : "Frame Rate" : "12" : ""
 	spritesheetpath(string) { editor = "AssetBrowse(img)" } : "Sprite Sheet Path" :  : ""
+	spritesheetalphapath(string) { editor = "AssetBrowse(img)" } : "Sprite Sheet Alpha Path" :  : ""
 	spritesheetnormalpath(string) { editor = "AssetBrowse(img)" } : "Sprite Sheet Normal Path" :  : ""
 ]
 

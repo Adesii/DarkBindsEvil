@@ -6,12 +6,12 @@ public class WorldMovementHelper
 {
 	private Vector3 _position;
 	private Vector3 _directionVector;
-	private float _radius;
+	private Vector3 _radius;
 
-	public WorldMovementHelper( Vector3 Position, float Radius = 10f )
+	public WorldMovementHelper( Vector3 Position, Vector3 Size )
 	{
 		_position = Position;
-		_radius = Radius;
+		_radius = Size;
 	}
 
 	//TODO: Fix being able to move into the wall and therefore being able to move through inside Corners stuff like X0 where X is a Wall, so moving from 0 to 0
@@ -27,23 +27,23 @@ public class WorldMovementHelper
 
 		DebugOverlay.Line( _position, transformedPos, Color.Red );
 		NextTile?.DebugView( true );
-		if ( NextTile != null && !NextTile.Block.IsSolid() && NextTile.FloorBlock.IsSolid() )
+		if ( NextTile != null && !NextTile.Block.HasCollisions() && NextTile.FloorBlock.HasCollisions() )
 		{
 			if ( diff.x != 0 && diff.y != 0 )
 			{
 				var horizontaltile = World.GetMapTile( CurrentPosition + Vector2Int.Right * (Velocity.x > 0 ? -1 : 1) );
 				horizontaltile?.DebugView( true, Color.Green );
-				if ( horizontaltile?.Block.IsSolid() ?? false )
+				if ( horizontaltile?.Block.HasCollisions() ?? false )
 					directionvector = directionvector.WithX( 0 );
-				if ( !horizontaltile?.FloorBlock.IsSolid() ?? false )
+				if ( !horizontaltile?.FloorBlock.HasCollisions() ?? false )
 				{
 					directionvector = directionvector.WithX( 0 );
 				}
 				var VerticalTile = World.GetMapTile( CurrentPosition + Vector2Int.Up * (Velocity.y > 0 ? 1 : -1) );
 				VerticalTile?.DebugView( true, Color.Yellow );
-				if ( VerticalTile?.Block.IsSolid() ?? false && (VerticalTile?.FloorBlock.IsSolid() ?? false) )
+				if ( VerticalTile?.Block.HasCollisions() ?? false && (VerticalTile?.FloorBlock.HasCollisions() ?? false) )
 					directionvector = directionvector.WithY( 0 );
-				if ( !VerticalTile?.FloorBlock.IsSolid() ?? false )
+				if ( !VerticalTile?.FloorBlock.HasCollisions() ?? false )
 				{
 					directionvector = directionvector.WithY( 0 );
 				}
@@ -52,7 +52,7 @@ public class WorldMovementHelper
 
 			_position += directionvector;
 		}
-		else if ( NextTile != null && (NextTile.Block.IsSolid() || !NextTile.FloorBlock.IsSolid()) )
+		else if ( NextTile != null && (NextTile.Block.HasCollisions() || !NextTile.FloorBlock.HasCollisions()) )
 		{
 
 			if ( diff.x != 0 && diff.y == 0 )
@@ -67,17 +67,17 @@ public class WorldMovementHelper
 			{
 				var horizontaltile = World.GetMapTile( CurrentPosition + Vector2Int.Right * (Velocity.x > 0 ? -1 : 1) );
 				horizontaltile?.DebugView( true, Color.Green );
-				if ( horizontaltile?.Block.IsSolid() ?? false )
+				if ( horizontaltile?.Block.HasCollisions() ?? false )
 					directionvector = directionvector.WithX( 0 );
-				if ( !horizontaltile?.FloorBlock.IsSolid() ?? false )
+				if ( !horizontaltile?.FloorBlock.HasCollisions() ?? false )
 				{
 					directionvector = directionvector.WithX( 0 );
 				}
 				var VerticalTile = World.GetMapTile( CurrentPosition + Vector2Int.Up * (Velocity.y > 0 ? 1 : -1) );
 				VerticalTile?.DebugView( true, Color.Yellow );
-				if ( VerticalTile?.Block.IsSolid() ?? false && (VerticalTile?.FloorBlock.IsSolid() ?? false) )
+				if ( VerticalTile?.Block.HasCollisions() ?? false && (VerticalTile?.FloorBlock.HasCollisions() ?? false) )
 					directionvector = directionvector.WithY( 0 );
-				if ( !VerticalTile?.FloorBlock.IsSolid() ?? false )
+				if ( !VerticalTile?.FloorBlock.HasCollisions() ?? false )
 				{
 					directionvector = directionvector.WithY( 0 );
 				}

@@ -24,8 +24,7 @@ Layer0
 
 	//---- Material ----
 	SpriteSheet "materials/ground_floor_plane.png"
-	SpriteSheetNormal "[0.501961 0.501961 1.000000 0.000000]"
-	SpriteSheetTintMask "materials/default/default.tga"
+	SpriteSheetOpacityMask "[1.000000 1.000000 1.000000 0.000000]"
 
 	//---- Texture Coordinates ----
 	g_nScaleTexCoordUByModelScaleAxis "0"

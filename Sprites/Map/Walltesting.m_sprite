@@ -6,36 +6,166 @@
 		spriteareas = 
 		[
 			{
-				minimapcolor = [1,0,0,1]
+				minimapcolor = [ 1, 0, 0, 1 ]
 				name = "Dirt"
 				area = 
 				{
 					width = 96
 					height = 96
-					position = [0,0]
-					size = [96,64]
+					position = [ 0, 0 ]
+					size = [ 96, 64 ]
 				}
 				xsubdivisions = 3
 				ysubdivisions = 1
-				areacolor = [1,0,1,1]
+				areacolor = [ 0, 1, 0, 1 ]
 				framerate = 12
-				spritesheetpath = "/sprites/map/walls/walls_paint layer 1_spritesheet.png"
+				spritesheetpath = "/sprites/map/walls/spritesheet.png"
+				spritesheetalphapath = ""
 			},
 			{
-				minimapcolor = [1,0,1,1]
+				minimapcolor = [ 0, 1, 1, 1 ]
 				name = "Stone"
 				area = 
 				{
 					width = 96
 					height = 96
-					position = [0,64]
-					size = [96,64]
+					position = [ 96, 0 ]
+					size = [ 96, 64 ]
 				}
 				xsubdivisions = 3
 				ysubdivisions = 1
-				areacolor = [1,1,0,1]
+				areacolor = [ 0, 1, 1, 1 ]
 				framerate = 12
-				spritesheetpath = "/sprites/map/walls/walls_paint layer 1_spritesheet.png"
+				spritesheetpath = "/sprites/map/walls/spritesheet.png"
+			},
+			{
+				minimapcolor = [ 1, 0, 1, 1 ]
+				name = "ice"
+				area = 
+				{
+					width = 96
+					height = 96
+					position = [ 192, 0 ]
+					size = [ 96, 64 ]
+				}
+				xsubdivisions = 3
+				ysubdivisions = 1
+				areacolor = [ 1, 1, 1, 1 ]
+				framerate = 12
+				spritesheetpath = "/sprites/map/walls/spritesheet.png"
+			},
+			{
+				minimapcolor = [ 1, 0, 1, 1 ]
+				name = "Concrete"
+				area = 
+				{
+					width = 96
+					height = 96
+					position = [ 288, 0 ]
+					size = [ 96, 64 ]
+				}
+				xsubdivisions = 3
+				ysubdivisions = 1
+				areacolor = [ 1, 0, 1, 1 ]
+				framerate = 12
+				spritesheetpath = "/sprites/map/walls/spritesheet.png"
+			},
+			{
+				minimapcolor = [ 0, 1, 1, 1 ]
+				name = "Sand"
+				area = 
+				{
+					width = 96
+					height = 96
+					position = [ 0, 64 ]
+					size = [ 96, 64 ]
+				}
+				xsubdivisions = 3
+				ysubdivisions = 1
+				areacolor = [ 1, 1, 0, 1 ]
+				framerate = 12
+				spritesheetpath = "/sprites/map/walls/spritesheet.png"
+			},
+			{
+				minimapcolor = [ 1, 1, 0, 1 ]
+				name = "MarkedStone"
+				area = 
+				{
+					width = 96
+					height = 96
+					position = [ 96, 64 ]
+					size = [ 96, 64 ]
+				}
+				xsubdivisions = 3
+				ysubdivisions = 1
+				areacolor = [ 1, 1, 0, 1 ]
+				framerate = 12
+				spritesheetpath = "/sprites/map/walls/spritesheet.png"
+			},
+			{
+				minimapcolor = [ 0, 0, 1, 1 ]
+				name = "Marble"
+				area = 
+				{
+					width = 96
+					height = 96
+					position = [ 192, 64 ]
+					size = [ 96, 64 ]
+				}
+				xsubdivisions = 3
+				ysubdivisions = 1
+				areacolor = [ 1, 0, 0, 1 ]
+				framerate = 12
+				spritesheetpath = "/sprites/map/walls/spritesheet.png"
+			},
+			{
+				minimapcolor = [ 1, 1, 0, 1 ]
+				name = "Moss"
+				area = 
+				{
+					width = 96
+					height = 96
+					position = [ 288, 64 ]
+					size = [ 96, 64 ]
+				}
+				xsubdivisions = 3
+				ysubdivisions = 1
+				areacolor = [ 1, 1, 1, 1 ]
+				framerate = 12
+				spritesheetpath = "/sprites/map/walls/spritesheet.png"
+			},
+			{
+				minimapcolor = [ 1, 1, 1, 1 ]
+				name = "Water"
+				area = 
+				{
+					width = 96
+					height = 96
+					position = [ 0, 128 ]
+					size = [ 96, 64 ]
+				}
+				xsubdivisions = 3
+				ysubdivisions = 1
+				areacolor = [ 1, 1, 0, 1 ]
+				framerate = 12
+				spritesheetpath = "/sprites/map/walls/spritesheet.png"
+				spritesheetalphapath = "sprites/map/walls/spritesheet_a.png"
+			},
+			{
+				minimapcolor = [ 0, 1, 1, 1 ]
+				name = "Wood"
+				area = 
+				{
+					width = 96
+					height = 96
+					position = [ 96, 128 ]
+					size = [ 96, 64 ]
+				}
+				xsubdivisions = 3
+				ysubdivisions = 1
+				areacolor = [ 1, 1, 0, 1 ]
+				framerate = 12
+				spritesheetpath = "/sprites/map/walls/spritesheet.png"
 			},
 		]
 	}

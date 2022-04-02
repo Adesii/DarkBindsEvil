@@ -57,12 +57,12 @@ public partial class World
 								Position = new Vector2Int( WorldPosition.x, WorldPosition.y ),
 								ParentChunk = chunk
 							};
-							tile.Block = nv > 0.4f ? BaseBlock.Create( "Dirt" ) : new AirBlock();
-							tile.FloorBlock = nv > 0.2f ? BaseBlock.Create( "Dirt" ) : new AirBlock();
+							tile.Block = nv > 0.4f ? BaseBlock.Create( "Dirt" ) : BaseBlock.Create( "Air" );
+							tile.FloorBlock = nv > 0.2f ? BaseBlock.Create( "Dirt" ) : BaseBlock.Create( "Air" );
 							if ( nv == 1 )
 							{
 								tile.Block = BaseBlock.Create( "Stone" );
-								tile.FloorBlock = new AirBlock();
+								tile.FloorBlock = BaseBlock.Create( "Air" );
 							}
 							chunk.Tiles.Add( WorldPosition, tile );
 

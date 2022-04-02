@@ -40,6 +40,7 @@ COMMON
 	float TintAmount<Attribute("TintAmount");>;
 
 	#define PS_INPUT_HAS_TANGENT_BASIS 1
+	#define DEPTH_STATE_ALREADY_SET
 }
 
 //=========================================================================================================================
@@ -65,6 +66,8 @@ struct PixelInput
 VS
 {
 	#include "common/vertex.hlsl"
+
+	
 	//
 	// Main
 	//
@@ -92,12 +95,35 @@ PS
 
 	DynamicCombo( D_HAS_NORMALS, 0..1, Sys( ALL ) );
 
+	RenderState( DepthEnable, false );
+
     
 
 	float2 spriteStartUV <Attribute("StartUV");>;     // corner uv coord for sprite in atlas
 	float2 spriteEndVU <Attribute("EndUV");>;       // opposite corner uv coord for sprite in atlas
 	float FacingDirection<Attribute("Facing");Default(1);>;
 
+	float3 vSpritePivot <Attribute("SpritePivot");>;
+	
+    CreateTexture2D( g_tDepthBufferCopyTexture ) <AsSceneDepth; SrgbRead( false );	AddressU( CLAMP ); AddressV( CLAMP ); Filter( POINT ); >;
+
+	float FetchDepth( float2 vTexCoord )
+	{
+		float flProjectedDepth = Tex2D(g_tDepthBufferCopyTexture, vTexCoord.xy);
+		// Remap depth to viewport depth range
+		flProjectedDepth = RemapValClamped( flProjectedDepth, g_flViewportMinZ, g_flViewportMaxZ, 0.0, 1.0 );
+
+		return flProjectedDepth;
+	}
+
+	bool DepthTest( PixelInput i )
+	{
+		float fDepth = FetchDepth(CalculateViewportUv( i.vPositionSs ) );
+		float4 vPosPs = Position3WsToPs( vSpritePivot );
+		float fDepthObj = vPosPs.z / vPosPs.w;
+
+		return fDepth <= fDepthObj;
+	}
 	//
 	// Main
 	//
@@ -109,7 +135,7 @@ PS
 		float2 spriteRange = (spriteEndVU - spriteStartUV);
 		float2 uv = spriteStartUV + (frac(clamp(i.vTextureCoords.xy,0.001f,0.999f) ) * spriteRange);
 		float4 Color = Tex2D(g_tSpriteSheetTex, uv).rgba;
-		if(Color.a <0.01f){ 
+		if(Color.a <0.01f || DepthTest(i)){ 
 			discard;
 		}
 		o.vColor.a = 1;

@@ -1,16 +1,22 @@
 .inventory{
-    width: 35%;
-    height: 70%;
+    width: 50%;
+    height: 80%;
+    top: 10;
     background-color: rgba(197, 122, 35, 0.452);
-    align-self: center;
-    transition: opacity 0.3s ease-in-out;
+    transition: opacity 0.1s cubic-bezier(0.25, 1, 0.5, 1);
+    transition: transform 0.1s cubic-bezier(0.25, 1, 0.5, 1);
     background-image: url("/ui/MainMenu/UI-Background.png");
     image-rendering: pixelated;
     background-size: 512;
 
+    border-radius: 10px;
+
     
     opacity: 0.5;
+    transform: scaleY(1);
+    transform-origin: top;
     &.hidden{
+        transform: scaleY(0);
         opacity: 0;
     }
     pointer-events: visible;

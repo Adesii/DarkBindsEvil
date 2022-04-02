@@ -19,6 +19,7 @@ public class Inventory : Panel
 		if ( Instance?.HasClass( "hidden" ) ?? true )
 			return;
 
+
 		input.ClearButton( InputButton.Attack1 );
 		input.ClearButton( InputButton.Attack2 );
 	}

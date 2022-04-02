@@ -69,6 +69,8 @@ public partial class MapTile
 	{
 		if ( TileSO.IsValid() )
 			TileSO.Delete();
+		Block?.OnDestroyed();
+		FloorBlock?.OnDestroyed();
 	}
 
 	internal void Deserialize( ref BinaryReader reader )
@@ -103,6 +105,8 @@ public partial class MapTile
 		{
 			TileSO.Delete();
 		}
+		Block?.OnDestroyed();
+		FloorBlock?.OnDestroyed();
 
 		GeneratingMesh = true;
 		var BlockModel = Block.BuildMesh( Position );
@@ -120,6 +124,9 @@ public partial class MapTile
 		GeneratingMesh = false;
 		if ( model == null || (BlockModel == null && FloorBlockModel == null) )
 			return;
+		Block?.OnCreated();
+		FloorBlock?.OnCreated();
+
 		TileSO = new MapSceneObject( World.Scene, model, new Transform( WorldPosition ) )
 		{
 			//Bounds = new BBox( new Vector3( -World.HalfTileSize, -World.HalfTileSize, -World.TileHeight ), new Vector3( World.HalfTileSize, World.HalfTileSize, World.TileHeight ) ) + WorldPosition
