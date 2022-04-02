@@ -11,3 +11,8 @@ ChunkPreview{
     opacity: 1;
     position: absolute;
 }
+
+ChatBox{
+    z-index: -100;
+    pointer-events: none;
+}
