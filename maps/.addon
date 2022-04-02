@@ -1,7 +1,7 @@
 {
   "Title": "darkbindsempty",
   "Type": "map",
-  "Org": "local",
+  "Org": "adesi",
   "Ident": "darkbindsempty",
   "Schema": 1,
   "HasAssets": true,
@@ -11,6 +11,8 @@
   "CodePath": null,
   "RootNamespace": null,
   "Metadata": {
-    "GameSupport": []
+    "GameSupport": [
+      "adesi.darkbindsevil"
+    ]
   }
 }

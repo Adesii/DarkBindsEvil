@@ -1,19 +1,25 @@
 {
   "Title": "The Dark Binds Evil",
   "Type": "game",
-  "Org": "local",
-  "Ident": "the_dark_binds_evil",
+  "Org": "adesi",
+  "Ident": "darkbindsevil",
   "Schema": 1,
   "HasAssets": true,
   "AssetsPath": "",
-  "ResourcePaths": null,
+  "ResourcePaths": [
+    "/fonts/*",
+    "/Sprites/*",
+    "/ui/*"
+  ],
   "HasCode": true,
   "CodePath": "/code/",
   "RootNamespace": "DarkBinds",
   "Metadata": {
     "MapList": [
-      "local.darkbindsempty"
+      "adesi.darkbindsempty"
     ],
-    "MapSelect": 1
+    "MapSelect": 1,
+    "MinPlayers": 1,
+    "MaxPlayers": 16
   }
 }

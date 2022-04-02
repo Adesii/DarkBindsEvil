@@ -29,9 +29,9 @@ public partial class DarkBindsGame : Game
 			_ = new DarkBindsHud();
 			World = new World();
 		}
-
-		Event.Run( "BlockRegister.RegisterBlocks" );
 	}
+
+
 
 	public override void ClientJoined( Client client )
 	{

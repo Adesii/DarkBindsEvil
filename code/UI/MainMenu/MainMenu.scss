@@ -8,6 +8,8 @@
         transition:all 0.1s ease-in-out;
         opacity: 0;
     }
+    justify-content: center;
+    align-items: center;
 }
 .BackGround{
     position: absolute;
@@ -39,10 +41,7 @@
     .menu-btn{
         height: 100px;
         width: 100%;
-        background-image: url("/ui/MainMenu/UI-Background-Stone.png");
-        image-rendering: pixelated;
-        background-size: 512;
-        background-position: -100 0;
+        
         border-radius: 10px;
 
         align-items: center;
@@ -52,6 +51,11 @@
             background-color: #f7e6b1;
         }
         pointer-events: all;
+
+        &.wip{
+            opacity: 0.5;
+            pointer-events: none;
+        }
     }
 }
 
@@ -84,6 +88,7 @@
     align-items: center;
     justify-content: space-between;
     padding: 25px;
+    opacity: 0.5;
     .LobbyTitle{
         font-size: 30px;
         font-weight: bold;
@@ -103,5 +108,89 @@
             font-weight: bold;
         }
 
+    }
+}
+
+.LoadMenu{
+    width: 70%;
+    height: 70%;
+    background-image: url("/ui/MainMenu/UI-Background.png");
+    image-rendering: pixelated;
+    background-size: contain;
+    background-repeat: repeat;
+    background-position-x: -10%;
+    border-radius: 10px;
+    justify-content: center;
+    flex-direction: column;
+    padding: 10px;
+    transition:opacity 0.5s ease-in-out;
+    .LoadTitle{
+        font-size: 30px;
+        font-weight: bold;
+        height: 50px;
+        width: 100%;
+        text-align: center;
+        margin-top: 10px;
+    }
+    .LoadList{
+        width: 90%;
+        height: 80%;
+        flex-direction: column;
+        align-items: center;
+        background-color: rgba(5, 5, 5, 0.329);
+        border-radius: 10px;
+        align-self: center;
+        .LoadListing{
+            width: 400px;
+            height: 100px;
+
+            font-size: 30px;
+            font-weight: bold;
+        }
+
+    }
+    .backbutton{
+        width: 250px;
+        height: 100px;
+        background-image: url("/ui/MainMenu/UI-Background-Stone.png");
+        image-rendering: pixelated;
+        background-size: 512;
+        pointer-events: all;
+        font-family: Public Pixel;
+        justify-content: center;
+        align-items: center;
+        font-size: 40px;
+        color: $MainFontColor;
+        text-shadow: 5px 3px rgb(0, 0, 0);
+        transition: all 0.1s ease-in-out;
+        transform: scale(1);
+        &:hover{
+            filter:brightness(1.5);
+            transform: scale(1.05);
+        }
+    }
+    &.hidden{
+        opacity: 0;
+    }
+    SaveState{
+        height: 70px;
+        width: 100%;
+        margin-bottom: 10px;
+        .SaveName{
+            flex-grow: 1;
+            background-color: rgba(0, 0, 0, 0.267);
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+        }
+        .overwritesave{
+            label {
+                font-family: materialicons;
+                font-size: 40px;
+                min-width: 100px;
+                justify-content: center;
+                text-align: center;
+            }
+        }
     }
 }

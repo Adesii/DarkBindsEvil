@@ -112,6 +112,56 @@ public partial class World : Entity
 		}
 
 	}
+	[ServerCmd]
+	public static void SaveWorld( string filename )
+	{
+		Host.AssertServer();
+		var startTimer = DateTime.Now;
+		var data = new MemoryStream();
+		var writer = new BinaryWriter( data );
+		writer.Write( Instance.Tiles.Count );
+		foreach ( var item in Instance.Tiles )
+		{
+			item.Value.SerializeToCompressed( ref writer );
+		}
+		writer.Flush();
+		var compressed = new MemoryStream();
+		using ( var gzip = new GZipStream( compressed, CompressionMode.Compress, false ) )
+		{
+			data.Position = 0;
+			data.CopyTo( gzip );
+		}
+		var compressedData = compressed.ToArray();
+		var compressedDataString = Convert.ToBase64String( compressedData );
+		var endTimer = DateTime.Now;
+		var time = endTimer - startTimer;
+		Log.Info( $"World saved in {time.TotalMilliseconds}ms" );
+		FileSystem.Data.WriteAllText( "Saves/" + filename + ".m_save", compressedDataString );
+	}
+	[ServerCmd]
+	public static void LoadWorld( string filename )
+	{
+		Host.AssertServer();
+		var startTimer = DateTime.Now;
+		var compressedData = Convert.FromBase64String( FileSystem.Data.ReadAllText( "Saves/" + filename ) );
+		var compressed = new MemoryStream( compressedData );
+		using ( var gzip = new GZipStream( compressed, CompressionMode.Decompress, false ) )
+		{
+			var reader = new BinaryReader( gzip );
+			var count = reader.ReadInt32();
+			for ( int i = 0; i < count; i++ )
+			{
+				var chunk = new MapChunk();
+				chunk.DeserializeFromCompressed( ref reader );
+				Instance.Tiles.Add( chunk.Position, chunk );
+			}
+		}
+		var endTimer = DateTime.Now;
+		var time = endTimer - startTimer;
+		Log.Info( $"World loaded in {time.TotalMilliseconds}ms" );
+		World.Instance.WorldNeedsUpdate = true;
+		World.Instance.SendchunksChunked( 32 );
+	}
 
 
 

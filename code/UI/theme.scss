@@ -9,14 +9,24 @@ label{
 }
 
 button{
+    justify-content: center;
+    align-items: center;
     font-family: Public Pixel;
     font-size: 40px;
     color: $MainFontColor;
     text-shadow: 5px 3px rgb(0, 0, 0);
     transition: all 0.1s ease-in-out;
     transform: scale(1);
+
+    background-image: url("/ui/MainMenu/UI-Background-Stone.png");
+    image-rendering: pixelated;
+    background-size: 512;
+    background-position: -100 0;
+
+    border-radius: 10px;
     &:hover{
         filter:brightness(1.5);
         transform: scale(1.05);
     }
+    pointer-events: visible;
 }

@@ -3,11 +3,11 @@
 <div class="MainMenu">
 	<div class="BackGround"></div>
 	<div class="MainMenuSelect">
-		<button class="menu-btn">Continue</button>
+		<button class="menu-btn wip">Continue</button>
 		<button class="menu-btn" onclick="NewGame()">New Game</button>
-		<button class="menu-btn">Load Game</button>
-		<button class="menu-btn">Settings</button>
-		<button class="menu-btn">Credits</button>
+		<button class="menu-btn" onclick="OpenLoadMenu()">Load Game</button>
+		<button class="menu-btn wip">Settings</button>
+		<button class="menu-btn wip">Credits</button>
 	</div>
 
 	<div class="TitlePanel"> </div>
@@ -20,5 +20,14 @@
 			<label class="PlayerListing">Player3</label>
 			<label class="PlayerListing">Player4</label>
 		</div>
+	</div>
+
+	<div class="LoadMenu hidden" @ref="LoadMenu">
+		<label class="LoadTitle">Load Game</label>
+		<div class="LoadList" @ref="LoadList">
+
+		</div>
+
+		<button class="backbutton" onclick="CloseLoadMenu()">Back</button>
 	</div>
 </div>

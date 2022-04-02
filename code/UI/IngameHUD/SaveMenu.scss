@@ -1,0 +1,90 @@
+
+@import "/ui/ingamehud/_textentry.scss";
+@import "/ui/theme.scss";
+
+
+SaveMenu{
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    pointer-events: none;
+    justify-content: center;
+    align-items: center;
+}
+
+.SaveButton{
+    position: absolute;
+    bottom: 10px;
+    left: 10px;
+    width: 200px;
+    height: 100px;
+}
+
+.SaveMenuPanel{
+    position: absolute;
+    width: 50%;
+    height: 50%;
+    pointer-events: none;
+    background-image: url("/ui/MainMenu/UI-Background.png");
+    image-rendering: pixelated;
+    background-size: contain;
+    background-repeat: repeat;
+    background-position-x: -10%;
+    flex-direction: column;
+    padding: 10px;
+    pointer-events: visible;
+    &.hidden{
+        transition:all 0.1s ease-in-out;
+        opacity: 0;
+    }
+
+    .SaveTitle{
+        width: 100%;
+        text-align: center;
+    }
+    .SaveGameRow{
+        margin: 10px;
+        width: 90%;
+        height: 50px;
+        align-self: center;
+        .savegamename{
+            flex-grow: 1;
+            text-align: center;
+        }
+        .savegamebutton{
+            pointer-events: all;
+        }
+    }
+    .SaveList{
+        flex-grow: 1;
+        background-color: rgba(0, 0, 0, 0.397);
+        border-radius: 10px;
+        margin: 10px;
+        flex-direction: column;
+    }
+    .backbutton{
+        pointer-events: all;
+    }
+
+}
+SaveState{
+    height: 70px;
+    width: 100%;
+    margin-bottom: 10px;
+    .SaveName{
+        flex-grow: 1;
+        background-color: rgba(0, 0, 0, 0.267);
+        justify-content: center;
+        align-items: center;
+        text-align: center;
+    }
+    .overwritesave{
+        label {
+            font-family: materialicons;
+            font-size: 40px;
+            min-width: 100px;
+            justify-content: center;
+            text-align: center;
+        }
+    }
+}

@@ -13,7 +13,7 @@ public class TopDownCamera : CameraMode
 	}
 	public override void Update()
 	{
-		Position = Entity.Position + Entity.Rotation * (Vector3.Up * CameraHeight - Vector3.Forward * CameraHeight / 4);
+		Position = Entity.Position + Entity.Rotation * (Vector3.Up * CameraHeight - Vector3.Forward * CameraHeight / 3);
 		Rotation = Rotation.LookAt( Entity.Position - Position );
 
 	}
