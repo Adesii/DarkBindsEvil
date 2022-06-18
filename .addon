@@ -15,10 +15,8 @@
   "CodePath": "/code/",
   "RootNamespace": "DarkBinds",
   "Metadata": {
-    "MapList": [
-      "adesi.darkbindsempty"
-    ],
-    "MapSelect": 1,
+    "MapList": [],
+    "MapSelect": 4,
     "MinPlayers": 1,
     "MaxPlayers": 16,
     "PerMapRanking": false,

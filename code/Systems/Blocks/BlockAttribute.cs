@@ -6,9 +6,9 @@ public class BlockAttribute : LibraryAttribute
 	public string BlockName { get; set; }
 	public int BlockID { get; set; }
 
-	public BlockAttribute( string blockName, int BlockID = -1 )
+	public BlockAttribute( string blockName, int BlockID = -1 ) : base( blockName.ToLower() )
 	{
-		BlockName = blockName;
+		this.BlockName = blockName;
 		this.BlockID = BlockID;
 	}
 }

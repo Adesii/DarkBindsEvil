@@ -30,16 +30,16 @@ public class Cursor : Panel
 		if ( hovered == null/*  || hovered is RootPanel  */)
 			return;
 
-		if ( input.Pressed( InputButton.Attack2 ) )
+		if ( input.Pressed( InputButton.SecondaryAttack ) )
 		{
 			hovered.CreateEvent( new MousePanelEvent( "onclick", hovered, "mouseleft" ) );
 		}
-		if ( input.Pressed( InputButton.Attack1 ) )
+		if ( input.Pressed( InputButton.PrimaryAttack ) )
 		{
 			hovered.CreateEvent( new MousePanelEvent( "onclick", hovered, "mouseright" ) );
 		}
-		input.ClearButton( InputButton.Attack1 );
-		input.ClearButton( InputButton.Attack2 );
+		input.ClearButton( InputButton.PrimaryAttack );
+		input.ClearButton( InputButton.SecondaryAttack );
 	}
 	public override void Tick()
 	{

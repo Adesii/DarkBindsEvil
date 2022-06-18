@@ -5,7 +5,8 @@ namespace DarkBinds.Systems.Worlds;
 
 public partial class World
 {
-	[ServerCmd]
+
+	[ConCmd.Server]
 	public static void RegenerateWorld()
 	{
 		Instance.Generate();

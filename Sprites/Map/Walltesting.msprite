@@ -2,7 +2,7 @@
 {
 	data = 
 	{
-		fileextension = "Map (*.m_sprite)"
+		fileextension = "Map (*.msprite)"
 		spriteareas = 
 		[
 			{

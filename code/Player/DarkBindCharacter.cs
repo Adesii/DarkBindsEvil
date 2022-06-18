@@ -157,7 +157,7 @@ public partial class DarkBindCharacter : ModelSprite
 			DebugOverlay.Box( wpos, -tileExtends.WithZ( 0 ), tileExtends, Color.Green.WithAlpha( 0.3f ), Time.Delta * 2 );
 		}
 
-		if ( Input.Down( InputButton.Attack1 ) && IsServer && LastAttack > 0.1f )
+		if ( Input.Down( InputButton.PrimaryAttack ) && IsServer && LastAttack > 0.1f )
 		{
 			LastAttack = 0;
 			var currentPos = Position;
@@ -172,7 +172,7 @@ public partial class DarkBindCharacter : ModelSprite
 			}
 
 		}
-		if ( Input.Down( InputButton.Attack2 ) && IsServer && LastAttack > 0.1f )
+		if ( Input.Down( InputButton.SecondaryAttack ) && IsServer && LastAttack > 0.1f )
 		{
 			LastAttack = 0;
 			for ( int i = 0; i < blocks.Count; i++ )
@@ -220,7 +220,7 @@ public partial class DarkBindCharacter : ModelSprite
 
 	}
 
-	[ServerCmd]
+	[ConCmd.Server]
 	public static void NoclipDarkBind()
 	{
 		Entity.All.OfType<DarkBindCharacter>().ToList().ForEach( ( x ) =>
@@ -268,7 +268,7 @@ public partial class DarkBindCharacter : ModelSprite
 			World.SendTile( block );
 		}
 	}
-	[ServerCmd]
+	[ConCmd.Server]
 	public static void CreateLightSource()
 	{
 		if ( ConsoleSystem.Caller?.Pawn is DarkBindCharacter charr )

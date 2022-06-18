@@ -112,7 +112,7 @@ public partial class World : Entity
 		}
 
 	}
-	[ServerCmd]
+	[ConCmd.Server]
 	public static void SaveWorld( string filename )
 	{
 		Host.AssertServer();
@@ -138,7 +138,7 @@ public partial class World : Entity
 		Log.Info( $"World saved in {time.TotalMilliseconds}ms" );
 		FileSystem.Data.WriteAllText( "Saves/" + filename + ".m_save", compressedDataString );
 	}
-	[ServerCmd]
+	[ConCmd.Server]
 	public static void LoadWorld( string filename )
 	{
 		Host.AssertServer();

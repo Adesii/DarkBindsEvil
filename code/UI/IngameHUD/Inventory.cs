@@ -20,7 +20,7 @@ public class Inventory : Panel
 			return;
 
 
-		input.ClearButton( InputButton.Attack1 );
-		input.ClearButton( InputButton.Attack2 );
+		input.ClearButton( InputButton.PrimaryAttack );
+		input.ClearButton( InputButton.SecondaryAttack );
 	}
 }

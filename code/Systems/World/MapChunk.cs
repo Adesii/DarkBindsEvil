@@ -112,7 +112,7 @@ public partial class MapChunk
 		int y = reader.ReadInt32();
 		Position = new Vector2Int( x, y );
 		int count = reader.ReadInt32();
-		Log.Debug( $"Deserializing {count} tiles" );
+		Log.Debug( $"Deserializing {count} tiles", 100 );
 
 		Tiles = new Dictionary<Vector2Int, MapTile>();
 
@@ -126,7 +126,7 @@ public partial class MapChunk
 	}
 	public void SerializeToCompressed( ref BinaryWriter writer )
 	{
-		Log.Debug( $"Serializing {Tiles.Count} tiles" );
+		Log.Debug( $"Serializing {Tiles.Count} tiles", 100 );
 		writer.Write( Position.x );
 		writer.Write( Position.y );
 		writer.Write( Tiles.Count );

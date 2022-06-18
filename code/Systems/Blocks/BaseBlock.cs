@@ -6,10 +6,21 @@ using System.Collections.Generic;
 
 namespace DarkBinds.Systems.Blocks;
 
-[Library]
+[Library( "BaseBlock" )]
 public class BaseBlock
 {
-	public static Dictionary<string, BlockAttribute> BlockList = new();
+	private static Dictionary<string, BlockAttribute> _blocks = new Dictionary<string, BlockAttribute>();
+	public static Dictionary<string, BlockAttribute> BlockList
+	{
+		get
+		{
+			if ( _blocks.Count == 0 )
+			{
+				RegisterBlocks();
+			}
+			return _blocks;
+		}
+	}
 
 	public string Name { get; set; }
 	public MapSheetArea MapSheet { get; set; }
@@ -42,23 +53,29 @@ public class BaseBlock
 	public virtual void OnDeserialize( ref BinaryReader reader )
 	{
 	}
+
 	[Event.Entity.PostSpawn]
 	public static void RegisterBlocks()
 	{
-		BlockList = new();
-		var listofBlocks = Library.GetAttributes<BlockAttribute>();
+		_blocks = new();
+		var listofBlocks = TypeLibrary.GetAttributes<BlockAttribute>();
 		foreach ( var block in listofBlocks )
 		{
-			BlockList[block.BlockName.ToLower()] = block;
+			_blocks[block.BlockName.Trim().ToLower()] = block;
+			Log.Info( $"Registered block {block.BlockName}" );
 		}
 	}
 
+
+	static int b = 100;
 	public static BaseBlock Create( string name )
 	{
-		var testblock = BlockList.GetValueOrDefault( name.ToLower() );
+		name = name.Trim().ToLower();
+		var testblock = BlockList.GetValueOrDefault( name );
 		if ( testblock != null )
 		{
-			var block = testblock.Create<BaseBlock>();
+			var block = TypeLibrary.Create<BaseBlock>( TypeLibrary.GetTypeByName( testblock.BlockName.Trim().ToLower() ) );
+			//Log.Info( $"Created block {block.Name}" );
 			block.Name = name;
 			block.MapSheet = MapSheetAsset.GetBlockArea( name );
 			return block;
@@ -72,7 +89,7 @@ public class BaseBlock
 				Name = name,
 			};
 		}
-		return null;
+		return new();
 	}
 	protected List<MapVertex> vertices = new();
 	protected List<int> indices = new();
@@ -100,7 +117,7 @@ public class BaseBlock
 		int hasSouthWestWall = -1;
 
 		//NorthWall
-		if ( NorthBlock != null && NorthBlock.Block.IsTranslucent() )
+		if ( NorthBlock.IsValid() && NorthBlock.Block.IsTranslucent() )
 		{
 			var right = TileWorldPosition + (Vector3.Forward + Vector3.Right) * HalfTileSize;
 			var left = right + Vector3.Left * TileSize;
@@ -111,7 +128,7 @@ public class BaseBlock
 			VertCount += 4;
 		}
 		//SouthWall
-		if ( SouthBlock != null && SouthBlock.Block.IsTranslucent() )
+		if ( SouthBlock.IsValid() && SouthBlock.Block.IsTranslucent() )
 		{
 			var right = TileWorldPosition + (Vector3.Backward + Vector3.Left) * HalfTileSize;
 			var left = right + Vector3.Right * TileSize;
@@ -123,7 +140,7 @@ public class BaseBlock
 			VertCount += 4;
 		}
 		//EastWall
-		if ( EastBlock != null && EastBlock.Block.IsTranslucent() )
+		if ( EastBlock.IsValid() && EastBlock.Block.IsTranslucent() )
 		{
 			var right = TileWorldPosition + (Vector3.Left + Vector3.Forward) * HalfTileSize;
 			var left = right + Vector3.Backward * TileSize;
@@ -140,7 +157,7 @@ public class BaseBlock
 			VertCount += 4;
 		}
 		//WestWall
-		if ( WestBlock != null && WestBlock.Block.IsTranslucent() )
+		if ( WestBlock.IsValid() && WestBlock.Block.IsTranslucent() )
 		{
 			var right = TileWorldPosition + (Vector3.Right + Vector3.Backward) * HalfTileSize;
 			var left = right + Vector3.Forward * TileSize;
@@ -220,7 +237,7 @@ public class BaseBlock
 		int hasSouthWestWall = -1;
 
 		//NorthWall
-		if ( NorthBlock != null && NorthBlock.FloorBlock.IsTranslucent() )
+		if ( NorthBlock.IsValid() && NorthBlock.FloorBlock.IsTranslucent() )
 		{
 			var right = TileWorldPosition + (Vector3.Forward + Vector3.Right) * HalfTileSize;
 			var left = right + Vector3.Left * TileSize;
@@ -231,7 +248,7 @@ public class BaseBlock
 			VertCount += 4;
 		}
 		//SouthWall
-		if ( SouthBlock != null && SouthBlock.FloorBlock.IsTranslucent() )
+		if ( SouthBlock.IsValid() && SouthBlock.FloorBlock.IsTranslucent() )
 		{
 			var right = TileWorldPosition + (Vector3.Backward + Vector3.Left) * HalfTileSize;
 			var left = right + Vector3.Right * TileSize;
@@ -243,7 +260,7 @@ public class BaseBlock
 			VertCount += 4;
 		}
 		//EastWall
-		if ( EastBlock != null && EastBlock.FloorBlock.IsTranslucent() )
+		if ( EastBlock.IsValid() && EastBlock.FloorBlock.IsTranslucent() )
 		{
 			var right = TileWorldPosition + (Vector3.Left + Vector3.Forward) * HalfTileSize;
 			var left = right + Vector3.Backward * TileSize;
@@ -260,7 +277,7 @@ public class BaseBlock
 			VertCount += 4;
 		}
 		//WestWall
-		if ( WestBlock != null && WestBlock.FloorBlock.IsTranslucent() )
+		if ( WestBlock.IsValid() && WestBlock.FloorBlock.IsTranslucent() )
 		{
 			var right = TileWorldPosition + (Vector3.Right + Vector3.Backward) * HalfTileSize;
 			var left = right + Vector3.Forward * TileSize;

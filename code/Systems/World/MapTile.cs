@@ -153,9 +153,9 @@ public partial class MapTile
 
 	internal void DebugView( bool alwaysshow = false, Color color = default )
 	{
-		if ( !Block.IsSolid() && !alwaysshow )
+		if ( (!Block.IsSolid() && !alwaysshow) || !Debug.Enabled )
 			return;
-		Debug.Box( WorldPosition + World.HalfTileSize, WorldPosition - World.HalfTileSize, color == new Color() ? Color.Red : color, 0, false );
+		DebugOverlay.Box( WorldPosition + World.HalfTileSize, WorldPosition - World.HalfTileSize, color == new Color() ? Color.Red : color, 0, false );
 	}
 
 	internal void SetAttributes()

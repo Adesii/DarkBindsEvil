@@ -2,7 +2,7 @@ global using Sandbox;
 global using Sandbox.UI;
 global using Sandbox.UI.Construct;
 global using Sandbox.Component;
-global using Hammer;
+global using SandboxEditor;
 
 global using System;
 global using System.Collections.Generic;
@@ -13,6 +13,7 @@ global using System.Threading.Tasks;
 using DarkBinds.Player;
 using DarkBinds.UI;
 using DarkBinds.Systems.Worlds;
+using DarkBinds.Systems.Blocks;
 
 namespace DarkBinds;
 
@@ -28,6 +29,11 @@ public partial class DarkBindsGame : Game
 		{
 			_ = new DarkBindsHud();
 			World = new World();
+			var idk = new EnvironmentLightEntity()
+			{
+				Brightness = 0,
+				Rotation = Vector3.Forward.EulerAngles.ToRotation()
+			};
 		}
 	}
 
@@ -60,4 +66,6 @@ public partial class DarkBindsGame : Game
 
 		cl.Pawn.Kill();
 	}
+
+
 }
