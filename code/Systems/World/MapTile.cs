@@ -2,6 +2,7 @@ using System.IO;
 using System.Numerics;
 using System.Runtime.Serialization;
 using DarkBinds.Systems.Blocks;
+using DarkBinds.Systems.Renderer;
 using Sandbox;
 using SpriteKit.Asset;
 
@@ -93,7 +94,10 @@ public partial class MapTile
 
 	public void BuildMesh()
 	{
+		//return Block.BuildMesh( ref mb, Position );
 		CreateSceneObject();
+
+
 	}
 
 	private void CreateSceneObject()
@@ -107,27 +111,27 @@ public partial class MapTile
 
 		GeneratingMesh = true;
 		var BlockModel = Block.BuildMesh( Position );
-		/* 		var builder = mb;
-				if ( BlockModel != null )
-				{
-					builder.AddMesh( BlockModel );
-				} */
+		var builder = Model.Builder;
+		if ( BlockModel != null )
+		{
+			builder.AddMesh( BlockModel );
+		}
 		var FloorBlockModel = FloorBlock.BuildFloorMesh( Position );
-		/* 		if ( FloorBlockModel != null )
-				{
-					builder.AddMesh( FloorBlockModel );
-				} */
-		//var model = builder.Create();
+		if ( FloorBlockModel != null )
+		{
+			builder.AddMesh( FloorBlockModel );
+		}
+		var model = builder.Create();
 		GeneratingMesh = false;
-		if ( /* model == null || */ (BlockModel == null && FloorBlockModel == null) )
+		if ( model == null || (BlockModel == null && FloorBlockModel == null) )
 			return;
 		Block?.OnCreated();
 		FloorBlock?.OnCreated();
 
-		/* TileSO = new MapSceneObject( World.RenderLayer, model, new Transform( WorldPosition ) )
+		TileSO = new MapSceneObject( PixelWorldRenderer.GetDefaultWorld(), model, new Transform( WorldPosition ) )
 		{
 			//Bounds = new BBox( new Vector3( -World.HalfTileSize, -World.HalfTileSize, -World.TileHeight ), new Vector3( World.HalfTileSize, World.HalfTileSize, World.TileHeight ) ) + WorldPosition
-		}; */
+		};
 
 		//SetAttributes();
 

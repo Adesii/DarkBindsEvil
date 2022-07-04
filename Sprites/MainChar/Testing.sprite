@@ -19,7 +19,6 @@
 				framerate = 12
 				spriteorigin = [ 0.5, 0 ]
 				spritesheetpath = "/sprites/mainchar/maindarksheet.png"
-				spritesheetnormalpath = "sprites/mainchar/maindarksheet_normal.png"
 			},
 			{
 				name = "Walk"
@@ -36,7 +35,6 @@
 				framerate = 20.0
 				spriteorigin = [ 0.5, 0 ]
 				spritesheetpath = "/sprites/mainchar/maindarksheet.png"
-				spritesheetnormalpath = "sprites/mainchar/maindarksheet_normal.png"
 			},
 		]
 	}

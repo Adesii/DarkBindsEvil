@@ -10,7 +10,7 @@ public class MarkedStone : BaseBlock
 	public override void OnCreated()
 	{
 		base.OnCreated();
-		Light = new SceneLight( PixelWorldRenderer.GetDefaultWorld().Scene, Tile.WorldPosition + Vector3.Up * World.HalfTileSize, 100f, (Color.Parse( "#24799e" ) ?? Color.Blue) )
+		Light = new SceneLight( PixelWorldRenderer.GetDefaultWorld(), Tile.WorldPosition + Vector3.Up * World.HalfTileSize, 100f, (Color.Parse( "#24799e" ) ?? Color.Blue) )
 		{
 			Falloff = 1,
 		};

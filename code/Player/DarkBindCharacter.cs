@@ -54,12 +54,12 @@ public partial class DarkBindCharacter : ModelSprite
 	private SceneSpotLight FollowSun { get; set; }
 	public override void ClientSpawn()
 	{
-		TargetSceneWorld = PixelWorldRenderer.GetDefaultCharacters().Scene;
+		TargetSceneWorld = PixelWorldRenderer.GetDefaultCharacters();
 		base.ClientSpawn();
 		if ( Host.IsClient && Local.Pawn == this )
 		{
 
-			var worldscene = PixelWorldRenderer.GetDefaultWorld().Scene;
+			var worldscene = PixelWorldRenderer.GetDefaultWorld();
 			FollowSun = new SceneSpotLight( worldscene, Position, Color.White )
 			{
 				Rotation = Rotation.LookAt( Vector3.Down ),

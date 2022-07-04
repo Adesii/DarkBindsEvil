@@ -33,7 +33,7 @@ public partial class World : Entity
 		base.ClientSpawn();
 		Instance = this;
 
-		World.RenderLayer = PixelWorldRenderer.GetDefaultWorld().Scene;
+		World.RenderLayer = PixelWorldRenderer.GetDefaultWorld();
 	}
 
 
@@ -52,7 +52,7 @@ public partial class World : Entity
 		Tiles = new();
 		ClearTiles();
 
-		//World.RenderLayer = PixelWorldRenderer.GetDefaultWorld().Scene;
+		//World.RenderLayer = Map.Scene;
 
 
 	}
@@ -107,7 +107,7 @@ public partial class World : Entity
 			LastCleanup = 0;
 		}
 
-		foreach ( var item in Tiles.Values )
+		foreach ( var item in ActiveChunks )
 		{
 			item.Render();
 		}
