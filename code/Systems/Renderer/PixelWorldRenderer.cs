@@ -14,7 +14,7 @@ public class PixelWorldRenderer : SceneCustomObject
 
 	public PixelWorldRenderer( SceneWorld sceneWorld ) : base( sceneWorld )
 	{
-		Bounds = new( -10, 10 );
+		Bounds = new( -1000, 1000 );
 		Event.Register( this );
 
 		ScreenMaterial = Material.Load( "materials/screen_renderer.vmat" );
@@ -25,25 +25,25 @@ public class PixelWorldRenderer : SceneCustomObject
 	public void UpdatePosition()
 	{
 		if ( PlayerCam != null )
-			Position = PlayerCam.Position + PlayerCam.Rotation.Forward * 3;
+			Position = PlayerCam.Position + PlayerCam.Rotation.Forward * 100;
 	}
 
 	public static SceneWorld GetDefaultWorld()
 	{
-		var layer = Get( -1 );
+		var layer = Get( 0 );
 		if ( !layer.IsInit )
 			layer.Settings = new()
 			{
 				IsQuantized = true,
-				IsFullScreen = false,
+				IsFullScreen = true,
 				IsPixelPerfectWithOverscan = true,
-				ScaleFactor = 8
+				ScaleFactor = 8,
 			};
 		return layer.Scene;
 	}
 	public static SceneWorld GetDefaultCharacters()
 	{
-		var layer = Get( 0 );
+		var layer = Get( 1 );
 		if ( !layer.IsInit )
 			layer.Settings = new()
 			{
@@ -59,15 +59,21 @@ public class PixelWorldRenderer : SceneCustomObject
 		if ( Layers == null )
 			Layers = new();
 		if ( !Layers.ContainsKey( v ) )
-			Layers[v] = new PixelLayer();
+		{
+			Layers[v] = new PixelLayer
+			{
+				RenderOrder = v
+			};
+		}
 		return Layers[v];
 	}
-
+	public Texture LastDepth;
 	public override void RenderSceneObject()
 	{
 		base.RenderSceneObject();
 		//Render.SetupLighting( this, attr );
 		if ( Layers != null && Layers.Count > 0 )
+		{
 			foreach ( var item in Layers.OrderBy( x => x.Key ) )
 			{
 				var layer = item.Value;
@@ -75,8 +81,10 @@ public class PixelWorldRenderer : SceneCustomObject
 				layer.RenderPosition = PlayerCam.Position;
 				layer.RenderRotation = PlayerCam.Rotation;
 				layer.FOV = PlayerCam.FieldOfView;
+				layer.RenderOrder = item.Key;
 				layer.RenderLayer();
-
 			}
+		}
+
 	}
 }

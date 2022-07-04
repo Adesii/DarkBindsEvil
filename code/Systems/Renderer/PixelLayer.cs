@@ -21,10 +21,7 @@ public class PixelLayer
 	public SceneWorld Scene { get; set; }
 	public bool IsInit = false;
 
-	//public PixelTextures PixelTextures { get; set; }
-
-	public Texture ColRender;
-	public Texture DepRender;
+	public PixelTextures PixelTextures { get; set; }
 
 
 
@@ -58,8 +55,7 @@ public class PixelLayer
 	[Event.Screen.SizeChanged]
 	public void ViewChanged()
 	{
-		ColRender?.Dispose();
-		DepRender?.Dispose();
+		PixelTextures?.Dispose();
 		//await GameTask.DelayRealtime( 100 );
 		if ( Settings.IsFullScreen )
 		{
@@ -72,22 +68,22 @@ public class PixelLayer
 		if ( Settings.RenderSize.Length <= 2 ) return;
 		//PixelTextures = new( Settings.RenderSize, false );
 
-		ColRender = Texture.CreateRenderTarget().WithSize( Settings.RenderSize ).WithScreenFormat().Create();
-		DepRender = Texture.CreateRenderTarget().WithSize( Settings.RenderSize ).WithDepthFormat().Create();
+		PixelTextures = new( Settings.RenderSize, false, false, false );
 		canRender = true;
 
 	}
 
 	public void RenderLayer()
 	{
-		if ( PixelWorldRenderer.ScreenMaterial == null || ColRender == null || DepRender == null || !canRender || !Scene.IsValid() )
+		if ( PixelWorldRenderer.ScreenMaterial == null || PixelTextures == null || !canRender || !Scene.IsValid() )
 		{
 			return;
 		}
 		Rect renderrect = new( 0, Settings.RenderSize );
-		Render.Draw.DrawScene( ColRender, DepRender, Scene, new(), renderrect, RenderPosition - RenderRotation.Forward, RenderRotation, FOV );
+		Render.Draw.DrawScene( PixelTextures.Color, PixelTextures.Depth, Scene, Attributes, renderrect, RenderPosition/*  - RenderRotation.Forward * 200f */, RenderRotation, FOV );
 		Render.Draw2D.Material = PixelWorldRenderer.ScreenMaterial;
-		Render.Draw2D.Texture = ColRender;
+		Render.Draw2D.Texture = PixelTextures.Color;
+
 		Rect rect = new( 0, Screen.Size );
 		Render.Draw2D.Quad( rect.TopLeft, rect.TopRight, rect.BottomRight, rect.BottomLeft );
 	}

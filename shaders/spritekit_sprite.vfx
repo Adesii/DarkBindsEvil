@@ -105,7 +105,7 @@ PS
 
 	float3 vSpritePivot <Attribute("SpritePivot");>;
 	
-    CreateTexture2D( g_tDepthBufferCopyTexture ) <AsSceneDepth; SrgbRead( false );	AddressU( CLAMP ); AddressV( CLAMP ); Filter( POINT ); >;
+    CreateTexture2D( g_tDepthBufferCopyTexture ) < AsSceneDepth; SrgbRead( false );	AddressU( CLAMP ); AddressV( CLAMP ); Filter( POINT ); >;
 
 	float FetchDepth( float2 vTexCoord )
 	{
@@ -153,8 +153,6 @@ PS
         	o.vColor.rgb = Color;
 		#endif
 		o.vColor.rgb = saturate(o.vColor.rgb + (Tint.rgb*TintAmount));
-		
-		
 		return o;
 	}
 }
