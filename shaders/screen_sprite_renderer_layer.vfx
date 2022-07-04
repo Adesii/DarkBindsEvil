@@ -37,7 +37,13 @@ PS
 
 	float4 g_vViewport < Source( Viewport ); >;
 	float4 g_vInvTextureDim < Source( InvTextureDim ); SourceArg( g_tColor ); >;
-	CreateTexture2D( g_tColor ) < Attribute( "Texture" ); SrgbRead( true ); Filter( NEAREST ); >;
+	CreateTexture2D( g_tColor ) < Attribute( "Texture" ); SrgbRead( true ); Filter( NEAREST );AddressU(CLAMP);AddressV(CLAMP); >;
+
+	float g_vGridSize < Attribute( "ScaleFactor" ); Default(1);>;
+	float2 RealCameraPosition < Attribute( "Position" ); Default2(0,0);>;
+	float2 SnappedCameraPosition < Attribute( "SnappedPosition" ); Default2(0,0);>;
+
+	DynamicCombo( D_IS_PIXELPERFECT, 0..1, Sys( ALL ) );
 
 	RenderState( SrgbWriteEnable0, true );
 	RenderState( ColorWriteEnable0, RGBA );
@@ -49,8 +55,30 @@ PS
 	{
 		PS_OUTPUT o;
 		UI_CommonProcessing_Pre( i );
+		float2 TextureSize =  TextureDimensions2D( g_tColor, 0 );
 
-		float4 vImage = Tex2DLevel( g_tColor, i.vTexCoord.xy, 0.0f );
+		float2 CameraPosition = RealCameraPosition;
+		float2 SnappedPosition = SnappedCameraPosition;
+		float2 vTexCoord = i.vTexCoord;
+		
+
+		#if D_IS_PIXELPERFECT == 1
+/* 			float2 vOffset = SnappedPosition - CameraPosition;
+			vOffset = vOffset.yx * g_vInvTextureDim;
+			vOffset /= 2;
+			vTexCoord-=  vOffset;
+
+			vTexCoord = vTexCoord.xy + g_vInvTextureDim;
+			 */
+
+		#endif
+		
+
+
+		
+
+		
+		float4 vImage = Tex2DLevel( g_tColor,vTexCoord.xy , 0.0f );
 		o.vColor = vImage * i.vColor.rgba;
 		return UI_CommonProcessing_Post( i, o );
 	}

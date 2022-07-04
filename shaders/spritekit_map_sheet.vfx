@@ -151,9 +151,9 @@ PS
 
 		
 		
-		PixelOutput po; //= FinalizePixelMaterial( i, b );
+		PixelOutput po= FinalizePixelMaterial( i, b );
 		po.vColor.a = Albedo.a;
-		po.vColor.rgb = Albedo.rgb;
+		//po.vColor.rgb = Albedo.rgb;
 		return po;
 	}
 }

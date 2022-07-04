@@ -8,24 +8,24 @@ public class PixelWorldRenderer : SceneCustomObject
 {
 	public static Dictionary<int, PixelLayer> Layers;
 
-	public CameraMode PlayerCam => Local.Client.Components.Get<CameraMode>() ?? (Local.Pawn?.Components.Get<CameraMode>());
+	public static CameraMode PlayerCam => Local.Client.Components.Get<CameraMode>() ?? (Local.Pawn?.Components.Get<CameraMode>());
 
 	public static Material ScreenMaterial { get; set; } = Material.Load( "materials/screen_renderer.vmat" );
 
 	public PixelWorldRenderer( SceneWorld sceneWorld ) : base( sceneWorld )
 	{
-		Bounds = new( -1000, 1000 );
-		Event.Register( this );
+
 
 		ScreenMaterial = Material.Load( "materials/screen_renderer.vmat" );
-
-		Flags.IsTranslucent = true;
+		Event.Register( this );
 	}
 	[Event.Frame]
 	public void UpdatePosition()
 	{
-		if ( PlayerCam != null )
-			Position = PlayerCam.Position + PlayerCam.Rotation.Forward * 100;
+		if ( Local.Pawn.IsValid() )
+			Position = Local.Pawn.Position;
+
+		Bounds = new( -100 + Position, 100 + Position );
 	}
 
 	public static SceneWorld GetDefaultWorld()
@@ -37,7 +37,9 @@ public class PixelWorldRenderer : SceneCustomObject
 				IsQuantized = true,
 				IsFullScreen = false,
 				IsPixelPerfectWithOverscan = true,
-				ScaleFactor = 8,
+				ScaleFactor = Worlds.World.TileSize / 3,
+				SnapFactor = Worlds.World.TileSize / 8
+
 			};
 		return layer.Scene;
 	}
@@ -80,7 +82,6 @@ public class PixelWorldRenderer : SceneCustomObject
 				if ( !layer.IsInit ) continue;
 				layer.RenderPosition = PlayerCam.Position;
 				layer.RenderRotation = PlayerCam.Rotation;
-				layer.FOV = PlayerCam.FieldOfView;
 				layer.RenderOrder = item.Key;
 				layer.RenderLayer();
 			}

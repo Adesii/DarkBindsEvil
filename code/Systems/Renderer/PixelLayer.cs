@@ -27,7 +27,6 @@ public class PixelLayer
 
 	public Vector3 RenderPosition { get; set; }
 	public Rotation RenderRotation { get; set; }
-	public float FOV { get; set; }
 
 	public static Vector2 ReferenceSize = new( 1920, 1080 );
 
@@ -63,7 +62,7 @@ public class PixelLayer
 		}
 		else
 		{
-			Settings.RenderSize = ReferenceSize / Settings.ScaleFactor;
+			Settings.RenderSize = new Vector2( ReferenceSize.x / Settings.ScaleFactor, ReferenceSize.y / Settings.ScaleFactor );
 		}
 		if ( Settings.RenderSize.Length <= 2 ) return;
 		//PixelTextures = new( Settings.RenderSize, false );
@@ -73,21 +72,45 @@ public class PixelLayer
 
 	}
 
+	public Vector2 OffsetDelta;
+	public Vector3 OldPos;
+
 	public void RenderLayer()
 	{
 		if ( PixelWorldRenderer.ScreenMaterial == null || PixelTextures == null || !canRender || !Scene.IsValid() )
 		{
 			return;
 		}
+		var cam = PixelWorldRenderer.PlayerCam;
 		Rect renderrect = new( 0, Settings.RenderSize );
-		Render.Draw.DrawScene( PixelTextures.Color, PixelTextures.Depth, Scene, Attributes, renderrect, RenderPosition/*  - RenderRotation.Forward * 200f */, RenderRotation, FOV );
+		var renderpos = RenderPosition;
+		if ( Settings.IsPixelPerfectWithOverscan )
+		{
+			OffsetDelta = 0;
+			var oldpos = renderpos;
+			renderpos = new Vector3( SnapToGridFloor( renderpos.x, Settings.SnapFactor ), SnapToGridFloor( renderpos.y, Settings.SnapFactor ), renderpos.z );
+			var snappedPos = renderpos;
+			OffsetDelta = snappedPos - oldpos;
+			OldPos = snappedPos;
+			Render.Attributes.Set( "ScaleFactor", Settings.ScaleFactor );
+			Render.Attributes.SetCombo( "D_IS_PIXELPERFECT", true );
+		}
+		Render.Draw.DrawScene( PixelTextures.Color, PixelTextures.Depth, Scene, Attributes, renderrect, renderpos - RenderRotation.Forward * 1400f, RenderRotation, cam.FieldOfView, cam.ZNear, cam.ZFar, cam.Ortho );
 		Render.Draw2D.Material = PixelWorldRenderer.ScreenMaterial;
 		Render.Draw2D.Texture = PixelTextures.Color;
-
-		Rect rect = new( 0, Screen.Size );
+		Render.Draw2D.Color = Color.White;
+		Rect rect = new( Settings.IsPixelPerfectWithOverscan ? (new Vector2( OffsetDelta.y, OffsetDelta.x ) * 2f) : 0, Screen.Size );
 		Render.Draw2D.Quad( rect.TopLeft, rect.TopRight, rect.BottomRight, rect.BottomLeft );
+		Render.Attributes.Clear();
 	}
 
+	//
+	// Summary:
+	//     Snap number to grid
+	public static float SnapToGridFloor( float f, float gridSize )
+	{
+		return MathF.Round( f / gridSize ) * gridSize;
+	}
 	public class LayerSettings
 	{
 
@@ -96,6 +119,8 @@ public class PixelLayer
 		public Vector2 RenderSize { get; set; }
 		public int ScaleFactor { get; set; }
 		public bool IsPixelPerfectWithOverscan { get; set; }
+		public bool ManualRenderSize { get; internal set; }
+		public int SnapFactor { get; internal set; }
 
 		public static LayerSettings Default()
 		{
