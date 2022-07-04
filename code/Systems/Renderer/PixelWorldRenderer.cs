@@ -35,7 +35,7 @@ public class PixelWorldRenderer : SceneCustomObject
 			layer.Settings = new()
 			{
 				IsQuantized = true,
-				IsFullScreen = true,
+				IsFullScreen = false,
 				IsPixelPerfectWithOverscan = true,
 				ScaleFactor = 8,
 			};
