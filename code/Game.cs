@@ -1,19 +1,18 @@
-global using Sandbox;
-global using Sandbox.UI;
-global using Sandbox.UI.Construct;
-global using Sandbox.Component;
-global using SandboxEditor;
-
 global using System;
 global using System.Collections.Generic;
-global using System.Linq;
 global using System.ComponentModel;
+global using System.Linq;
 global using System.Threading.Tasks;
-
+global using Sandbox;
+global using Sandbox.Component;
+global using Sandbox.UI;
+global using Sandbox.UI.Construct;
+global using SandboxEditor;
 using DarkBinds.Player;
-using DarkBinds.UI;
-using DarkBinds.Systems.Worlds;
 using DarkBinds.Systems.Blocks;
+using DarkBinds.Systems.Renderer;
+using DarkBinds.Systems.Worlds;
+using DarkBinds.UI;
 
 namespace DarkBinds;
 
@@ -22,6 +21,8 @@ public partial class DarkBindsGame : Game
 
 	public static DarkBindsGame Instance = Current as DarkBindsGame;
 	[Net] public World World { get; set; }
+
+	public PixelWorldRenderer WorldRenderer { get; set; }
 	public DarkBindsGame()
 	{
 		Log.Debug( "Game created" );
@@ -34,6 +35,10 @@ public partial class DarkBindsGame : Game
 				Brightness = 0,
 				Rotation = Vector3.Forward.EulerAngles.ToRotation()
 			};
+		}
+		if ( IsClient )
+		{
+			WorldRenderer = new PixelWorldRenderer( Map.Scene );
 		}
 	}
 

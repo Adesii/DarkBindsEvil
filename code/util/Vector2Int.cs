@@ -129,6 +129,10 @@ public struct Vector2Int : IEquatable<Vector2Int>
 	{
 		return c1.vec + c2.vec;
 	}
+	public static Vector3 operator +( Vector3 c1, Vector2Int c2 )
+	{
+		return new Vector3( c1.x + c2.vec.X, c1.y + c2.vec.Y, c1.z );
+	}
 
 	public static Vector2Int operator -( Vector2Int c1, Vector2Int c2 )
 	{

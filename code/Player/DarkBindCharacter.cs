@@ -1,10 +1,11 @@
-using SpriteKit.Entities;
-using SpriteKit.SceneObjects;
+using DarkBinds.Systems.Renderer;
 using DarkBinds.Systems.Worlds;
+using DarkBinds.UI;
+using DarkBinds.UI.IngameHUD;
 using DarkBinds.util;
 using Sandbox;
-using DarkBinds.UI.IngameHUD;
-using DarkBinds.UI;
+using SpriteKit.Entities;
+using SpriteKit.SceneObjects;
 
 namespace DarkBinds.Player;
 
@@ -42,38 +43,42 @@ public partial class DarkBindCharacter : ModelSprite
 		//Components.Create<SoulPillar>();
 		//Components.Create<SoulEater>();
 
-		FollowLight = new PointLightEntity()
-		{
-			Falloff = 1,
-			Range = 150f,
-			Color = Color.White,
-			Brightness = 0.3f,
-			DynamicShadows = true,
-		};
+
 
 		DarkInventory = new DarkInventory();
 
 
 	}
 
-	[Net, Predicted] protected PointLightEntity FollowLight { get; set; }
-	private SpotLightEntity FollowSun { get; set; }
+	protected SceneLight FollowLight { get; set; }
+	private SceneSpotLight FollowSun { get; set; }
 	public override void ClientSpawn()
 	{
+		TargetSceneWorld = PixelWorldRenderer.GetDefaultCharacters().Scene;
 		base.ClientSpawn();
 		if ( Host.IsClient && Local.Pawn == this )
-			FollowSun = new SpotLightEntity()
+		{
+
+			var worldscene = PixelWorldRenderer.GetDefaultWorld().Scene;
+			FollowSun = new SceneSpotLight( worldscene, Position, Color.White )
 			{
 				Rotation = Rotation.LookAt( Vector3.Down ),
 				Falloff = 1,
-				InnerConeAngle = 18,
-				OuterConeAngle = 23,
-				Range = 550,
-				Color = new Color( 1.0f, 0.95f, 0.8f ),
-				Brightness = 1.2f,
-				DynamicShadows = true,
+				Radius = 550,
+
+				SpotCone = new()
+				{
+					Inner = 18,
+					Outer = 23,
+				},
+				LightColor = new Color( 1.0f, 0.95f, 0.8f ) * 1.2f,
 			};
 
+			FollowLight = new SceneLight( worldscene, Position, 150f, Color.White * 0.5f )
+			{
+				Falloff = 1,
+			};
+		}
 		Tracking = TrackingMode.Billboard;
 
 
@@ -198,18 +203,11 @@ public partial class DarkBindCharacter : ModelSprite
 			Position += directionvector;
 
 
-		if ( FollowLight.IsValid() )
+		if ( FollowLight.IsValid() && IsClient )
 		{
-			if ( IsServer )
-			{
-				FollowLight.Position = Position + Vector3.Up * 64f;
-				FollowLight.QuadraticAttenuation = 0f;
-				FollowLight.LinearAttenuation = 1f;
-
-			}
-		}
-		if ( FollowSun.IsValid() )
+			FollowLight.Position = Position + Vector3.Up * 64f;
 			FollowSun.Position = Position + Vector3.Up * 500f;
+		}
 	}
 
 	public bool IsBlockSolid( MapTile Block )
@@ -266,14 +264,6 @@ public partial class DarkBindCharacter : ModelSprite
 				block.FloorBlock = Systems.Blocks.BaseBlock.Create( "Air" );
 
 			World.SendTile( block );
-		}
-	}
-	[ConCmd.Server]
-	public static void CreateLightSource()
-	{
-		if ( ConsoleSystem.Caller?.Pawn is DarkBindCharacter charr )
-		{
-			var light = new SceneLight( World.Scene, charr.Position + (Vector3.Up * 32), 400, Color.White );
 		}
 	}
 

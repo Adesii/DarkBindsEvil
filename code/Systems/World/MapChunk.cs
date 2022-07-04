@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.IO.Compression;
+using DarkBinds.Systems.Renderer;
 using Sandbox;
 using Sandbox.Internal;
 using SpriteKit.Asset;
@@ -10,7 +11,7 @@ namespace DarkBinds.Systems.Worlds;
 
 public partial class MapChunk
 {
-	public static Dictionary<string, Material> MaterialList = new();
+	public Dictionary<MapSheetArea, (List<MapVertex>, List<int>)> MaterialList = new();
 	public static Material DefaultMaterial => Material.Load( "materials/maptest.vmat" );
 
 	private Vector2Int _pos;
@@ -25,10 +26,9 @@ public partial class MapChunk
 
 	public Vector3 WorldPosition { get; set; }
 
-	[SkipHotload]
 	public Dictionary<Vector2Int, MapTile> Tiles { get; set; } = new();
 	private SceneObject GroundPlaneSO { get; set; }
-	private SceneObject ChunkSO { get; set; }
+	private List<SceneObject> ChunkSO { get; set; }
 	public bool IsGenerated { get; set; } = false;
 	public bool IsGenerating { get; set; } = false;
 
@@ -54,6 +54,11 @@ public partial class MapChunk
 		IsGenerated = false;
 		GenerateMesh();
 	}
+	[Event.Hotload]
+	private void HotReload()
+	{
+		RegenerateMesh();
+	}
 	private void ClearTileSO()
 	{
 
@@ -61,9 +66,16 @@ public partial class MapChunk
 		{
 			GroundPlaneSO.Delete();
 		}
-		if ( ChunkSO.IsValid() )
+		if ( ChunkSO != null )
 		{
-			ChunkSO.Delete();
+			foreach ( var ch in ChunkSO )
+			{
+				ch.Delete();
+			}
+		}
+		else
+		{
+			ChunkSO = new();
 		}
 		foreach ( var item in Tiles.Values )
 		{
@@ -71,16 +83,15 @@ public partial class MapChunk
 				item.Delete();
 		}
 	}
-	private async void ResolveMesh()
+	private void ResolveMesh()
 	{
-		await GenerateChunk();
+		GenerateChunk();
 		IsGenerated = true;
 		IsGenerating = false;
 	}
 
-	private async Task GenerateChunk()
+	private void GenerateChunk()
 	{
-		ClearTileSO();
 
 		//Mesh idk = new( spriteMapFloor );
 		//idk.CreateBuffers( MakeTesselatedPlane( new Vector3( World.TileSize, World.TileSize ) / 2, 0, new Vector3( World.ViewSize, World.ViewSize, 0 ), 4, 4 ) );
@@ -88,17 +99,47 @@ public partial class MapChunk
 		//GroundPlaneSO = new MapSceneObject( Map.Scene, groundplane, new Transform( WorldPosition ) );
 		//GroundPlaneSO.Attributes.Set( "SpriteSheet", MapSheetAsset.GetBlockArea( "Dirt" ).SpriteSheetTexture );
 		int index = 0;
-		//ModelBuilder mb = Model.Builder;
+		MaterialList = new();
 		foreach ( var Tile in Tiles.Values )
 		{
 			Tile.BuildMesh();
-			if ( index % 8 == 0 )
-				await GameTask.NextPhysicsFrame();
+			//if ( index % 8 == 0 )
+			//	await GameTask.NextPhysicsFrame();
 			index++;
 		}
-		//Model model = mb.Create();
+		//ClearTileSO();
+		foreach ( var item in MaterialList )
+		{
+			var modelbuilder = Model.Builder;
 
-		//ChunkSO = new MapSceneObject( Map.Scene, model, new Transform( WorldPosition ) );
+			var vertices = item.Value.Item1;
+			var indices = item.Value.Item2;
+
+			var matcopy = MapChunk.DefaultMaterial.CreateCopy();
+			matcopy.OverrideTexture( "SpriteSheet", item.Key.SpriteSheetTexture );
+			matcopy.OverrideTexture( "SpriteSheetOpacityMask", item.Key.SpriteSheetAlphaTexture );
+
+
+			Mesh TileMesh = new( matcopy );
+			TileMesh.CreateVertexBuffer<MapVertex>( vertices.Count, MapVertex.Layout, vertices );
+
+			TileMesh.SetVertexBufferSize( vertices.Count );
+			TileMesh.SetVertexBufferData( vertices );
+
+			TileMesh.CreateIndexBuffer( indices.Count, indices );
+			TileMesh.SetIndexBufferSize( indices.Count );
+			TileMesh.SetIndexBufferData( indices );
+			modelbuilder.AddMesh( TileMesh );
+
+			Model model = modelbuilder.Create();
+
+			var chunkio = new MapSceneObject( PixelWorldRenderer.GetDefaultWorld().Scene, model, new Transform( WorldPosition ) );
+			//chunkio.Attributes.Set( "sheet", item.Key.SpriteSheetTexture );
+			//chunkio.Attributes.Set( "sheetalpha", item.Key.SpriteSheetAlphaTexture );
+			chunkio.Bounds = new BBox( new Vector3( 0, 0, 0 ), new Vector3( World.ViewSize, World.ViewSize, 1000 ) );
+			ChunkSO.Add( chunkio );
+		}
+		MaterialList.Clear();
 		//
 		//ChunkSO.Attributes.Set( "SpriteSheet", MapSheetAsset.GetBlockArea( "Dirt" ).SpriteSheetTexture );
 

@@ -2,12 +2,12 @@ namespace DarkBinds.Systems.Worlds;
 
 public partial class World
 {
-	public const int WorldSize = 64;
+	public const int WorldSize = 16;
 	public const int TileSize = 32;
 	public const int TileHeight = 64;
 	public const int ChunkSize = 8;
 
-	public static SceneWorld Scene;
+	public static SceneWorld RenderLayer;
 
 
 	private static int _viewsize = World.ChunkSize * World.TileSize;

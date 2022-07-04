@@ -1,7 +1,7 @@
 {
   "Title": "The Dark Binds Evil",
   "Type": "game",
-  "Org": "adesi",
+  "Org": "local",
   "Ident": "darkbindsevil",
   "Schema": 1,
   "HasAssets": true,

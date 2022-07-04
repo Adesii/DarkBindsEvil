@@ -1,8 +1,8 @@
-using System.IO;
-using SpriteKit.Asset;
-using DarkBinds.Systems.Worlds;
 using System;
 using System.Collections.Generic;
+using System.IO;
+using DarkBinds.Systems.Worlds;
+using SpriteKit.Asset;
 
 namespace DarkBinds.Systems.Blocks;
 
@@ -97,6 +97,12 @@ public class BaseBlock
 	{
 		if ( !HasMesh() )
 			return null;
+
+		if ( !Tile.ParentChunk.MaterialList.ContainsKey( MapSheet ) )
+		{
+			Tile.ParentChunk.MaterialList.Add( MapSheet, new( new(), new() ) );
+		}
+
 		indices = new();
 		vertices = new();
 		var HalfTileSize = World.TileSize / 2;
@@ -183,17 +189,8 @@ public class BaseBlock
 		}
 		if ( VertCount > 0 )
 		{
-			if ( !MapChunk.MaterialList.ContainsKey( MapSheet.SpriteSheetPath ) )
-			{
-				var copy = MapChunk.DefaultMaterial.CreateCopy();
-				copy.OverrideTexture( "SpriteSheet", MapSheet.SpriteSheetTexture );
-				var alpha = MapSheet.SpriteSheetAlphaTexture;
-				if ( alpha != null )
-					copy.OverrideTexture( "SpriteSheetOpacityMask", MapSheet.SpriteSheetAlphaTexture );
-				MapChunk.MaterialList.Add( MapSheet.SpriteSheetPath, copy );
-			}
-			Mesh TileMesh = new( MapChunk.MaterialList[MapSheet.SpriteSheetPath] );
-			TileMesh.CreateVertexBuffer<MapVertex>( vertices.Count, MapVertex.Layout, vertices );
+			Mesh TileMesh = new( MapChunk.DefaultMaterial );
+			/*TileMesh.CreateVertexBuffer<MapVertex>( vertices.Count, MapVertex.Layout, vertices );
 
 			TileMesh.SetVertexBufferSize( vertices.Count );
 			TileMesh.SetVertexBufferData( vertices );
@@ -201,7 +198,18 @@ public class BaseBlock
 			TileMesh.CreateIndexBuffer( indices.Count, indices );
 			TileMesh.SetIndexBufferSize( indices.Count );
 			TileMesh.SetIndexBufferData( indices );
+			 if ( !MapChunk.MaterialList.ContainsKey( MapSheet ) )
+			{
+				/* 				var copy = MapChunk.DefaultMaterial.CreateCopy();
+								copy.OverrideTexture( "SpriteSheet", MapSheet.SpriteSheetTexture );
+								var alpha = MapSheet.SpriteSheetAlphaTexture;
+								if ( alpha != null )
+									copy.OverrideTexture( "SpriteSheetOpacityMask", MapSheet.SpriteSheetAlphaTexture ); 
+				MapChunk.MaterialList.Add( MapSheet, new( new(), new() ) );
 
+			}
+			MapChunk.MaterialList[MapSheet].Item1.AddRange( vertices );
+			MapChunk.MaterialList[MapSheet].Item2.AddRange( indices ); */
 			return TileMesh;
 		}
 
@@ -217,6 +225,12 @@ public class BaseBlock
 	{
 		if ( !HasMesh() )
 			return null;
+
+		if ( !Tile.ParentChunk.MaterialList.ContainsKey( MapSheet ) )
+		{
+			Tile.ParentChunk.MaterialList.Add( MapSheet, new( new(), new() ) );
+		}
+
 		indices = new();
 		vertices = new();
 		var HalfTileSize = World.TileSize / 2;
@@ -303,21 +317,34 @@ public class BaseBlock
 		}
 		if ( VertCount > 0 )
 		{
-			if ( !MapChunk.MaterialList.ContainsKey( MapSheet.SpriteSheetPath ) )
-			{
-				var copy = MapChunk.DefaultMaterial.CreateCopy();
-				copy.OverrideTexture( "SpriteSheet", MapSheet.SpriteSheetTexture );
-				MapChunk.MaterialList.Add( MapSheet.SpriteSheetPath, copy );
-			}
-			Mesh TileMesh = new( MapChunk.MaterialList[MapSheet.SpriteSheetPath] );
-			TileMesh.CreateVertexBuffer<MapVertex>( vertices.Count, MapVertex.Layout, vertices );
+			/* 			if ( !MapChunk.MaterialList.ContainsKey( MapSheet.SpriteSheetPath ) )
+						{
+							var copy = MapChunk.DefaultMaterial.CreateCopy();
+							copy.OverrideTexture( "SpriteSheet", MapSheet.SpriteSheetTexture );
+							MapChunk.MaterialList.Add( MapSheet.SpriteSheetPath, copy );
+						} */
+			Mesh TileMesh = new( MapChunk.DefaultMaterial );
+			/* TileMesh.CreateVertexBuffer<MapVertex>( vertices.Count, MapVertex.Layout, vertices );
 
 			TileMesh.SetVertexBufferSize( vertices.Count );
 			TileMesh.SetVertexBufferData( vertices );
 
 			TileMesh.CreateIndexBuffer( indices.Count, indices );
 			TileMesh.SetIndexBufferSize( indices.Count );
-			TileMesh.SetIndexBufferData( indices );
+			TileMesh.SetIndexBufferData( indices ); */
+
+			/* if ( !MapChunk.MaterialList.ContainsKey( MapSheet ) )
+			{
+				/* 				var copy = MapChunk.DefaultMaterial.CreateCopy();
+								copy.OverrideTexture( "SpriteSheet", MapSheet.SpriteSheetTexture );
+								var alpha = MapSheet.SpriteSheetAlphaTexture;
+								if ( alpha != null )
+									copy.OverrideTexture( "SpriteSheetOpacityMask", MapSheet.SpriteSheetAlphaTexture ); 
+				MapChunk.MaterialList.Add( MapSheet, new( new(), new() ) );
+
+			}
+			MapChunk.MaterialList[MapSheet].Item1.AddRange( vertices );
+			MapChunk.MaterialList[MapSheet].Item2.AddRange( indices ); */
 
 			return TileMesh;
 		}
@@ -336,6 +363,11 @@ public class BaseBlock
 		var v2 = TileWorldPosition + (Vector3.Backward + Vector3.Left) * HalfTileSize;
 		var v3 = TileWorldPosition + (Vector3.Right + Vector3.Backward) * HalfTileSize;
 
+		v0 += Tile.LocalPosition;
+		v1 += Tile.LocalPosition;
+		v2 += Tile.LocalPosition;
+		v3 += Tile.LocalPosition;
+
 		var uv0 = new Vector2( 0, 0 );
 		var uv1 = new Vector2( 1, 0 );
 		var uv2 = new Vector2( 0, 0.5f );
@@ -350,9 +382,9 @@ public class BaseBlock
 					new MapVertex(v2   + Vector3.Up * World.TileHeight,Vector3.Up, Vector3.Right, uv2,VertBlends,Texcord0),
 					new MapVertex(v3   + Vector3.Up * World.TileHeight,Vector3.Up, Vector3.Right, uv3,VertBlends,Texcord0)
 				};
-		vertices.AddRange( arr );
-		int i = vertices.Count;
-		indices.AddRange( new List<int>(){
+		Tile.ParentChunk.MaterialList[MapSheet].Item1.AddRange( arr );
+		int i = Tile.ParentChunk.MaterialList[MapSheet].Item1.Count;
+		Tile.ParentChunk.MaterialList[MapSheet].Item2.AddRange( new List<int>(){
 					i - 1,i - 3,i - 4,
 					i - 2,i - 1,i - 4
 			} );
@@ -450,10 +482,10 @@ public class BaseBlock
 		var uv2 = new Vector2( 0, 1 );
 		var uv3 = new Vector2( 1, 1 );
 
-		Vector3 v0 = topleft;
-		Vector3 v1 = topright;
-		Vector3 v2 = left;
-		Vector3 v3 = right;
+		Vector3 v0 = topleft + Tile.LocalPosition;
+		Vector3 v1 = topright + Tile.LocalPosition;
+		Vector3 v2 = left + Tile.LocalPosition;
+		Vector3 v3 = right + Tile.LocalPosition;
 
 
 		ComputeTriangleNormalAndTangent( out var outnormal, out var outtangent, v0, v1, v2, uv0, uv1, uv2 );
@@ -473,9 +505,9 @@ public class BaseBlock
 					new MapVertex(v2,outnormal, outtangent,uv2,Blends,uvcoords),
 					new MapVertex(v3,outnormal, outtangent,uv3,Blends,uvcoords),
 				};
-		vertices.AddRange( arr );
-		int i = vertices.Count;
-		indices.AddRange( new List<int>(){
+		Tile.ParentChunk.MaterialList[MapSheet].Item1.AddRange( arr );
+		int i = Tile.ParentChunk.MaterialList[MapSheet].Item1.Count;
+		Tile.ParentChunk.MaterialList[MapSheet].Item2.AddRange( new List<int>(){
 				i - 4,i - 3,i - 1,
 				i - 4,i - 1,i - 2
 		} );

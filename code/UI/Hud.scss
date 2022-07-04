@@ -1,18 +1,23 @@
 ﻿RootPanel {
-    pointer-events: visible;
-    cursor: none;
+	pointer-events: visible;
+	cursor: none;
+	display: flex;
+
+	&.Dev {
+		display: none;
+	}
 }
 
-ChunkPreview{
-    aspect-ratio: 1;
-    background-color: #6e6e6e;
-    background-repeat: no-repeat;
-    right: 0;
-    opacity: 1;
-    position: absolute;
+ChunkPreview {
+	aspect-ratio: 1;
+	background-color: #6e6e6e;
+	background-repeat: no-repeat;
+	right: 0;
+	opacity: 1;
+	position: absolute;
 }
 
-ChatBox{
-    z-index: -100;
-    pointer-events: none;
+ChatBox {
+	z-index: -100;
+	pointer-events: none;
 }
