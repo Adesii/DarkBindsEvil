@@ -6,7 +6,7 @@ namespace DarkBinds.Systems.Renderer;
 
 public class PixelWorldRenderer : SceneCustomObject
 {
-	public static Dictionary<int, PixelLayer> Layers = new();
+	public static Dictionary<int, PixelLayer> Layers;
 
 	public CameraMode PlayerCam => Local.Client.Components.Get<CameraMode>() ?? (Local.Pawn?.Components.Get<CameraMode>());
 
@@ -18,7 +18,8 @@ public class PixelWorldRenderer : SceneCustomObject
 		Event.Register( this );
 
 		ScreenMaterial = Material.Load( "materials/screen_renderer.vmat" );
-		Layers = new();
+
+		Flags.IsTranslucent = true;
 	}
 	[Event.Frame]
 	public void UpdatePosition()
@@ -29,45 +30,36 @@ public class PixelWorldRenderer : SceneCustomObject
 
 	public static SceneWorld GetDefaultWorld()
 	{
-		var layer = GetOrCreateLayer( 1 );
-		layer.Settings = new()
-		{
-			IsQuantized = true,
-			IsFullScreen = false,
-			IsPixelPerfectWithOverscan = true,
-			ScaleFactor = 8
-		};
-		layer.Init();
-		Layers[1] = layer;
+		var layer = Get( -1 );
+		if ( !layer.IsInit )
+			layer.Settings = new()
+			{
+				IsQuantized = true,
+				IsFullScreen = false,
+				IsPixelPerfectWithOverscan = true,
+				ScaleFactor = 8
+			};
 		return layer.Scene;
 	}
 	public static SceneWorld GetDefaultCharacters()
 	{
-		var layer = GetOrCreateLayer( 2 );
-		layer.Settings = new()
-		{
-			IsQuantized = false,
-			IsFullScreen = true,
-			IsPixelPerfectWithOverscan = false
-		};
-		layer.Init();
-		Layers[2] = layer;
+		var layer = Get( 0 );
+		if ( !layer.IsInit )
+			layer.Settings = new()
+			{
+				IsQuantized = false,
+				IsFullScreen = true,
+				IsPixelPerfectWithOverscan = false
+			};
 		return layer.Scene;
 	}
-	public static PixelLayer CreateLayer( int layer, PixelLayer.LayerSettings settings )
-	{
-		var layerObj = GetOrCreateLayer( layer );
-		layerObj.Settings = settings;
-		return layerObj;
-	}
 
-	public static PixelLayer GetOrCreateLayer( int v )
+	public static PixelLayer Get( int v )
 	{
+		if ( Layers == null )
+			Layers = new();
 		if ( !Layers.ContainsKey( v ) )
-		{
-			var l = new PixelLayer();
-			Layers[v] = l;
-		}
+			Layers[v] = new PixelLayer();
 		return Layers[v];
 	}
 
@@ -75,16 +67,16 @@ public class PixelWorldRenderer : SceneCustomObject
 	{
 		base.RenderSceneObject();
 		//Render.SetupLighting( this, attr );
-		foreach ( var item in Layers.OrderBy( x => x.Key ) )
-		{
-			var layer = item.Value;
-			if ( !layer.IsInit ) continue;
-			Render.Clear( Color.Transparent );
-			layer.RenderPosition = PlayerCam.Position;
-			layer.RenderRotation = PlayerCam.Rotation;
-			layer.FOV = PlayerCam.FieldOfView;
-			layer.RenderLayer();
+		if ( Layers != null && Layers.Count > 0 )
+			foreach ( var item in Layers.OrderBy( x => x.Key ) )
+			{
+				var layer = item.Value;
+				if ( !layer.IsInit ) continue;
+				layer.RenderPosition = PlayerCam.Position;
+				layer.RenderRotation = PlayerCam.Rotation;
+				layer.FOV = PlayerCam.FieldOfView;
+				layer.RenderLayer();
 
-		}
+			}
 	}
 }
