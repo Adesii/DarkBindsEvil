@@ -37,14 +37,20 @@ PS
 
 	float4 g_vViewport < Source( Viewport ); >;
 	float4 g_vInvTextureDim < Source( InvTextureDim ); SourceArg( g_tColor ); >;
-	CreateTexture2D( g_tColor ) < Attribute( "Texture" ); SrgbRead( true ); Filter( NEAREST );AddressU(CLAMP);AddressV(CLAMP); >;
+	CreateTexture2D( g_tColor ) < Attribute( "Texture" ); SrgbRead( true ); Filter( NEAREST ); OutputFormat( DXT5 );AddressU(CLAMP);AddressV(CLAMP); >;
+
+
+	CreateTexture2D( g_tQuantizeLut ) <Attribute( "Quantization" );Filter( NEAREST ); OutputFormat( DXT5 ); SrgbRead( true ); >;
+
+
+	
+	DynamicCombo( D_IS_QUANTIZED, 0..1, Sys( ALL ) );
 
 	float g_vGridSize < Attribute( "ScaleFactor" ); Default(1);>;
 	float2 RealCameraPosition < Attribute( "Position" ); Default2(0,0);>;
 	float2 SnappedCameraPosition < Attribute( "SnappedPosition" ); Default2(0,0);>;
 
-	DynamicCombo( D_IS_PIXELPERFECT, 0..1, Sys( ALL ) );
-
+	//DynamicCombo( D_IS_PIXELPERFECT, 0..1, Sys( ALL ) );
 	RenderState( SrgbWriteEnable0, true );
 	RenderState( ColorWriteEnable0, RGBA );
 	RenderState( FillMode, SOLID );
@@ -61,25 +67,22 @@ PS
 		float2 SnappedPosition = SnappedCameraPosition;
 		float2 vTexCoord = i.vTexCoord;
 		
+		float4 vImage = Tex2DLevel( g_tColor,vTexCoord.xy , 0.0f );
 
-		#if D_IS_PIXELPERFECT == 1
-/* 			float2 vOffset = SnappedPosition - CameraPosition;
-			vOffset = vOffset.yx * g_vInvTextureDim;
-			vOffset /= 2;
-			vTexCoord-=  vOffset;
+		#if D_IS_QUANTIZED == 1
+			float greyscale = max(vImage.r, max(vImage.g, vImage.b));
 
-			vTexCoord = vTexCoord.xy + g_vInvTextureDim;
-			 */
+			float quantized = Tex2DLevel( g_tQuantizeLut,float2(saturate(1-greyscale),0.2f) , 0.0f ).r;
+			vImage *= quantized;
+
 
 		#endif
-		
 
+		float3 vColor = vImage.rgb;//saturate(vQuantize.rgb).r;
 
-		
-
-		
-		float4 vImage = Tex2DLevel( g_tColor,vTexCoord.xy , 0.0f );
-		o.vColor = vImage * i.vColor.rgba;
-		return UI_CommonProcessing_Post( i, o );
+		o.vColor.rgb = vColor.rgb * i.vColor.rgb;
+		//o.vColor.rgb = vQuantize.r;
+		o.vColor.a = vImage.a * i.vColor.a;
+		return /* o;// */UI_CommonProcessing_Post( i, o );
 	}
 }

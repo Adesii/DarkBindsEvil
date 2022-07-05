@@ -107,6 +107,10 @@ PS
 
 	float fRoughness<UiType(Slider);Range(0,1);Default(0.5);>;
 
+	
+	
+
+
 	//
 	// Main
 	//
@@ -148,8 +152,6 @@ PS
 			float4(0.5,0.5,1,0),
 			float4(0,0,0,0)
 		);
-
-		
 		
 		PixelOutput po= FinalizePixelMaterial( i, b );
 		po.vColor.a = Albedo.a;

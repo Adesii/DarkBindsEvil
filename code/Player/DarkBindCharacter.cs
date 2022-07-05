@@ -1,4 +1,3 @@
-using DarkBinds.Systems.Renderer;
 using DarkBinds.Systems.Worlds;
 using DarkBinds.UI;
 using DarkBinds.UI.IngameHUD;
@@ -54,34 +53,53 @@ public partial class DarkBindCharacter : ModelSprite
 	private SceneSpotLight FollowSun { get; set; }
 	public override void ClientSpawn()
 	{
-		TargetSceneWorld = PixelWorldRenderer.GetDefaultCharacters();
+		TargetSceneWorld = PixelRenderer.GetDefaultCharacters();
 		base.ClientSpawn();
 		if ( Host.IsClient && Local.Pawn == this )
 		{
+			CreateLights();
 
-			var worldscene = PixelWorldRenderer.GetDefaultWorld();
-			FollowSun = new SceneSpotLight( worldscene, Position, Color.White * 2 )
-			{
-				Rotation = Rotation.LookAt( Vector3.Down ),
-				Falloff = 1,
-				Radius = 550,
-
-				SpotCone = new()
-				{
-					Inner = 18,
-					Outer = 23,
-				},
-				LightColor = new Color( 1.0f, 0.95f, 0.8f ) * 1.2f,
-			};
-
-			FollowLight = new SceneLight( worldscene, Position, 150f, Color.White )
-			{
-				Falloff = 1,
-			};
 		}
 		Tracking = TrackingMode.Billboard;
 
 
+
+	}
+	[Event.Hotload]
+	private void CreateLights()
+	{
+		if ( !Host.IsClient || Local.Pawn != this )
+		{
+			return;
+
+		}
+		if ( FollowSun.IsValid() )
+		{
+			FollowSun.Delete();
+		}
+		if ( FollowLight.IsValid() )
+		{
+			FollowLight.Delete();
+		}
+		var worldscene = PixelRenderer.GetDefaultWorld();
+		FollowSun = new SceneSpotLight( worldscene, Position, Color.White )
+		{
+			Rotation = Rotation.LookAt( Vector3.Down ),
+			Falloff = 1,
+			Radius = 550,
+
+			SpotCone = new()
+			{
+				Inner = 18,
+				Outer = 23,
+			},
+			LightColor = new Color( 1.0f, 0.95f, 0.8f ) * 3f,
+		};
+
+		FollowLight = new SceneLight( worldscene, Position, 150f, Color.White )
+		{
+			LightColor = Color.White * 16
+		};
 
 	}
 
@@ -205,7 +223,7 @@ public partial class DarkBindCharacter : ModelSprite
 
 		if ( FollowLight.IsValid() && IsClient )
 		{
-			FollowLight.Position = Position + Vector3.Up * 64f;
+			FollowLight.Position = Position + Vector3.Up * 32f;
 			FollowSun.Position = Position + Vector3.Up * 500f;
 		}
 	}
@@ -268,11 +286,11 @@ public partial class DarkBindCharacter : ModelSprite
 	}
 
 	[ConCmd.Client]
-	public static void SpawnSpinningCube()
+	public static void SpawnSpinningCube( float scale = 0.25f )
 	{
 		var player = Local.Pawn as DarkBindCharacter;
 
-		new SpinningCube( PixelWorldRenderer.GetDefaultWorld(), player.Transform.WithPosition( player.Position + Vector3.Up * 16 ).WithScale( 0.25f ) );
+		new SpinningCube( PixelRenderer.GetDefaultWorld(), player.Transform.WithPosition( player.Position + Vector3.Up * 16 ).WithScale( scale ) );
 	}
 
 	[ConCmd.Client]
@@ -280,7 +298,7 @@ public partial class DarkBindCharacter : ModelSprite
 	{
 		var player = Local.Pawn as DarkBindCharacter;
 
-		new SceneModel( PixelWorldRenderer.GetDefaultWorld(), path, player.Transform.WithPosition( player.Position ).WithScale( scale ) );
+		new SceneModel( PixelRenderer.GetDefaultWorld(), path, player.Transform.WithPosition( player.Position ).WithScale( scale ) );
 	}
 
 

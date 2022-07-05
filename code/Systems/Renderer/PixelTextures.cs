@@ -1,4 +1,4 @@
-namespace DarkBinds.Systems.Renderer;
+namespace Pixel;
 
 public class PixelTextures : IDisposable
 {

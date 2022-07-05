@@ -15,7 +15,7 @@ public class SpinningCube : SceneModel
 	[Event.Frame]
 	public void UpdatePosition()
 	{
-		Rotation = Rotation.Lerp( StartRot, RandRot, RotStart * 2 );
+		Rotation = Rotation.Lerp( StartRot, RandRot, RotStart );
 		if ( Rotation.Forward.Angle( RandRot.Forward ) < 10f )
 		{
 			RandRot = Rotation.Random;

@@ -1,21 +1,46 @@
-using System.Collections.Generic;
-using System.Collections.Specialized;
-using DarkBinds.Player;
+using Pixel.Camera;
 
-namespace DarkBinds.Systems.Renderer;
+namespace Pixel;
 
-public class PixelWorldRenderer : SceneCustomObject
+public class PixelRenderer : SceneCustomObject
 {
+	public static PixelRenderer _instance;
+	public static PixelRenderer Instance
+	{
+		get
+		{
+			if ( _instance == null )
+			{
+				_instance = new PixelRenderer( Map.Scene );
+			}
+			return _instance;
+		}
+	}
 	public static Dictionary<int, PixelLayer> Layers;
 
-	public static CameraMode PlayerCam => Local.Client.Components.Get<CameraMode>() ?? (Local.Pawn?.Components.Get<CameraMode>());
+	public static CameraMode PlayerCam
+	{
+		get
+		{
+			var clientcam = Local.Client.Components.Get<CameraMode>();
+			if ( clientcam != null ) return clientcam;
+
+			var cam = Local.Pawn?.Components.Get<CameraMode>();
+			if ( cam is not ProxyCameraMode )
+			{
+				cam.Enabled = false;
+				cam = new ProxyCameraMode( cam );
+				Local.Pawn.Components.Add( cam );
+			}
+
+			return cam;
+		}
+	}
 
 	public static Material ScreenMaterial { get; set; } = Material.Load( "materials/screen_renderer.vmat" );
 
-	public PixelWorldRenderer( SceneWorld sceneWorld ) : base( sceneWorld )
+	public PixelRenderer( SceneWorld sceneWorld ) : base( sceneWorld )
 	{
-
-
 		ScreenMaterial = Material.Load( "materials/screen_renderer.vmat" );
 		Event.Register( this );
 	}
@@ -37,8 +62,8 @@ public class PixelWorldRenderer : SceneCustomObject
 				IsQuantized = true,
 				IsFullScreen = false,
 				IsPixelPerfectWithOverscan = true,
-				ScaleFactor = Worlds.World.TileSize / 3,
-				SnapFactor = Worlds.World.TileSize / 8
+				ScaleFactor = 32 / 3,// TODO: remove later on and put into a partial file. Is DarkBindsEvil Specific.
+				SnapFactor = 32 / 8
 
 			};
 		return layer.Scene;
@@ -68,6 +93,19 @@ public class PixelWorldRenderer : SceneCustomObject
 			};
 		}
 		return Layers[v];
+	}
+	[Event.Tick]
+	public void UpdateLayers()
+	{
+		foreach ( var item in Layers.OrderBy( x => x.Key ) )
+		{
+			var layer = item.Value;
+			if ( !layer.IsInit ) continue;
+			layer.RenderPosition = PlayerCam.Position;
+			layer.RenderRotation = PlayerCam.Rotation;
+			layer.RenderOrder = item.Key;
+			layer.UpdateLayer();
+		}
 	}
 	public Texture LastDepth;
 	public override void RenderSceneObject()

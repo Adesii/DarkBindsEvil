@@ -1,6 +1,4 @@
-using Sandbox;
-
-namespace DarkBinds.Systems.Renderer;
+namespace Pixel;
 
 public class PixelLayer
 {
@@ -34,6 +32,8 @@ public class PixelLayer
 	internal int RenderOrder = 0;
 
 	public string LayerGUID { get; set; }
+
+	public Texture QuantizeLUT { get; set; }
 
 	~PixelLayer()
 	{
@@ -77,11 +77,11 @@ public class PixelLayer
 
 	public void RenderLayer()
 	{
-		if ( PixelWorldRenderer.ScreenMaterial == null || PixelTextures == null || !canRender || !Scene.IsValid() )
+		if ( PixelRenderer.ScreenMaterial == null || PixelTextures == null || !canRender || !Scene.IsValid() )
 		{
 			return;
 		}
-		var cam = PixelWorldRenderer.PlayerCam;
+		var cam = PixelRenderer.PlayerCam;
 		Rect renderrect = new( 0, Settings.RenderSize );
 		var renderpos = RenderPosition;
 		if ( Settings.IsPixelPerfectWithOverscan )
@@ -93,15 +93,26 @@ public class PixelLayer
 			OffsetDelta = snappedPos - oldpos;
 			OldPos = snappedPos;
 			Render.Attributes.Set( "ScaleFactor", Settings.ScaleFactor );
-			Render.Attributes.SetCombo( "D_IS_PIXELPERFECT", true );
+		}
+		if ( Settings.IsQuantized && QuantizeLUT != null && QuantizeLUT.IsLoaded )
+		{
+			Render.Attributes.SetCombo( "D_IS_QUANTIZED", true );
+			Render.Attributes.Set( "Quantization", QuantizeLUT );
 		}
 		Render.Draw.DrawScene( PixelTextures.Color, PixelTextures.Depth, Scene, Attributes, renderrect, renderpos - RenderRotation.Forward * 1400f, RenderRotation, cam.FieldOfView, cam.ZNear, cam.ZFar, cam.Ortho );
-		Render.Draw2D.Material = PixelWorldRenderer.ScreenMaterial;
+		Render.Draw2D.Material = PixelRenderer.ScreenMaterial;
 		Render.Draw2D.Texture = PixelTextures.Color;
 		Render.Draw2D.Color = Color.White;
 		Rect rect = new( Settings.IsPixelPerfectWithOverscan ? (new Vector2( OffsetDelta.y, OffsetDelta.x ) * 2f) : 0, Screen.Size );
 		Render.Draw2D.Quad( rect.TopLeft, rect.TopRight, rect.BottomRight, rect.BottomLeft );
 		Render.Attributes.Clear();
+	}
+
+	public void UpdateLayer()
+	{
+		//if ( QuantizeLUT == null || !QuantizeLUT.IsLoaded )
+		QuantizeLUT = Sandbox.TextureLoader.Image.Load( FileSystem.Mounted, $"ui/pixelation/layer_{RenderOrder}_lut.png" );
+
 	}
 
 	//

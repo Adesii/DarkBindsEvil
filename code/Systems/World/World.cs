@@ -1,6 +1,6 @@
 using System.IO;
 using System.IO.Compression;
-using DarkBinds.Systems.Renderer;
+
 using static FastNoiseLite;
 
 namespace DarkBinds.Systems.Worlds;
@@ -33,7 +33,7 @@ public partial class World : Entity
 		base.ClientSpawn();
 		Instance = this;
 
-		World.RenderLayer = PixelWorldRenderer.GetDefaultWorld();
+		World.RenderLayer = PixelRenderer.GetDefaultWorld();
 	}
 
 

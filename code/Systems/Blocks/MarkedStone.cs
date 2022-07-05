@@ -1,4 +1,3 @@
-using DarkBinds.Systems.Renderer;
 using DarkBinds.Systems.Worlds;
 
 namespace DarkBinds.Systems.Blocks;
@@ -10,9 +9,8 @@ public class MarkedStone : BaseBlock
 	public override void OnCreated()
 	{
 		base.OnCreated();
-		Light = new SceneLight( PixelWorldRenderer.GetDefaultWorld(), Tile.WorldPosition + Vector3.Up * World.HalfTileSize, 100f, (Color.Parse( "#24799e" ) ?? Color.Blue) )
+		Light = new SceneLight( PixelRenderer.GetDefaultWorld(), Tile.WorldPosition + Vector3.Up * World.HalfTileSize, 300f, ((Color.Parse( "#24799e" ) ?? Color.Blue)) * 100 )
 		{
-			Falloff = 1,
 		};
 	}
 
