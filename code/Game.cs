@@ -38,7 +38,7 @@ public partial class DarkBindsGame : Game
 		}
 		if ( IsClient )
 		{
-			WorldRenderer = new PixelRenderer( Map.Scene );
+			WorldRenderer = new PixelRenderer();
 		}
 	}
 
