@@ -72,5 +72,11 @@ public partial class DarkBindsGame : Game
 		cl.Pawn.Kill();
 	}
 
+	public override void RenderHud()
+	{
+		base.RenderHud();
+		PixelRenderer.Instance.RenderSceneObject();
+	}
+
 
 }
