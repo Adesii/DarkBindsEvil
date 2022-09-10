@@ -1,9 +1,9 @@
 ﻿RootPanel {
-    pointer-events: visible;
+    pointer-events: none;
     cursor: none;
 }
 
-ChunkPreview{
+ChunkPreview {
     aspect-ratio: 1;
     background-color: #6e6e6e;
     background-repeat: no-repeat;
@@ -12,7 +12,7 @@ ChunkPreview{
     position: absolute;
 }
 
-ChatBox{
+ChatBox {
     z-index: -100;
     pointer-events: none;
 }

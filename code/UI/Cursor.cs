@@ -1,5 +1,4 @@
 using DarkBinds.Player;
-using Gamelib.UI;
 
 namespace DarkBinds.UI;
 
@@ -23,24 +22,7 @@ public class Cursor : Panel
 	{
 		Mouse = Sandbox.Mouse.Position;
 	}
-	[Event.BuildInput]
-	public static void Build( InputBuilder input )
-	{
-		hovered = UIUtility.GetHoveredPanel();
-		if ( hovered == null/*  || hovered is RootPanel  */)
-			return;
 
-		if ( input.Pressed( InputButton.SecondaryAttack ) )
-		{
-			hovered.CreateEvent( new MousePanelEvent( "onclick", hovered, "mouseleft" ) );
-		}
-		if ( input.Pressed( InputButton.PrimaryAttack ) )
-		{
-			hovered.CreateEvent( new MousePanelEvent( "onclick", hovered, "mouseright" ) );
-		}
-		input.ClearButton( InputButton.PrimaryAttack );
-		input.ClearButton( InputButton.SecondaryAttack );
-	}
 	public override void Tick()
 	{
 		cursorImage.Style.Left = Length.Fraction( (Mouse.x / Screen.Width).Clamp( 0, 0.999f ) );
