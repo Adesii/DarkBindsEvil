@@ -2,29 +2,17 @@
 
 Layer0
 {
-	shader "spritekit_map_sheet.vfx"
+	shader "code/systems/spritekit/shaders/spritekit_map_sheet.shader"
 
-	AmbientOcclusionAmount "3.367"
-	AmbientOcclusionDistance "1.033"
-	AmbientOcclusionSquare "[0.111 1.000]"
-
-	//---- Color ----
-	g_flModelTintAmount "1.000"
-	g_vColorTint "[1.000000 1.000000 1.000000 0.000000]"
-
-	//---- Fade ----
-	g_flFadeExponent "1.000"
+	AmbientOcclusionAmount "1.000"
+	AmbientOcclusionDistance "1.000"
+	AmbientOcclusionSquare "[0.100 0.900]"
+	g_flDirectionalLightmapMinZ "0.000"
+	g_flDirectionalLightmapStrength "0.000"
 
 	//---- Material ----
-	SpriteSheet "materials/tools/toolsblocksound_color.png"
+	SpriteSheet "materials/default/default_color.tga"
 	SpriteSheetOpacityMask "materials/default/default_mask.tga"
-	TextureColor "[1.000000 1.000000 1.000000 0.000000]"
+	TextureColor "materials/default/default_color.tga"
 	TextureTintMask "materials/default/default.tga"
-
-	//---- Texture Coordinates ----
-	g_nScaleTexCoordUByModelScaleAxis "0"
-	g_nScaleTexCoordVByModelScaleAxis "0"
-	g_vTexCoordOffset "[0.000 0.000]"
-	g_vTexCoordScale "[1.000 1.000]"
-	g_vTexCoordScrollSpeed "[0.000 0.000]"
 }

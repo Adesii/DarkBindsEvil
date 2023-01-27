@@ -10,7 +10,7 @@ public class MiniMap : Panel
 	{
 		if ( coords != null )
 		{
-			var p = Local.Pawn as DarkBindCharacter;
+			var p = Game.LocalPawn as DarkBindCharacter;
 			coords.Text = $"Coordinates: {p.PlayerPosition.x}, {p.PlayerPosition.y}";
 		}
 	}

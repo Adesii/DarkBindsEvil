@@ -62,7 +62,7 @@ public class ChunkPreview : Image
 			PreviewTexture.Update( chunkdata.ToArray(), 0, 0, PreviewTexture.Width, PreviewTexture.Height );
 			dirty = false;
 		}
-		var PlayerPos = World.GetTilePosition( Local.Pawn.Position );
+		var PlayerPos = World.GetTilePosition( Game.LocalPawn.Position );
 		if ( PlayerPos != PrevPosition )
 		{
 			prevchunkdata = chunkdata.ToList();

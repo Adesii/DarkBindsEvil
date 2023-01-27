@@ -19,7 +19,7 @@
 				ysubdivisions = 1
 				areacolor = [ 0, 1, 0, 1 ]
 				framerate = 12
-				spritesheetpath = "/sprites/map/walls/spritesheet.png"
+				spritesheetpath =  resource:"sprites/map/walls/spritesheet.png"
 				spritesheetalphapath = ""
 			},
 			{
@@ -36,7 +36,7 @@
 				ysubdivisions = 1
 				areacolor = [ 0, 1, 1, 1 ]
 				framerate = 12
-				spritesheetpath = "/sprites/map/walls/spritesheet.png"
+				spritesheetpath =  resource:"sprites/map/walls/spritesheet.png"
 			},
 			{
 				minimapcolor = [ 1, 0, 1, 1 ]
@@ -52,7 +52,7 @@
 				ysubdivisions = 1
 				areacolor = [ 1, 1, 1, 1 ]
 				framerate = 12
-				spritesheetpath = "/sprites/map/walls/spritesheet.png"
+				spritesheetpath =  resource:"sprites/map/walls/spritesheet.png"
 			},
 			{
 				minimapcolor = [ 1, 0, 1, 1 ]
@@ -68,7 +68,7 @@
 				ysubdivisions = 1
 				areacolor = [ 1, 0, 1, 1 ]
 				framerate = 12
-				spritesheetpath = "/sprites/map/walls/spritesheet.png"
+				spritesheetpath =  resource:"sprites/map/walls/spritesheet.png"
 			},
 			{
 				minimapcolor = [ 0, 1, 1, 1 ]
@@ -84,7 +84,7 @@
 				ysubdivisions = 1
 				areacolor = [ 1, 1, 0, 1 ]
 				framerate = 12
-				spritesheetpath = "/sprites/map/walls/spritesheet.png"
+				spritesheetpath =  resource:"sprites/map/walls/spritesheet.png"
 			},
 			{
 				minimapcolor = [ 1, 1, 0, 1 ]
@@ -100,7 +100,7 @@
 				ysubdivisions = 1
 				areacolor = [ 1, 1, 0, 1 ]
 				framerate = 12
-				spritesheetpath = "/sprites/map/walls/spritesheet.png"
+				spritesheetpath =  resource:"sprites/map/walls/spritesheet.png"
 			},
 			{
 				minimapcolor = [ 0, 0, 1, 1 ]
@@ -116,7 +116,7 @@
 				ysubdivisions = 1
 				areacolor = [ 1, 0, 0, 1 ]
 				framerate = 12
-				spritesheetpath = "/sprites/map/walls/spritesheet.png"
+				spritesheetpath =  resource:"sprites/map/walls/spritesheet.png"
 			},
 			{
 				minimapcolor = [ 1, 1, 0, 1 ]
@@ -132,7 +132,7 @@
 				ysubdivisions = 1
 				areacolor = [ 1, 1, 1, 1 ]
 				framerate = 12
-				spritesheetpath = "/sprites/map/walls/spritesheet.png"
+				spritesheetpath =  resource:"sprites/map/walls/spritesheet.png"
 			},
 			{
 				minimapcolor = [ 1, 1, 1, 1 ]
@@ -148,8 +148,8 @@
 				ysubdivisions = 1
 				areacolor = [ 1, 1, 0, 1 ]
 				framerate = 12
-				spritesheetpath = "/sprites/map/walls/spritesheet.png"
-				spritesheetalphapath = "sprites/map/walls/spritesheet_a.png"
+				spritesheetpath =  resource:"sprites/map/walls/spritesheet.png"
+				spritesheetalphapath = resource:"sprites/map/walls/spritesheet_a.png"
 			},
 			{
 				minimapcolor = [ 0, 1, 1, 1 ]
@@ -165,7 +165,7 @@
 				ysubdivisions = 1
 				areacolor = [ 1, 1, 0, 1 ]
 				framerate = 12
-				spritesheetpath = "/sprites/map/walls/spritesheet.png"
+				spritesheetpath =  resource:"sprites/map/walls/spritesheet.png"
 			},
 		]
 	}

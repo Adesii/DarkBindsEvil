@@ -74,8 +74,9 @@ public class BaseBlock
 		var testblock = BlockList.GetValueOrDefault( name );
 		if ( testblock != null )
 		{
-			var block = TypeLibrary.Create<BaseBlock>( TypeLibrary.GetTypeByName( testblock.BlockName.Trim().ToLower() ) );
-			//Log.Info( $"Created block {block.Name}" );
+			var block = TypeLibrary.Create<BaseBlock>( testblock.BlockName.Trim().ToLower() );
+			if ( Game.IsClient )
+				Log.Debug( $"Created block {block}" );
 			block.Name = name;
 			block.MapSheet = MapSheetAsset.GetBlockArea( name );
 			return block;
@@ -186,10 +187,11 @@ public class BaseBlock
 			if ( !MapChunk.MaterialList.ContainsKey( MapSheet.SpriteSheetPath ) )
 			{
 				var copy = MapChunk.DefaultMaterial.CreateCopy();
-				copy.OverrideTexture( "SpriteSheet", MapSheet.SpriteSheetTexture );
+				MapSheet.LoadTextures();
+				copy.Set( "SpriteSheet", MapSheet.SpriteSheetTexture );
 				var alpha = MapSheet.SpriteSheetAlphaTexture;
 				if ( alpha != null )
-					copy.OverrideTexture( "SpriteSheetOpacityMask", MapSheet.SpriteSheetAlphaTexture );
+					copy.Set( "SpriteSheetOpacityMask", MapSheet.SpriteSheetAlphaTexture );
 				MapChunk.MaterialList.Add( MapSheet.SpriteSheetPath, copy );
 			}
 			Mesh TileMesh = new( MapChunk.MaterialList[MapSheet.SpriteSheetPath] );
@@ -306,7 +308,8 @@ public class BaseBlock
 			if ( !MapChunk.MaterialList.ContainsKey( MapSheet.SpriteSheetPath ) )
 			{
 				var copy = MapChunk.DefaultMaterial.CreateCopy();
-				copy.OverrideTexture( "SpriteSheet", MapSheet.SpriteSheetTexture );
+				MapSheet.LoadTextures();
+				copy.Set( "SpriteSheet", MapSheet.SpriteSheetTexture );
 				MapChunk.MaterialList.Add( MapSheet.SpriteSheetPath, copy );
 			}
 			Mesh TileMesh = new( MapChunk.MaterialList[MapSheet.SpriteSheetPath] );
@@ -397,9 +400,9 @@ public class BaseBlock
 		{
 			var SpriteViewport = MapSheet.Area;
 			if ( MapSheet.XSubdivisions != 1 )
-				SpriteViewport.width /= MapSheet.XSubdivisions;
+				SpriteViewport.Width /= MapSheet.XSubdivisions;
 			if ( MapSheet.YSubdivisions != 1 )
-				SpriteViewport.height /= MapSheet.YSubdivisions;
+				SpriteViewport.Height /= MapSheet.YSubdivisions;
 
 			var view = SpriteViewport;
 			float axisprogress = 0;
@@ -414,8 +417,8 @@ public class BaseBlock
 			axisprogress += 1;
 
 			int x = ((MapSheet.XSubdivisions.FloorToInt()) - axisprogress.FloorToInt()).Clamp( 0, MapSheet.XSubdivisions.FloorToInt() - 1 );
-			view.Position += new Vector2( x * SpriteViewport.width,
-										  0 * SpriteViewport.height );
+			view.Position += new Vector2( x * SpriteViewport.Width,
+										  0 * SpriteViewport.Height );
 			Vector2 StartUV = view.Position / MapSheet.SpriteSheetTexture.Size;
 			Vector2 EndUV = (view.Position + view.Size) / MapSheet.SpriteSheetTexture.Size;
 			return new Vector4( StartUV.x, StartUV.y, EndUV.x, EndUV.y );

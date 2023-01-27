@@ -22,7 +22,7 @@ public class ItemBar : Panel
 		int i = 0;
 		if ( ItemList != null )
 		{
-			Player = Local.Pawn as DarkBindCharacter;
+			Player = Game.LocalPawn as DarkBindCharacter;
 			if ( ItemList.ChildrenCount <= 0 )
 				foreach ( var item in Player.DarkInventory.BlockList )
 				{

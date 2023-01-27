@@ -5,6 +5,7 @@ using DarkBinds.util;
 using Sandbox;
 using SpriteKit.Entities;
 using SpriteKit.SceneObjects;
+using SpriteKit.Player;
 
 namespace DarkBinds.Player;
 
@@ -13,6 +14,19 @@ public partial class DarkBindCharacter : ModelSprite
 	public float Speed => 125f;
 	[Net, Predicted]
 	public Vector2Int PlayerPosition { get; set; }
+
+	[ClientInput]
+	public Vector3 MousePosition { get; set; }
+
+	[ClientInput]
+	public Vector3 MouseDirection { get; set; }
+
+	[Event.Client.BuildInput]
+	public void BuildInput()
+	{
+		MousePosition = Camera.Position;
+		MouseDirection = Screen.GetDirection( Mouse.Position );
+	}
 
 	public string CurrentBlock => DarkInventory.CurrentBlock;
 	/// <summary>
@@ -33,7 +47,7 @@ public partial class DarkBindCharacter : ModelSprite
 	public override void Spawn()
 	{
 		//SpritePath = "/sprites/mainchar/darkbind.sprite";
-		SpritePath = "/sprites/mainchar/testing.sprite";
+		SpritePath = "sprites/mainchar/testing.sprite";
 		CameraMode = new TopDownCamera();
 		base.Spawn();
 		Rotation = Rotation.LookAt( Vector3.Backward, Vector3.Up );
@@ -55,7 +69,7 @@ public partial class DarkBindCharacter : ModelSprite
 	{
 		TargetSceneWorld = PixelRenderer.GetDefaultCharacters();
 		base.ClientSpawn();
-		if ( Host.IsClient && Local.Pawn == this )
+		if ( Game.IsClient && Game.LocalClient == this )
 		{
 			CreateLights();
 
@@ -68,7 +82,7 @@ public partial class DarkBindCharacter : ModelSprite
 	[Event.Hotload]
 	private void CreateLights()
 	{
-		if ( !Host.IsClient || Local.Pawn != this )
+		if ( !Game.IsClient || Game.LocalClient != this )
 		{
 			return;
 
@@ -108,9 +122,23 @@ public partial class DarkBindCharacter : ModelSprite
 	bool isEditingFloor = false;
 
 
-	public override void Simulate( Client cl )
+	public override void FrameSimulate( IClient cl )
+	{
+		base.FrameSimulate( cl );
+		HandleCamera();
+	}
+
+	private void HandleCamera()
+	{
+		var camera = Components.Get<CameraMode>();
+		//camera ??= Components.Create<PlayFieldCamera>();
+		camera?.Build();
+	}
+
+	public override void Simulate( IClient cl )
 	{
 		base.Simulate( cl );
+
 		Vector3 Vel = new();
 		if ( Input.Down( InputButton.Forward ) )
 		{
@@ -128,7 +156,7 @@ public partial class DarkBindCharacter : ModelSprite
 		{
 			Vel += Vector3.Right;
 		}
-		if ( Input.Pressed( InputButton.Use ) && IsClient )
+		if ( Input.Pressed( InputButton.Use ) && Game.IsClient )
 		{
 			Inventory.Toggle();
 		}
@@ -160,11 +188,11 @@ public partial class DarkBindCharacter : ModelSprite
 		}
 		PlayerPosition = World.GetTilePosition( Position );
 		var directionvector = Speed * Time.Delta * Vel.Normal;
-		var TargetBlockPosition = LinePlaneIntersectionWithHeight( Input.Cursor.Origin, Input.Cursor.Direction, 0 );
+		var TargetBlockPosition = LinePlaneIntersectionWithHeight( MousePosition, MouseDirection, 0 );
 		var tileExtends = new Vector3( World.HalfTileSize + 1, World.HalfTileSize + 1, World.TileHeight + 1 );
 		var blocks = World.GetBlocksInLine( Position, TargetBlockPosition, 3 );
 		isEditingFloor = Input.Down( InputButton.Run );
-		if ( IsClient && Cursor.hovered == null )
+		if ( Game.IsClient && Cursor.hovered == null )
 		{
 			for ( int i = 0; i < blocks.Count; i++ )
 			{
@@ -180,7 +208,7 @@ public partial class DarkBindCharacter : ModelSprite
 			DebugOverlay.Box( wpos, -tileExtends.WithZ( 0 ), tileExtends, Color.Green.WithAlpha( 0.3f ), Time.Delta * 2 );
 		}
 
-		if ( Input.Down( InputButton.PrimaryAttack ) && IsServer && LastAttack > 0.1f )
+		if ( Input.Down( InputButton.PrimaryAttack ) && Game.IsServer && LastAttack > 0.1f )
 		{
 			LastAttack = 0;
 			var currentPos = Position;
@@ -195,7 +223,7 @@ public partial class DarkBindCharacter : ModelSprite
 			}
 
 		}
-		if ( Input.Down( InputButton.SecondaryAttack ) && IsServer && LastAttack > 0.1f )
+		if ( Input.Down( InputButton.SecondaryAttack ) && Game.IsServer && LastAttack > 0.1f )
 		{
 			LastAttack = 0;
 			for ( int i = 0; i < blocks.Count; i++ )
@@ -221,7 +249,7 @@ public partial class DarkBindCharacter : ModelSprite
 			Position += directionvector;
 
 
-		if ( FollowLight.IsValid() && IsClient )
+		if ( FollowLight.IsValid() && Game.IsClient )
 		{
 			FollowLight.Position = Position + Vector3.Up * 32f;
 			FollowSun.Position = Position + Vector3.Up * 500f;

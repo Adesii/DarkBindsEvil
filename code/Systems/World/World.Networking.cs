@@ -92,10 +92,6 @@ public partial class World
 			var reader = new BinaryReader( dstream );
 			int amount = reader.ReadInt32();
 			Log.Debug( $"Amount of chunks: {amount}" );
-			foreach ( var item in Tiles.Values )
-			{
-				item.Delete();
-			}
 			ClearTiles();
 			for ( int i = 0; i < amount; i++ )
 			{
@@ -261,6 +257,6 @@ public partial class World
 			bottomlefttile.BuildMesh();
 
 		Event.Run( "tile.changed", tile );
-		Log.Debug( $"Tile {tile.Position} received" );
+		Log.Debug( $"Tile {tile.Position} received of type {tile.Block.Name}" );
 	}
 }

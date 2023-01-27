@@ -69,7 +69,7 @@ public struct Vector2Int : IEquatable<Vector2Int>
 	//     Return the same vector but with a length of one
 	public readonly Vector2Int Normal => System.Numerics.Vector2.Normalize( vec );
 
-	public static Vector2Int Random => new Vector2Int( Rand.Float( -1f, 1f ), Rand.Float( -1f, 1f ) ).Normal * Rand.Float( 0f, 1f );
+	public static Vector2Int Random => new Vector2Int( Game.Random.Float( -1f, 1f ), Game.Random.Float( -1f, 1f ) ).Normal * Game.Random.Float( 0f, 1f );
 
 	public Vector2Int( int x )
 		: this( x, x )

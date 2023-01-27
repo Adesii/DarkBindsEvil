@@ -32,7 +32,7 @@ SaveMenu{
     background-position-x: -10%;
     flex-direction: column;
     padding: 10px;
-    pointer-events: visible;
+    pointer-events: all;
     &.hidden{
         transition:all 0.1s ease-in-out;
         opacity: 0;

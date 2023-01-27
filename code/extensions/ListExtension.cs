@@ -14,7 +14,7 @@ public static class ListExtension
 		if ( !list.Any() )
 			throw new InvalidOperationException( "Cannot select a random member of an empty list!" );
 
-		return list[Rand.Int( 0, list.Count - 1 )];
+		return list[Game.Random.Int( 0, list.Count - 1 )];
 	}
 
 	/// <summary>

@@ -34,7 +34,7 @@ public class SaveMenu : Panel
 	public override void Tick()
 	{
 		base.Tick();
-		if ( Local.Client.IsListenServerHost )
+		if ( Game.LocalClient.IsListenServerHost )
 		{
 			OpenButton?.SetClass( "hidden", false );
 			SaveGameNameEntry.AcceptsFocus = true;
