@@ -1,9 +1,9 @@
 {
   "Title": "The Dark Binds Evil",
   "Type": "game",
-  "Org": "local",
+  "Org": "adesi",
   "Ident": "darkbindsevil",
-  "Tags": null,
+  "Tags": "",
   "Schema": 1,
   "HasAssets": true,
   "AssetsPath": "",
@@ -22,6 +22,9 @@
     "PerMapRanking": false,
     "LeaderboardType": 0,
     "RankType": 0,
-    "GameNetworkType": 0
+    "GameNetworkType": 0,
+    "Summary": "A Sandbox using SpriteKit. Currently in Pre-Alpha",
+    "Description": "[Version: 0.1]\r\n\r\nCurrently in Pre-Alpha and Heavily in Development\r\n\r\nThis uses SpriteKit, my Own Pixel and Sprite S\u0026Box Framework that i develop using this Game as a Testing Ground. It is Possible to use it in your own Projects but it changes pretty much daily so it isn\u0027t in a Stable Release state yet.\r\n\r\n--Features--\r\nGenerate a 512x512 World and Move about it.\r\nBreak and Place Blocks and Floor Tiles.\r\nMultiplayer should work.\r\nSave/Loading support, very basic stuff. can\u0027t even open Main Menu from ingame yet.\r\n\r\n--coming Features--\r\nmany Features...\r\ntoo many to list them here. Best place to stay up-to-date is to look at the Github page of this.\r\n\r\ngithub.com/Adesii/DarkBindsEvil\r\n(can\u0027t open links yet. but should be easy to find)\r\n",
+    "Public": true
   }
 }
