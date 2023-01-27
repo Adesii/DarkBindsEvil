@@ -3,7 +3,7 @@ using static FastNoiseLite;
 
 namespace DarkBinds.Systems.Worlds;
 
-public partial class World
+public partial class World : Entity
 {
 
 	[ConCmd.Server]

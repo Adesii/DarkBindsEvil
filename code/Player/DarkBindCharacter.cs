@@ -99,14 +99,14 @@ public partial class DarkBindCharacter : ModelSprite
 		FollowSun = new SceneSpotLight( worldscene, Position, Color.White )
 		{
 			Rotation = Rotation.LookAt( Vector3.Down ),
-			Falloff = 1,
+			//Falloff = 1,
 			Radius = 550,
 
-			SpotCone = new()
+			/* SpotCone = new()
 			{
 				Inner = 18,
 				Outer = 23,
-			},
+			}, */
 			LightColor = new Color( 1.0f, 0.95f, 0.8f ) * 3f,
 		};
 
@@ -316,7 +316,7 @@ public partial class DarkBindCharacter : ModelSprite
 	[ConCmd.Client]
 	public static void SpawnSpinningCube( float scale = 0.25f )
 	{
-		var player = Local.Pawn as DarkBindCharacter;
+		var player = Game.LocalPawn as DarkBindCharacter;
 
 		new SpinningCube( PixelRenderer.GetDefaultWorld(), player.Transform.WithPosition( player.Position + Vector3.Up * 16 ).WithScale( scale ) );
 	}
@@ -324,7 +324,7 @@ public partial class DarkBindCharacter : ModelSprite
 	[ConCmd.Client]
 	public static void SpawnModel( string path, float scale )
 	{
-		var player = Local.Pawn as DarkBindCharacter;
+		var player = Game.LocalPawn as DarkBindCharacter;
 
 		new SceneModel( PixelRenderer.GetDefaultWorld(), path, player.Transform.WithPosition( player.Position ).WithScale( scale ) );
 	}

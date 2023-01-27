@@ -14,7 +14,7 @@ public partial class DarkBindsHud : Sandbox.HudEntity<RootPanel>
 		RootPanel.SetTemplate( "/UI/Hud.html" );
 		RootPanel.BindClass( "Dev", () =>
 		{
-			return Local.Client.Components.Get<DevCamera>( true )?.Enabled ?? false;
+			return Game.LocalClient.Components.Get<DevCamera>( true )?.Enabled ?? false;
 		} );
 	}
 

@@ -12,7 +12,7 @@ public class SpinningCube : SceneModel
 		RotStart = 0;
 		StartRot = Rotation;
 	}
-	[Event.Frame]
+	[Event.Client.Frame]
 	public void UpdatePosition()
 	{
 		Rotation = Rotation.Lerp( StartRot, RandRot, RotStart );

@@ -1,6 +1,6 @@
 namespace DarkBinds.Systems.Worlds;
 
-public partial class World
+public partial class World : Entity
 {
 	public const int WorldSize = 8; //64 default
 	public const int TileSize = 32;
