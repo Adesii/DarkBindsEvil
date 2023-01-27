@@ -8,7 +8,7 @@ public partial class DarkBindsHud : Sandbox.HudEntity<RootPanel>
 	public DarkBindsHud() : base()
 	{
 		Instance = this;
-		if ( !IsClient ) return;
+		if ( !Game.IsClient ) return;
 		RootPanel.SetTemplate( "/UI/Hud.html" );
 	}
 

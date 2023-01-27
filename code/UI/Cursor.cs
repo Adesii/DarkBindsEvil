@@ -13,12 +13,12 @@ public class Cursor : Panel
 	{
 		BindClass( "inactive", () =>
 		{
-			return Local.Client.Components.Get<DevCamera>( true ).Enabled;
+			return Game.LocalClient.Components.Get<DevCamera>( true ).Enabled;
 		} );
 	}
 
-	[Event.BuildInput]
-	public void BuildInput( InputBuilder input )
+	[Event.Client.BuildInput]
+	public void BuildInput()
 	{
 		Mouse = Sandbox.Mouse.Position;
 	}

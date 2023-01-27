@@ -2,7 +2,7 @@ global using Sandbox;
 global using Sandbox.UI;
 global using Sandbox.UI.Construct;
 global using Sandbox.Component;
-global using SandboxEditor;
+global using Editor;
 
 global using System;
 global using System.Collections.Generic;
@@ -14,10 +14,11 @@ using DarkBinds.Player;
 using DarkBinds.UI;
 using DarkBinds.Systems.Worlds;
 using DarkBinds.Systems.Blocks;
+using SpriteKit.Asset;
 
 namespace DarkBinds;
 
-public partial class DarkBindsGame : Game
+public partial class DarkBindsGame : GameManager
 {
 
 	public static DarkBindsGame Instance = Current as DarkBindsGame;
@@ -25,7 +26,7 @@ public partial class DarkBindsGame : Game
 	public DarkBindsGame()
 	{
 		Log.Debug( "Game created" );
-		if ( IsServer )
+		if ( Game.IsServer )
 		{
 			_ = new DarkBindsHud();
 			World = new World();
@@ -35,11 +36,22 @@ public partial class DarkBindsGame : Game
 				Rotation = Vector3.Forward.EulerAngles.ToRotation()
 			};
 		}
+		else
+		{
+
+			foreach ( var item in AreaAsset.All )
+			{
+				if ( item.Value is AreaAsset a )
+				{
+					a.PostInGameLoad();
+				}
+			}
+		}
 	}
 
 
 
-	public override void ClientJoined( Client client )
+	public override void ClientJoined( IClient client )
 	{
 		base.ClientJoined( client );
 
@@ -58,13 +70,6 @@ public partial class DarkBindsGame : Game
 			var tx = randomSpawnPoint.Transform;
 			player.Transform = tx;
 		}
-	}
-
-	public override void DoPlayerSuicide( Client cl )
-	{
-		if ( cl.Pawn == null ) return;
-
-		cl.Pawn.Kill();
 	}
 
 

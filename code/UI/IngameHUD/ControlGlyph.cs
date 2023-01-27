@@ -21,18 +21,11 @@ namespace SkyFortress.UI
 		bool solid = false;
 		bool neutral = false;
 
-		private static Texture UnboundTexture = Texture.Load( FileSystem.Mounted, "/ui/unbound.png" );
+		private static Texture UnboundTexture = Texture.Load( FileSystem.Mounted, "ui/unbound.png" );
 
 		public ControlGlyph()
 		{
 			AddClass( "controlglyph" );
-		}
-
-		protected override void PreTemplateApplied()
-		{
-			base.PreTemplateApplied();
-			solid = false;
-			neutral = false;
 		}
 
 		public override void SetProperty( string name, string value )

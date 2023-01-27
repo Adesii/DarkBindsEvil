@@ -18,7 +18,7 @@
 				areacolor = [0,1,1,1]
 				framerate = 12
 				spriteorigin = [0.5,0.04]
-				spritesheetpath = "/sprites/abilities/soulpillar.png"
+				spritesheetpath =  resource:"sprites/abilities/soulpillar.png"
 			},
 		]
 	}

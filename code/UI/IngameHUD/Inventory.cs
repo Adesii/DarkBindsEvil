@@ -13,14 +13,14 @@ public class Inventory : Panel
 	{
 		Instance.SetClass( "hidden", !Instance.HasClass( "hidden" ) );
 	}
-	[Event.BuildInput]
-	public static void BuildInput( InputBuilder input )
+	[Event.Client.BuildInput]
+	public static void BuildInput()
 	{
 		if ( Instance?.HasClass( "hidden" ) ?? true )
 			return;
 
 
-		input.ClearButton( InputButton.PrimaryAttack );
-		input.ClearButton( InputButton.SecondaryAttack );
+		Input.ClearButton( InputButton.PrimaryAttack );
+		Input.ClearButton( InputButton.SecondaryAttack );
 	}
 }

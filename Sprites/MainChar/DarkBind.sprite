@@ -18,7 +18,7 @@
 				areacolor = [1,0,1,1]
 				framerate = 7
 				spriteorigin = [0.5,0]
-				spritesheetpath = "/sprites/mainchar/darksheet.png"
+				spritesheetpath =  resource:"sprites/mainchar/darksheet.png"
 			},
 			{
 				name = "walk"
@@ -34,7 +34,7 @@
 				areacolor = [0,0,1,1]
 				framerate = 7
 				spriteorigin = [0.5,0]
-				spritesheetpath = "/sprites/mainchar/darksheet.png"
+				spritesheetpath =  resource:"sprites/mainchar/darksheet.png"
 			},
 		]
 	}

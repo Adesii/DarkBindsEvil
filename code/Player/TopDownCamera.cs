@@ -1,20 +1,16 @@
 namespace DarkBinds.Player;
 
-public class TopDownCamera : CameraMode
+public class TopDownCamera : SpriteKit.Player.CameraMode
 {
 	public float CameraHeight => 600.0f;
-	public override void Activated()
+	protected override void OnActivate()
 	{
-		base.Activated();
-
-		OrthoSize = 0.5f;
-		Ortho = false;
-		FieldOfView = 40f;
+		Camera.FieldOfView = 40f;
 	}
-	public override void Update()
+	public override void Build()
 	{
-		Position = Entity.Position + Entity.Rotation * (Vector3.Up * CameraHeight - Vector3.Forward * CameraHeight / 3);
-		Rotation = Rotation.LookAt( Entity.Position - Position );
+		Camera.Position = Entity.Position + Entity.Rotation * (Vector3.Up * CameraHeight - Vector3.Forward * CameraHeight / 3);
+		Camera.Rotation = Rotation.LookAt( Entity.Position - Camera.Position );
 
 	}
 }

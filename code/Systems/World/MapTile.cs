@@ -157,12 +157,14 @@ public partial class MapTile
 			return;
 		DebugOverlay.Box( WorldPosition + World.HalfTileSize, WorldPosition - World.HalfTileSize, color == new Color() ? Color.Red : color, 0, false );
 	}
-
+	[Event.PreRender]
 	internal void SetAttributes()
 	{
-		if ( !TileSO.IsValid() || Block == null || Block.MapSheet == null || FloorBlock == null || FloorBlock.MapSheet == null )
-			return;
-		TileSO.Attributes.Set( "SpriteSheet", Block.MapSheet.SpriteSheetTexture );
-		TileSO.Attributes.Set( "FloorSpriteSheet", FloorBlock.MapSheet.SpriteSheetTexture );
+		//if ( !TileSO.IsValid() || Block == null || Block.MapSheet == null || FloorBlock == null || FloorBlock.MapSheet == null )
+		//	return;
+		if ( TileSO.IsValid() )
+			TileSO.Attributes.Set( "SpriteSheet", Block.MapSheet.SpriteSheetTexture );
+		//TileSO.Attributes.Set( "FloorSpriteSheet", FloorBlock.MapSheet.SpriteSheetTexture );
+
 	}
 }

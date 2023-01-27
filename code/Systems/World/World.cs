@@ -32,14 +32,14 @@ public partial class World : Entity
 		base.ClientSpawn();
 		Instance = this;
 
-		World.Scene = Map.Scene;
+		World.Scene = Game.SceneWorld;
 	}
 
 
 	[Event.Hotload]
 	public void onhotload()
 	{
-		var startTimer = DateTime.Now;
+		/* var startTimer = DateTime.Now;
 		if ( World.Scene.IsValid() )
 			foreach ( var item in World.Scene.SceneObjects )
 			{
@@ -51,9 +51,7 @@ public partial class World : Entity
 		Tiles = new();
 		ClearTiles();
 
-		World.Scene = Map.Scene;
-
-
+		World.Scene = Game.SceneWorld; */
 	}
 
 	[Event.Tick.Client]
@@ -71,7 +69,7 @@ public partial class World : Entity
 
 	public void RenderWorld()
 	{
-		var player = Local.Pawn;
+		var player = Game.LocalPawn;
 		if ( player == null ) return;
 		var pos = player.Position;
 		var playerchunks = World.GetChunkIndex( pos );
@@ -115,7 +113,7 @@ public partial class World : Entity
 	[ConCmd.Server]
 	public static void SaveWorld( string filename )
 	{
-		Host.AssertServer();
+		Game.AssertServer();
 		var startTimer = DateTime.Now;
 		var data = new MemoryStream();
 		var writer = new BinaryWriter( data );
@@ -141,7 +139,7 @@ public partial class World : Entity
 	[ConCmd.Server]
 	public static void LoadWorld( string filename )
 	{
-		Host.AssertServer();
+		Game.AssertServer();
 		var startTimer = DateTime.Now;
 		var compressedData = Convert.FromBase64String( FileSystem.Data.ReadAllText( "Saves/" + filename ) );
 		var compressed = new MemoryStream( compressedData );
@@ -174,6 +172,16 @@ public partial class World : Entity
 				item.Delete();
 				Event.Unregister( item );
 			}
+		else
+			foreach ( var sceneobject in Game.SceneWorld.SceneObjects )
+			{
+				if ( sceneobject is MapSceneObject mp )
+				{
+					mp.Delete();
+				}
+			}
+
+		MapChunk.MaterialList = new();
 		Tiles = new();
 		ActiveChunks = new();
 	}
