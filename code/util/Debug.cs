@@ -5,7 +5,7 @@ namespace DarkBinds;
 public static class Debug
 {
 	[ConVar.Replicated( "DarkDebug" )]
-	public static int Level { get; set; } = 1;
+	public static int Level { get; set; } = 0;
 
 	public static bool Enabled => Level > 0;
 }

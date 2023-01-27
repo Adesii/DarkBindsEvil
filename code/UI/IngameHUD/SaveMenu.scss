@@ -19,6 +19,19 @@ SaveMenu{
     width: 200px;
     height: 100px;
 }
+.Spawn,.Spawn1{
+    position: absolute;
+    bottom: 10px;
+    left: 240px;
+    width: 200px;
+    height: 100px;
+    label{
+        font-size: 15px;
+    }
+}
+.Spawn1{
+    left: 470px;
+}
 
 .SaveMenuPanel{
     position: absolute;

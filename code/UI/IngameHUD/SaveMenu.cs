@@ -1,4 +1,5 @@
 using System.IO;
+using DarkBinds.Player;
 using DarkBinds.Systems.Worlds;
 
 namespace DarkBinds.UI.IngameHUD;
@@ -29,6 +30,16 @@ public class SaveMenu : Panel
 				SaveList.AddChild( TempItem );
 			}
 
+	}
+
+	public void SpawnObject()
+	{
+		DarkBindCharacter.SpawnSpinningCube();
+	}
+
+	public void OpenObjectNon()
+	{
+		DarkBindCharacter.SpawnNonPixelatedSpinningCube();
 	}
 
 	public override void Tick()
