@@ -1,6 +1,12 @@
 ﻿RootPanel {
     pointer-events: none;
     cursor: none;
+    display: flex;
+    position: absolute;
+
+    &.Dev {
+        display: none;
+    }
 }
 
 ChunkPreview {

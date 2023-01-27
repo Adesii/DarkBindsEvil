@@ -13,4 +13,5 @@ public class TopDownCamera : SpriteKit.Player.CameraMode
 		Camera.Rotation = Rotation.LookAt( Entity.Position - Camera.Position );
 
 	}
+
 }

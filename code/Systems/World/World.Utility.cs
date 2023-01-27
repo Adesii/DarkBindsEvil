@@ -1,6 +1,6 @@
 namespace DarkBinds.Systems.Worlds;
 
-public partial class World
+public partial class World : Entity
 {
 	public static int GetSurroundCount( Vector2Int position )
 	{

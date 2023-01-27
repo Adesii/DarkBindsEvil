@@ -5,18 +5,14 @@ namespace DarkBinds.Systems.Blocks;
 [Block( "MarkedStone" )]
 public class MarkedStone : BaseBlock
 {
-	private PointLightEntity Light;
+	private SceneLight Light;
 	public override void OnCreated()
 	{
 		base.OnCreated();
-		Light = new PointLightEntity
+		Light = new SceneLight( PixelRenderer.GetDefaultWorld(), Tile.WorldPosition + Vector3.Up * World.HalfTileSize, World.HalfTileSize * 4, ((Color.Parse( "#24799e" ) ?? Color.Blue)) * 1 )
 		{
-			Falloff = 1,
-			Range = 100f,
-			Color = Color.Parse( "#24799e" ) ?? Color.Blue,
-			Brightness = 0.3f,
-			DynamicShadows = false,
-			Position = Tile.WorldPosition + Vector3.Up * World.HalfTileSize
+			QuadraticAttenuation = 4,
+			LinearAttenuation = 0
 		};
 	}
 

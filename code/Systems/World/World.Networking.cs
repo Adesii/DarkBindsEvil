@@ -3,7 +3,7 @@ using System.IO.Compression;
 
 namespace DarkBinds.Systems.Worlds;
 
-public partial class World
+public partial class World : Entity
 {
 	public async void SendchunksChunked( int amountofChunks )
 	{

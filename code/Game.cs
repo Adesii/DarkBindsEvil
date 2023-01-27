@@ -6,15 +6,15 @@ global using Editor;
 
 global using System;
 global using System.Collections.Generic;
-global using System.Linq;
 global using System.ComponentModel;
+global using System.Linq;
 global using System.Threading.Tasks;
-
+global using Pixel;
 using DarkBinds.Player;
-using DarkBinds.UI;
-using DarkBinds.Systems.Worlds;
 using DarkBinds.Systems.Blocks;
 using SpriteKit.Asset;
+using DarkBinds.Systems.Worlds;
+using DarkBinds.UI;
 
 namespace DarkBinds;
 
@@ -23,6 +23,8 @@ public partial class DarkBindsGame : GameManager
 
 	public static DarkBindsGame Instance = Current as DarkBindsGame;
 	[Net] public World World { get; set; }
+
+	public PixelRenderer WorldRenderer { get; set; }
 	public DarkBindsGame()
 	{
 		Log.Debug( "Game created" );
@@ -35,9 +37,11 @@ public partial class DarkBindsGame : GameManager
 				Brightness = 0,
 				Rotation = Vector3.Forward.EulerAngles.ToRotation()
 			};
+
 		}
-		else
+		if ( Game.IsClient )
 		{
+			WorldRenderer = new PixelRenderer();
 
 			foreach ( var item in AreaAsset.All )
 			{
@@ -47,6 +51,10 @@ public partial class DarkBindsGame : GameManager
 				}
 			}
 		}
+	}
+
+	public override void DoPlayerDevCam( IClient client )
+	{
 	}
 
 
@@ -72,5 +80,34 @@ public partial class DarkBindsGame : GameManager
 		}
 	}
 
+}
 
+[SceneCamera.AutomaticRenderHook]
+public class camrenderhook : RenderHook
+{
+
+	public override void OnStage( SceneCamera target, Stage renderStage )
+	{
+		if ( renderStage == Stage.AfterOpaque )
+		{
+			var targetcam = target;
+			var cam = new SceneCamera()
+			{
+				FieldOfView = targetcam.FieldOfView,
+				Rotation = targetcam.Rotation,
+				Position = targetcam.Position,
+				AntiAliasing = targetcam.AntiAliasing,
+				AmbientLightColor = targetcam.AmbientLightColor,
+				ZFar = targetcam.ZFar,
+				ZNear = targetcam.ZNear,
+				BackgroundColor = targetcam.BackgroundColor,
+				EnablePostProcessing = targetcam.EnablePostProcessing,
+				Ortho = targetcam.Ortho,
+				OrthoHeight = targetcam.OrthoHeight,
+				OrthoWidth = targetcam.OrthoWidth
+			};
+			PixelLayer.target = cam;
+			PixelRenderer.Instance.RenderSceneObject();
+		}
+	}
 }

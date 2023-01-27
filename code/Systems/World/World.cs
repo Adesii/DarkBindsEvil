@@ -1,5 +1,6 @@
 using System.IO;
 using System.IO.Compression;
+
 using static FastNoiseLite;
 
 namespace DarkBinds.Systems.Worlds;
@@ -32,7 +33,7 @@ public partial class World : Entity
 		base.ClientSpawn();
 		Instance = this;
 
-		World.Scene = Game.SceneWorld;
+		World.RenderLayer = PixelRenderer.GetDefaultWorld();
 	}
 
 
@@ -173,6 +174,7 @@ public partial class World : Entity
 				Event.Unregister( item );
 			}
 		else
+		{
 			foreach ( var sceneobject in Game.SceneWorld.SceneObjects )
 			{
 				if ( sceneobject is MapSceneObject mp )
@@ -180,6 +182,11 @@ public partial class World : Entity
 					mp.Delete();
 				}
 			}
+
+			PixelRenderer.ClearLayers();
+
+		}
+
 
 		MapChunk.MaterialList = new();
 		Tiles = new();

@@ -22,7 +22,6 @@ public class Cursor : Panel
 	{
 		Mouse = Sandbox.Mouse.Position;
 	}
-
 	public override void Tick()
 	{
 		cursorImage.Style.Left = Length.Fraction( (Mouse.x / Screen.Width).Clamp( 0, 0.999f ) );

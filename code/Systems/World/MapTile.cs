@@ -2,6 +2,7 @@ using System.IO;
 using System.Numerics;
 using System.Runtime.Serialization;
 using DarkBinds.Systems.Blocks;
+
 using Sandbox;
 using SpriteKit.Asset;
 
@@ -127,7 +128,7 @@ public partial class MapTile
 		Block?.OnCreated();
 		FloorBlock?.OnCreated();
 
-		TileSO = new MapSceneObject( World.Scene, model, new Transform( WorldPosition ) )
+		TileSO = new MapSceneObject( PixelRenderer.GetDefaultWorld(), model, new Transform( WorldPosition ) )
 		{
 			//Bounds = new BBox( new Vector3( -World.HalfTileSize, -World.HalfTileSize, -World.TileHeight ), new Vector3( World.HalfTileSize, World.HalfTileSize, World.TileHeight ) ) + WorldPosition
 		};
