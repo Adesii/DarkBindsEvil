@@ -1,3 +1,6 @@
 [submodule "code/systems/SpriteKit"]
 	path = code/systems/SpriteKit
 	url = https://github.com/Adesii/SpriteKit
+[submodule "code/systems/PixelRenderer"]
+	path = code/systems/PixelRenderer
+	url = https://github.com/Adesii/sbox-pixelworld
