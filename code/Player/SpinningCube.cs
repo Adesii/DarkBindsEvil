@@ -5,7 +5,7 @@ public class SpinningCube : SceneModel
 	Rotation RandRot;
 	Rotation StartRot;
 	TimeSince RotStart;
-	public SpinningCube( SceneWorld sceneWorld, Transform transform ) : base( sceneWorld, "models/maya_testcube_100.vmdl", transform )
+	public SpinningCube( SceneWorld sceneWorld, Transform transform ) : base( sceneWorld, "models/editor/playerstart.vmdl", transform )
 	{
 		Event.Register( this );
 		RandRot = Rotation.Random;
@@ -15,6 +15,7 @@ public class SpinningCube : SceneModel
 	[Event.Client.Frame]
 	public void UpdatePosition()
 	{
+		if ( !this.IsValid() ) return;
 		Rotation = Rotation.Lerp( StartRot, RandRot, RotStart );
 		if ( Rotation.Forward.Angle( RandRot.Forward ) < 10f )
 		{

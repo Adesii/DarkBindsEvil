@@ -1,5 +1,5 @@
 @import "/ui/theme.scss";
-.LoadingScreen{
+LoadingScreen{
     position: absolute;
     width: 100%;
     height: 100%;
@@ -9,6 +9,7 @@
     &.hidden{
         transition:all 2s ease-in-out;
         opacity: 0;
+        pointer-events: none;
     }
 }
 

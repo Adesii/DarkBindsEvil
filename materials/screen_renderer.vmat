@@ -2,5 +2,5 @@
 
 Layer0
 {
-	shader "screen_sprite_renderer_layer.vfx"
+	shader "screen_sprite_renderer_layer.shader"
 }

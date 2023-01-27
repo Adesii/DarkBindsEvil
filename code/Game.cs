@@ -37,6 +37,7 @@ public partial class DarkBindsGame : GameManager
 				Brightness = 0,
 				Rotation = Vector3.Forward.EulerAngles.ToRotation()
 			};
+
 		}
 		if ( Game.IsClient )
 		{
@@ -50,6 +51,10 @@ public partial class DarkBindsGame : GameManager
 				}
 			}
 		}
+	}
+
+	public override void DoPlayerDevCam( IClient client )
+	{
 	}
 
 
@@ -75,11 +80,34 @@ public partial class DarkBindsGame : GameManager
 		}
 	}
 
-	public override void RenderHud()
+}
+
+[SceneCamera.AutomaticRenderHook]
+public class camrenderhook : RenderHook
+{
+
+	public override void OnStage( SceneCamera target, Stage renderStage )
 	{
-		base.RenderHud();
-		PixelRenderer.Instance.RenderSceneObject();
+		if ( renderStage == Stage.AfterOpaque )
+		{
+			var targetcam = target;
+			var cam = new SceneCamera()
+			{
+				FieldOfView = targetcam.FieldOfView,
+				Rotation = targetcam.Rotation,
+				Position = targetcam.Position,
+				AntiAliasing = targetcam.AntiAliasing,
+				AmbientLightColor = targetcam.AmbientLightColor,
+				ZFar = targetcam.ZFar,
+				ZNear = targetcam.ZNear,
+				BackgroundColor = targetcam.BackgroundColor,
+				EnablePostProcessing = targetcam.EnablePostProcessing,
+				Ortho = targetcam.Ortho,
+				OrthoHeight = targetcam.OrthoHeight,
+				OrthoWidth = targetcam.OrthoWidth
+			};
+			PixelLayer.target = cam;
+			PixelRenderer.Instance.RenderSceneObject();
+		}
 	}
-
-
 }

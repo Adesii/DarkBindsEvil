@@ -174,6 +174,7 @@ public partial class World : Entity
 				Event.Unregister( item );
 			}
 		else
+		{
 			foreach ( var sceneobject in Game.SceneWorld.SceneObjects )
 			{
 				if ( sceneobject is MapSceneObject mp )
@@ -181,6 +182,11 @@ public partial class World : Entity
 					mp.Delete();
 				}
 			}
+
+			PixelRenderer.ClearLayers();
+
+		}
+
 
 		MapChunk.MaterialList = new();
 		Tiles = new();

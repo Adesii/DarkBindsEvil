@@ -35,9 +35,7 @@ PS
 {
 	#include "ui/pixel.hlsl"
 
-	float4 g_vViewport < Source( Viewport ); >;
-	float4 g_vInvTextureDim < Source( InvTextureDim ); SourceArg( g_tColor ); >;
-	CreateTexture2D( g_tColor ) < Attribute( "Texture" ); SrgbRead( true ); Filter( NEAREST ); OutputFormat( DXT5 );AddressU(CLAMP);AddressV(CLAMP); >;
+	CreateTexture2D( g_tColor )< Attribute( "Texture" );SrgbRead( true );Filter(NEAREST);AddressU( WRAP );AddressV( WRAP );>;
 	CreateTexture2D( g_tFrameBuffer ) < Attribute("FrameBufferCopyTexture"); SrgbRead( true ); Filter( NEAREST ); OutputFormat( DXT5 );AddressU(CLAMP);AddressV(CLAMP); >;
 
 
@@ -76,7 +74,7 @@ PS
 
 			float2 vTexCoord = i.vTexCoord;
 			float2 TextureSize =  TextureDimensions2D( g_tColor, 0 );
-			float4 vImage = Tex2DLevel( g_tColor,vTexCoord.xy , 0.0f );
+			float4 vImage = Tex2D( g_tColor,vTexCoord.xy );
 		#endif
 
 		#if D_IS_QUANTIZED == 1
@@ -90,10 +88,10 @@ PS
 
 		float3 vColor = vImage.rgb;//saturate(vQuantize.rgb).r;
 
-		o.vColor.rgb = vColor.rgb * i.vColor.rgb;
-		//o.vColor.rgb = 0.1f;
+		o.vColor.rgb = vColor.rgb* i.vColor.rgb;
 		o.vColor.a = vImage.a * i.vColor.a;
+		//o.vColor.rgb = 1;
 		//o.vColor.a = 1;
-		return /* o;// */UI_CommonProcessing_Post( i, o );
+		return UI_CommonProcessing_Post(i,o);
 	}
 }
