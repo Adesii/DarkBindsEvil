@@ -1,0 +1,119 @@
+@using System;
+@using Sandbox;
+@using Sandbox.UI;
+
+
+@namespace DarkBinds.UI
+@attribute [StyleSheet("/UI/IngameHUD/ControlGlyph.scss")]
+@inherits Panel
+
+
+
+<root>
+	<image class="glyph" @ref="Glyph" />
+	<label class="text" @ref="Text"></label>
+</root>
+
+@code
+{
+
+
+	public Image Glyph { get; set; }
+	public Label Text { get; set; }
+	public InputButton Button { get; set; }
+
+	public InputGlyphSize Size { get; set; } = InputGlyphSize.Small;
+
+	GlyphStyle style = default;
+
+	bool solid = false;
+	bool neutral = false;
+
+	private static Texture UnboundTexture = Texture.Load(FileSystem.Mounted, "ui/unbound.png");
+
+	public ControlGlyph()
+	{
+		AddClass("controlglyph");
+	}
+
+	public override void SetProperty(string name, string value)
+	{
+		switch (name)
+		{
+			case "glyph":
+				if (Enum.TryParse(value.ToTitleCase().Replace(" ", ""), out InputButton btn))
+				{
+					Button = btn;
+					SetGlyph(btn);
+				}
+				break;
+			case "glyphsize":
+				if (Enum.TryParse(value.ToTitleCase(), out InputGlyphSize size))
+				{
+					Size = size;
+				}
+				break;
+			case "glyphstyle":
+				if (value.ToLower() == "dark")
+				{
+					style = GlyphStyle.Dark;
+				}
+				else if (value.ToLower() == "light")
+				{
+					style = GlyphStyle.Light;
+				}
+				break;
+			case "solid":
+				solid = true;
+				break;
+			case "neutral":
+				neutral = true;
+				break;
+			default:
+				base.SetProperty(name, value);
+				break;
+		}
+	}
+
+	public override void SetContent(string value)
+	{
+		base.SetContent(value);
+		Text.Text = value;
+	}
+
+	public void SetGlyph(InputButton btn, InputGlyphSize size = InputGlyphSize.Small)
+	{
+		if(!Glyph.IsValid()) return;
+		var Style = style;
+		if (solid)
+			Style = Style.WithSolidABXY();
+		if (neutral)
+			Style = Style.WithNeutralColorABXY();
+
+		Texture glyphimage = Input.GetGlyph(btn, size, Style);
+		if (glyphimage == null || string.IsNullOrEmpty(Input.GetButtonOrigin(btn)))
+		{
+			glyphimage = UnboundTexture;
+			Text.SetClass("hide", Text.TextLength == 0);
+			Glyph.Texture = glyphimage;
+			Glyph.Style.Width = 32;
+			Glyph.Style.Height = 32;
+			return;
+		}
+		Glyph.SetClass("Medium", size == InputGlyphSize.Medium);
+		Glyph.SetClass("Large", size == InputGlyphSize.Large);
+		Text.SetClass("hide", Text.TextLength == 0);
+		Glyph.Texture = glyphimage;
+		Glyph.Style.AspectRatio = (float)glyphimage.Width / glyphimage.Height;
+	}
+
+	public override void Tick()
+	{
+		base.Tick();
+		if (Glyph.IsValid())
+			SetGlyph(Button, Size);
+	}
+
+
+}
+

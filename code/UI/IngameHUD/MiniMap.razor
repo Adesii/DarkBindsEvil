@@ -1,0 +1,22 @@
+@using DarkBinds.Player;
+
+@namespace DarkBinds.UI.IngameHUD
+@attribute [StyleSheet("/UI/IngameHUD/MiniMap.scss")]
+@inherits Panel
+
+<root>
+	<label class="coords" @ref="coords"></label>
+</root>
+
+@code {
+	public Label coords { get; set; }
+	public override void Tick()
+	{
+		if (coords != null)
+		{
+			var p = Game.LocalPawn as DarkBindCharacter;
+			coords.Text = $"Coordinates: {p.PlayerPosition.x}, {p.PlayerPosition.y}";
+		}
+	}
+
+}

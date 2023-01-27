@@ -1,0 +1,21 @@
+@using DarkBinds;
+@namespace DarkBinds.UI
+@attribute [StyleSheet("/UI/Cursor.scss")]
+@inherits Panel
+
+<root>
+	<div class="CursorImage" @ref="cursorImage"></div>
+</root>
+
+@code {
+	public Panel cursorImage { get; set; }
+	public static Panel hovered;
+	Vector2 Mouse;
+
+	public override void Tick()
+	{
+		if (!cursorImage.IsValid()) return;
+		cursorImage.Style.Left = Length.Fraction((Mouse.x / Screen.Width).Clamp(0, 0.999f));
+		cursorImage.Style.Top = Length.Fraction((Mouse.y / Screen.Height).Clamp(0, 0.999f));
+	}
+}

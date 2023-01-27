@@ -231,7 +231,7 @@ public partial class DarkBindCharacter : ModelSprite
 		var tileExtends = new Vector3( World.HalfTileSize + 1, World.HalfTileSize + 1, World.TileHeight + 1 );
 		var blocks = World.GetBlocksInLine( Position, TargetBlockPosition, 3 );
 		isEditingFloor = Input.Down( InputButton.Run );
-		if ( Game.IsClient && Cursor.hovered == null && MainMenu.Instance.HasClass( "hidden" ) && LoadingScreen.Instance.HasClass( "hidden" ) )
+		if ( Game.IsClient && Cursor.hovered == null )
 		{
 			for ( int i = 0; i < blocks.Count; i++ )
 			{

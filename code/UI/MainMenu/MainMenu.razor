@@ -1,0 +1,94 @@
+@using DarkBinds.Systems.Worlds;
+@using DarkBinds.UI.Loading;
+@using DarkBinds;
+@namespace DarkBinds.UI
+@attribute [StyleSheet("/UI/MainMenu/MainMenu.scss")]
+@inherits Panel
+
+
+
+<root>
+	<div class="BackGround"></div>
+	<div class="MainMenuSelect">
+		<button class="menu-btn wip">Continue</button>
+		<button class="menu-btn" @onclick=@NewGame>New Game</button>
+		<button class="menu-btn" @onclick=@OpenLoadMenu>Load Game</button>
+		<button class="menu-btn wip">Settings</button>
+		<button class="menu-btn wip">Credits</button>
+	</div>
+
+	<div class="TitlePanel"> </div>
+
+	<div class="LobbySection">
+		<label class="LobbyTitle">Lobby</label>
+		<div class="LobbyList">
+			<label class="PlayerListing">Player1</label>
+			<label class="PlayerListing">Player2</label>
+			<label class="PlayerListing">Player3</label>
+			<label class="PlayerListing">Player4</label>
+		</div>
+	</div>
+
+	<div class="LoadMenu hidden" @ref="LoadMenu">
+		<label class="LoadTitle">Load Game</label>
+		<div class="LoadList" @ref="LoadList">
+
+		</div>
+
+		<button class="backbutton" @onclick=@CloseLoadMenu>Back</button>
+	</div>
+</root>
+
+@code {
+	public static MainMenu Instance;
+
+	public MainMenu()
+	{
+		Instance = this;
+	}
+
+	public Panel LoadList { get; set; }
+	public Panel LoadMenu { get; set; }
+	public void NewGame()
+	{
+		SetClass("hidden", true);
+		LoadingScreen.Instance.SetClass("hidden", false);
+		World.RegenerateWorld();
+	}
+
+	public void OpenLoadMenu()
+	{
+		LoadMenu.SetClass("hidden", false);
+		if (!FileSystem.Data.DirectoryExists("Saves"))
+		{
+			FileSystem.Data.CreateDirectory("Saves");
+		}
+		var files = FileSystem.Data.FindFile("Saves", "*.m_save");
+		if (LoadList.ChildrenCount == 0)
+			foreach (var file in files)
+			{
+				var TempItem = new SaveState(file, this);
+				LoadList.AddChild(TempItem);
+			}
+
+	}
+	public void CloseLoadMenu()
+	{
+		LoadMenu.SetClass("hidden", true);
+	}
+	class SaveState : Panel
+	{
+		public string SaveName { get; set; }
+		public SaveState(string SaveName, Panel parent)
+		{
+			this.SaveName = SaveName;
+			Add.Label(SaveName, "SaveName");
+			Add.Button("Load", "LoadButton", () =>
+			{
+				parent.SetClass("hidden", true);
+				LoadingScreen.Instance.SetClass("hidden", false);
+				World.LoadWorld(SaveName);
+			});
+		}
+	}
+}

@@ -1,0 +1,48 @@
+@namespace DarkBinds.UI.IngameHUD
+@attribute [StyleSheet("/UI/IngameHUD/IngameRoot.scss")]
+@inherits Panel
+
+
+
+<root>
+	<Inventory />
+	<ItemBar />
+	<MiniMap />
+	<SaveMenu />
+
+	<div class="Help">
+		<label class="Help-title">
+			Help
+		</label>
+		<div class="Help-text">
+			<Label class="keybind">
+				<ControlGlyph glyph="PrimaryAttack"> - Break </ControlGlyph>
+			</Label>
+			<Label class="keybind">
+				<ControlGlyph glyph="SecondaryAttack"> - Place </ControlGlyph>
+			</Label>
+			<Label class="keybind">
+				<ControlGlyph glyph="Zoom"> - Switch Blocks </ControlGlyph>
+			</Label>
+			<Label class="keybind">
+				<ControlGlyph glyph="Forward" glyphsize="Small" />
+				<ControlGlyph glyph="left" glyphsize="Small" />
+				<ControlGlyph glyph="back" glyphsize="Small" />
+				<ControlGlyph glyph="right" glyphsize="Small"> - Move</ControlGlyph>
+			</Label>
+			<Label class="keybind">
+				<ControlGlyph glyph="Run"> - Select Floor </ControlGlyph>
+			</Label>
+		</div>
+	</div>
+</root>
+
+@code
+{
+	public static IngameRoot Instance;
+
+	public IngameRoot()
+	{
+		Instance = this;
+	}
+}

@@ -1,0 +1,49 @@
+@using DarkBinds.Systems.Worlds;
+@using DarkBinds.UI.IngameHUD;
+
+@namespace DarkBinds.UI.Loading
+@attribute [StyleSheet("/UI/Loading/LoadingScreen.scss")]
+@inherits Panel
+
+
+
+<root>
+	<div class="BackGround"></div>
+	<div class="TitlePanel"> </div>
+	<div class="Bar-outercase">
+		<div class="ProgressBar-case">
+			<div class="ProgressBarBackdrop"></div>
+			<div class="ProgressBar" @ref="ProgressBar"></div>
+		</div>
+	</div>
+</root>
+
+@code {
+	public static LoadingScreen Instance;
+
+	public LoadingScreen()
+	{
+		Instance = this;
+	}
+
+	public Panel ProgressBar { get; set; }
+	float backgroundscroll;
+
+	public override void Tick()
+	{
+		base.Tick();
+		if (!ProgressBar.IsValid()) return;
+
+		ProgressBar.Style.Width = Length.Fraction(World.WorldLoadingProgress);
+		backgroundscroll += RealTime.Delta * 64;
+		backgroundscroll %= 127;
+
+		ProgressBar.Style.BackgroundPositionX = Length.Pixels((-128) + backgroundscroll);
+
+		if (World.WorldLoadingProgress >= 1f)
+		{
+			SetClass("hidden", true);
+			IngameRoot.Instance.SetClass("hidden", false);
+		}
+	}
+}

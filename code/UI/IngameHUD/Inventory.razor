@@ -1,0 +1,33 @@
+@namespace DarkBinds.UI.IngameHUD
+@attribute [StyleSheet("/UI/IngameHUD/Inventory.scss")]
+@inherits Panel
+
+
+
+<root class="inventory hidden">
+
+</root>
+
+@code
+{
+	public static Inventory Instance;
+
+	public Inventory()
+	{
+		Instance = this;
+	}
+	public static void Toggle()
+	{
+		Instance.SetClass("hidden", !Instance.HasClass("hidden"));
+	}
+	[Event.Client.BuildInput]
+	public static void BuildInput()
+	{
+		if (Instance?.HasClass("hidden") ?? true)
+			return;
+
+
+		Input.ClearButton(InputButton.PrimaryAttack);
+		Input.ClearButton(InputButton.SecondaryAttack);
+	}
+}

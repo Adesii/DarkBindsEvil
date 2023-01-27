@@ -1,0 +1,17 @@
+@using DarkBinds;
+@using DarkBinds.UI.IngameHUD;
+@using DarkBinds.UI.Loading;
+
+@namespace DarkBinds.UI
+@attribute [StyleSheet("/UI/Hud.scss")]
+@inherits RootPanel
+
+
+<root>
+    <MainMenu />
+    <LoadingScreen class="hidden" />
+    <IngameRoot class="hidden" />
+    <Cursor />
+    <ChatBox />
+    <!-- <ChunkPreview /> -->
+</root>
