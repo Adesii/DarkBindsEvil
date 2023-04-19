@@ -33,7 +33,7 @@ public partial class World : Entity
 		base.ClientSpawn();
 		Instance = this;
 
-		World.RenderLayer = PixelRenderer.GetDefaultWorld();
+		World.RenderLayer = World.GetWorldLayer();
 	}
 
 
@@ -183,7 +183,7 @@ public partial class World : Entity
 				}
 			}
 
-			PixelRenderer.ClearLayers();
+			PixelLayerAsset.GetLayer( "world" ).Clear();
 
 		}
 

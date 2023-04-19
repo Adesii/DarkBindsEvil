@@ -5,8 +5,8 @@ using DarkBinds.util;
 using Sandbox;
 using SpriteKit.Entities;
 using SpriteKit.SceneObjects;
-using SpriteKit.Player;
 using DarkBinds.UI.Loading;
+using SpriteKit.Asset;
 
 namespace DarkBinds.Player;
 
@@ -48,7 +48,7 @@ public partial class DarkBindCharacter : ModelSprite
 	public override void Spawn()
 	{
 		//SpritePath = "/sprites/mainchar/darkbind.sprite";
-		SpritePath = "sprites/mainchar/testing.sprite";
+		SpriteAsset = ResourceLibrary.Get<SpriteAsset>( "sprites/mainchar/testing.sprite" );
 		CameraMode = new TopDownCamera();
 		base.Spawn();
 		Rotation = Rotation.LookAt( Vector3.Backward, Vector3.Up );
@@ -70,7 +70,7 @@ public partial class DarkBindCharacter : ModelSprite
 	private SceneSpotLight FollowSun2 { get; set; }
 	public override void ClientSpawn()
 	{
-		TargetSceneWorld = PixelRenderer.GetDefaultCharacters();
+		TargetSceneWorld = World.GetCharacterLayer();
 		base.ClientSpawn();
 		if ( Game.IsClient && Game.LocalClient == this )
 		{
@@ -106,13 +106,13 @@ public partial class DarkBindCharacter : ModelSprite
 		{
 			FollowLight2.Delete();
 		}
-		var worldscene = PixelRenderer.GetDefaultWorld();
+		var worldscene = World.GetWorldLayer();
 		var arr = CreateLights( worldscene );
 
 		FollowSun = arr.Item1;
 		FollowLight = arr.Item2;
 
-		var arr2 = CreateLights( PixelRenderer.GetDefaultCharacters() );
+		var arr2 = CreateLights( World.GetCharacterLayer() );
 
 		FollowSun2 = arr2.Item1;
 		FollowLight2 = arr2.Item2;
@@ -353,7 +353,7 @@ public partial class DarkBindCharacter : ModelSprite
 	{
 		var player = Game.LocalPawn as DarkBindCharacter;
 
-		new SpinningCube( PixelRenderer.GetDefaultWorld(), player.Transform.WithPosition( player.Position + Vector3.Up * 16 ).WithScale( scale ) );
+		new SpinningCube( World.GetWorldLayer(), player.Transform.WithPosition( player.Position + Vector3.Up * 16 ).WithScale( scale ) );
 	}
 
 	[ConCmd.Client]
@@ -361,7 +361,7 @@ public partial class DarkBindCharacter : ModelSprite
 	{
 		var player = Game.LocalPawn as DarkBindCharacter;
 
-		new SpinningCube( PixelRenderer.GetDefaultCharacters(), player.Transform.WithPosition( player.Position + Vector3.Up * 16 ).WithScale( scale ) );
+		new SpinningCube( World.GetCharacterLayer(), player.Transform.WithPosition( player.Position + Vector3.Up * 16 ).WithScale( scale ) );
 	}
 
 	[ConCmd.Client]
@@ -369,7 +369,7 @@ public partial class DarkBindCharacter : ModelSprite
 	{
 		var player = Game.LocalPawn as DarkBindCharacter;
 
-		new SceneModel( PixelRenderer.GetDefaultWorld(), path, player.Transform.WithPosition( player.Position ).WithScale( scale ) );
+		new SceneModel( World.GetWorldLayer(), path, player.Transform.WithPosition( player.Position ).WithScale( scale ) );
 	}
 
 

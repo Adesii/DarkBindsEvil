@@ -1,0 +1,15 @@
+{
+  "Order": 1,
+  "IsQuantized": false,
+  "IsFullScreen": true,
+  "SetRenderSize": false,
+  "RenderSize": "100,100",
+  "ScaleFactorX": 278,
+  "ScaleFactorY": 4,
+  "IsPixelPerfectWithOverscan": false,
+  "SnapFactorX": 32,
+  "SnapFactorY": 8,
+  "ScaleReference": 1,
+  "AmbientLight": "1,1,1,1",
+  "AmbientLightIntensity": 100
+}

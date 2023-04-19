@@ -128,7 +128,7 @@ public partial class MapTile
 		Block?.OnCreated();
 		FloorBlock?.OnCreated();
 
-		TileSO = new MapSceneObject( PixelRenderer.GetDefaultWorld(), model, new Transform( WorldPosition ) )
+		TileSO = new MapSceneObject( World.GetWorldLayer(), model, new Transform( WorldPosition ) )
 		{
 			//Bounds = new BBox( new Vector3( -World.HalfTileSize, -World.HalfTileSize, -World.TileHeight ), new Vector3( World.HalfTileSize, World.HalfTileSize, World.TileHeight ) ) + WorldPosition
 		};

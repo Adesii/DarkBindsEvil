@@ -1,6 +1,6 @@
 namespace DarkBinds.Player;
 
-public class TopDownCamera : SpriteKit.Player.CameraMode
+public class TopDownCamera : CameraMode
 {
 	public float CameraHeight => 600.0f;
 	protected override void OnActivate()

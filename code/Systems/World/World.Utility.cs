@@ -111,4 +111,14 @@ public partial class World : Entity
 		}
 		return blocks;
 	}
+
+	public static SceneWorld GetWorldLayer()
+	{
+		return PixelLayerAsset.GetSceneWorld( "world" );
+	}
+
+	public static SceneWorld GetCharacterLayer()
+	{
+		return PixelLayerAsset.GetSceneWorld( "character" );
+	}
 }

@@ -11,7 +11,7 @@ namespace DarkBinds.Systems.Worlds;
 public partial class MapChunk
 {
 	public static Dictionary<string, Material> MaterialList = new();
-	public static Material DefaultMaterial => Material.FromShader( "code/systems/spritekit/shaders/spritekit_map_sheet.shader" );
+	public static Material DefaultMaterial => Material.FromShader( "shaders/spritekit_map_sheet.shader" );
 
 	private Vector2Int _pos;
 	public Vector2Int Position

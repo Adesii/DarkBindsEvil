@@ -9,7 +9,7 @@ public class MarkedStone : BaseBlock
 	public override void OnCreated()
 	{
 		base.OnCreated();
-		Light = new SceneLight( PixelRenderer.GetDefaultWorld(), Tile.WorldPosition + Vector3.Up * World.HalfTileSize, World.HalfTileSize * 4, ((Color.Parse( "#24799e" ) ?? Color.Blue)) * 1 )
+		Light = new SceneLight( PixelLayerAsset.GetSceneWorld( "world" ), Tile.WorldPosition + Vector3.Up * World.HalfTileSize, World.HalfTileSize * 4, ((Color.Parse( "#24799e" ) ?? Color.Blue)) * 1 )
 		{
 			QuadraticAttenuation = 4,
 			LinearAttenuation = 0
