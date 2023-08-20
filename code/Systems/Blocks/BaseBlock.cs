@@ -54,7 +54,7 @@ public class BaseBlock
 	{
 	}
 
-	[Event.Entity.PostSpawn]
+	[GameEvent.Entity.PostSpawn]
 	public static void RegisterBlocks()
 	{
 		_blocks = new();

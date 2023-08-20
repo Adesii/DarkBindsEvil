@@ -1,7 +1,7 @@
 namespace DarkBinds.UI;
 public partial class Cursor : Panel
 {
-	[Event.Client.BuildInput]
+	[GameEvent.Client.BuildInput]
 	private void buildinput()
 	{
 

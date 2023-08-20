@@ -55,7 +55,7 @@ public partial class World : Entity
 		World.Scene = Game.SceneWorld; */
 	}
 
-	[Event.Tick.Client]
+	[GameEvent.Tick.Client]
 	public void ClientTick()
 	{
 		if ( Tiles != null && Tiles.Count > 0 )
@@ -118,6 +118,7 @@ public partial class World : Entity
 		var startTimer = DateTime.Now;
 		var data = new MemoryStream();
 		var writer = new BinaryWriter( data );
+		Log.Info( Instance.Tiles );
 		writer.Write( Instance.Tiles.Count );
 		foreach ( var item in Instance.Tiles )
 		{

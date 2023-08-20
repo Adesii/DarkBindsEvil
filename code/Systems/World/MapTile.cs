@@ -158,7 +158,7 @@ public partial class MapTile
 			return;
 		DebugOverlay.Box( WorldPosition + World.HalfTileSize, WorldPosition - World.HalfTileSize, color == new Color() ? Color.Red : color, 0, false );
 	}
-	[Event.PreRender]
+	[GameEvent.PreRender]
 	internal void SetAttributes()
 	{
 		//if ( !TileSO.IsValid() || Block == null || Block.MapSheet == null || FloorBlock == null || FloorBlock.MapSheet == null )

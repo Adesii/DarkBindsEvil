@@ -20,7 +20,7 @@
 	{
 		Instance.SetClass("hidden", !Instance.HasClass("hidden"));
 	}
-	[Event.Client.BuildInput]
+	[GameEvent.Client.BuildInput]
 	public static void BuildInput()
 	{
 		if (Instance?.HasClass("hidden") ?? true)

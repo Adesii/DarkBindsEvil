@@ -82,7 +82,8 @@ public partial class World : Entity
 		}
 		CompressedChunks.AddRange( chunk );
 		WorldLoadingProgress = (float)chunkNumber / (amountofChunks - 1);
-		//Log.Debug( "Chunk " + chunkNumber + "/" + (amountofChunks) + " received" );
+		Log.Debug( "Chunk " + chunkNumber + "/" + (amountofChunks) + " received" );
+		Log.Info( $"Chunk " + chunkNumber + "/" + (amountofChunks) + " received" );
 		if ( chunkNumber == amountofChunks - 1 )
 		{
 

@@ -2,6 +2,7 @@
 @attribute [StyleSheet("/UI/IngameHUD/IngameRoot.scss")]
 @inherits Panel
 
+@using DarkBinds.UI;
 
 
 <root>
@@ -15,24 +16,24 @@
 			Help
 		</label>
 		<div class="Help-text">
-			<Label class="keybind">
+			<div class="keybind">
 				<ControlGlyph glyph="PrimaryAttack"> - Break </ControlGlyph>
-			</Label>
-			<Label class="keybind">
+			</div>
+			<div class="keybind">
 				<ControlGlyph glyph="SecondaryAttack"> - Place </ControlGlyph>
-			</Label>
-			<Label class="keybind">
+			</div>
+			<div class="keybind">
 				<ControlGlyph glyph="Zoom"> - Switch Blocks </ControlGlyph>
-			</Label>
-			<Label class="keybind">
+			</div>
+			<div class="keybind">
 				<ControlGlyph glyph="Forward" glyphsize="Small" />
 				<ControlGlyph glyph="left" glyphsize="Small" />
 				<ControlGlyph glyph="back" glyphsize="Small" />
 				<ControlGlyph glyph="right" glyphsize="Small"> - Move</ControlGlyph>
-			</Label>
-			<Label class="keybind">
+			</div>
+			<div class="keybind">
 				<ControlGlyph glyph="Run"> - Select Floor </ControlGlyph>
-			</Label>
+			</div>
 		</div>
 	</div>
 </root>

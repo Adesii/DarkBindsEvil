@@ -54,6 +54,8 @@ public partial class DarkBindCharacter : ModelSprite
 		Rotation = Rotation.LookAt( Vector3.Backward, Vector3.Up );
 		Scale = 0.63f;
 
+
+
 		//Components.Create<SoulPillar>();
 		//Components.Create<SoulEater>();
 
@@ -179,23 +181,23 @@ public partial class DarkBindCharacter : ModelSprite
 		}
 
 		Vector3 Vel = new();
-		if ( Input.Down( InputButton.Forward ) )
+		if ( Input.Down( "Forward" ) )
 		{
 			Vel += Vector3.Forward;
 		}
-		if ( Input.Down( InputButton.Back ) )
+		if ( Input.Down( "Backward" ) )
 		{
 			Vel += Vector3.Backward;
 		}
-		if ( Input.Down( InputButton.Left ) )
+		if ( Input.Down( "Left" ) )
 		{
 			Vel += Vector3.Left;
 		}
-		if ( Input.Down( InputButton.Right ) )
+		if ( Input.Down( "Right" ) )
 		{
 			Vel += Vector3.Right;
 		}
-		if ( Input.Pressed( InputButton.Use ) && Game.IsClient )
+		if ( Input.Pressed( "Use" ) && Game.IsClient )
 		{
 			Inventory.Toggle();
 		}

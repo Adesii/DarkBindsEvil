@@ -12,7 +12,7 @@ public class SpinningCube : SceneModel
 		RotStart = 0;
 		StartRot = Rotation;
 	}
-	[Event.Client.Frame]
+	[GameEvent.Client.Frame]
 	public void UpdatePosition()
 	{
 		if ( !this.IsValid() ) return;
