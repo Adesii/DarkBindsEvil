@@ -7,7 +7,7 @@
   "Schema": 1,
   "HasAssets": true,
   "AssetsPath": "",
-  "Resources": null,
+  "Resources": "/ui/mainMenu/*\n/UI/*\n/Sources/*.png\n*png\n/fonts/*",
   "MenuResources": "/UI/GameMenu/*",
   "HasCode": true,
   "CodePath": "/code/",
